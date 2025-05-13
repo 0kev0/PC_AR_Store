@@ -146,9 +146,21 @@
                 android:id="@+id/ContinueWithoutAcount"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:onClick="VerCatologo"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/amazon_orange"
+                android:onClick="VerCatologo"
+                android:text="Continuar sin cuenta"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/test"
+                android:layout_width="108dp"
+                android:layout_height="21dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/amazon_orange"
+                android:onClick="ARtest"
                 android:text="Continuar sin cuenta"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
