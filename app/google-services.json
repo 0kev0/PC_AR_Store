@@ -12,7 +12,20 @@
           "package_name": "com.example.pcarstore"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "292696914670-27dfo8ankj6blrvq57pta4fh3g6uasqa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pcarstore",
+            "certificate_hash": "f6350a3a2340877d2df63903ea170c6099ebe512"
+          }
+        },
+        {
+          "client_id": "292696914670-bhr4tqfvfmcq1e7hm4d7ie78vp3vi0qh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAwLOapb41q-7q5UVhd8X4mQvqjg7Q2JBc"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "292696914670-bhr4tqfvfmcq1e7hm4d7ie78vp3vi0qh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

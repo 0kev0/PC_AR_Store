@@ -24,7 +24,6 @@ public class FragmentCatalogo extends Fragment {
 
         // Inicializar vistas
         recyclerView = view.findViewById(R.id.recyclerViewCatalogo);
-        fabFilter = view.findViewById(R.id.fabFilter);
 
         return view;
     }

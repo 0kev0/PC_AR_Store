@@ -103,37 +103,31 @@
                 android:background="@drawable/amazon_button_bg"
                 android:text="Sign-In"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="15dp"
                 android:text="LIVIN DEV´S terminos y condiciones"
                 android:textColor="@color/dark_gray"
                 android:textSize="12sp" />
 
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Keep me signed in"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:paddingHorizontal="8dp"
-                android:text="New to Amazon?"
+                android:text="No tienes una cuenta?"
                 android:textColor="@color/dark_gray"
                 android:textSize="13sp" />
 
             <Button
                 android:id="@+id/LoginGoogle"
-                android:layout_width="326dp"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/amazon_secondary_button_bg"
@@ -146,9 +140,10 @@
                 android:id="@+id/ContinueWithoutAcount"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:onClick="VerCatologo"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/amazon_orange"
+                android:onClick="VerCatologo"
+                android:background="@drawable/button_border_gray"
                 android:text="Continuar sin cuenta"
                 android:textAllCaps="false"
                 android:textColor="@color/black"

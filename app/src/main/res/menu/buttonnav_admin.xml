@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_admin"
+        android:icon="@drawable/ic_admin"
+        android:title="Admin"
+        app:showAsAction="always">
+
+        <menu>
+            <group android:checkableBehavior="none">
+                <item
+                    android:id="@+id/action_add_product"
+                    android:icon="@drawable/ic_add"
+                    android:title="Agregar Producto"/>
+
+                <item
+                    android:id="@+id/action_manage_users"
+                    android:icon="@drawable/ic_users"
+                    android:title="Gestionar Usuarios"/>
+
+                <item
+                    android:id="@+id/action_view_stats"
+                    android:icon="@drawable/ic_stats"
+                    android:title="Estadísticas"/>
+
+                <item
+                    android:id="@+id/action_admin_settings"
+                    android:icon="@drawable/ic_settings"
+                    android:title="Configuración"/>
+            </group>
+        </menu>
+    </item>
+</menu>
