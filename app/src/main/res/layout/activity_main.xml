@@ -132,11 +132,24 @@
                 android:textSize="13sp" />
 
             <Button
+                android:id="@+id/LoginGoogle"
                 android:layout_width="326dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/amazon_secondary_button_bg"
-                android:text="Create your Amazon account"
+                android:text="Continuar con Google"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/ContinueWithoutAcount"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:onClick="VerCatologo"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/amazon_orange"
+                android:text="Continuar sin cuenta"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
