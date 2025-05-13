@@ -49,15 +49,5 @@
         app:layout_constraintTop_toBottomOf="@id/searchLayout"
         tools:listitem="@layout/item_producto" />
 
-    <!-- Botón flotante para filtros -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabFilter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:backgroundTint="@color/amazon_orange"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
