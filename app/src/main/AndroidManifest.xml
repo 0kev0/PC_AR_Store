@@ -13,7 +13,7 @@
         android:theme="@style/Theme.PCARStore"
         tools:targetApi="31">
         <activity
-            android:name=".LoginActivity"
+            android:name=".CatalogoActivity"
             android:exported="false"
             android:theme="@style/Theme.PCARStore" />
         <activity
