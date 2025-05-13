@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -15,12 +14,11 @@ import com.example.pcarstore.R;
 
 
 public class MainActivity extends AppCompatActivity {
-        private Button catalogo, loginGoogle;
+        private Button catalogo, loginGoogle,test;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -29,10 +27,15 @@ public class MainActivity extends AppCompatActivity {
         });
         catalogo = findViewById(R.id.ContinueWithoutAcount);
         loginGoogle = findViewById(R.id.LoginGoogle);
+        test = findViewById(R.id.test);
     }
 
     public void VerCatologo(View view) {
         Intent intent = new Intent(this, CatalogoActivity.class);
         startActivity(intent);
+    }
+
+    public void ARtest(View view) {
+        startActivity(new Intent(this, AR_test.class));
     }
 }
