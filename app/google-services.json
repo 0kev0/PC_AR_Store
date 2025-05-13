@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "292696914670",
+    "project_id": "pcarstore",
+    "storage_bucket": "pcarstore.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292696914670:android:46625accef19ca06f191ff",
+        "android_client_info": {
+          "package_name": "com.example.pcarstore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwLOapb41q-7q5UVhd8X4mQvqjg7Q2JBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
