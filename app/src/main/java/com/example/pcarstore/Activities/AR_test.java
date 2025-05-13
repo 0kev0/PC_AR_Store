@@ -328,7 +328,7 @@ public class AR_test extends AppCompatActivity implements SampleRender.Renderer 
             virtualObjectAlbedoTexture =
                     Texture.createFromAsset(
                             render,
-                            "models/pawn_albedo.png",
+                            "models/lemon/lemon_diff_4k.jpg",
                             Texture.WrapMode.CLAMP_TO_EDGE,
                             Texture.ColorFormat.SRGB);
             virtualObjectAlbedoInstantPlacementTexture =
@@ -344,7 +344,7 @@ public class AR_test extends AppCompatActivity implements SampleRender.Renderer 
                             Texture.WrapMode.CLAMP_TO_EDGE,
                             Texture.ColorFormat.LINEAR);
 
-            virtualObjectMesh = Mesh.createFromAsset(render, "models/pawn.obj");
+            virtualObjectMesh = Mesh.createFromAsset(render, "models/lemon/lemon_4k.obj");
             virtualObjectShader =
                     Shader.createFromAssets(
                                     render,
@@ -361,6 +361,7 @@ public class AR_test extends AppCompatActivity implements SampleRender.Renderer 
                             .setTexture("u_RoughnessMetallicAmbientOcclusionTexture", virtualObjectPbrTexture)
                             .setTexture("u_Cubemap", cubemapFilter.getFilteredCubemapTexture())
                             .setTexture("u_DfgTexture", dfgTexture);
+
         } catch (IOException e) {
             Log.e(TAG, "Failed to read a required asset file", e);
             messageSnackbarHelper.showError(this, "Failed to read a required asset file: " + e);
