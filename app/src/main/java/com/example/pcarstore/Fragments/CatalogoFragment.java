@@ -56,7 +56,7 @@ public class CatalogoFragment extends Fragment {
 
         // Configurar RecyclerView de productos
         productsRecycler = view.findViewById(R.id.recyclerViewCatalogo);
-        productsRecycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        productsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Inicializar adapters
         productAdapter = new ProductAdapter(productList, product -> {

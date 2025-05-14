@@ -1,6 +1,7 @@
 package com.example.pcarstore.Activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.util.Log;
@@ -35,7 +36,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 
@@ -80,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
         // Configurar listeners
         loginGoogle.setOnClickListener(v -> registerGoogle());
     }
+
+
 
     private void insertCategories() {
         // Categoría 1: Ruedas
@@ -130,17 +136,21 @@ public class MainActivity extends AppCompatActivity {
     private void insertProducts() {
         // Producto 1: Llantas deportivas
         Product product1 = new Product(
-                "Llantas Deportivas 18''",
+                "Llantas DeportivasX 18''",
                 199.99,
                 "Ruedas",
                 50,
-                "Llantas aleación ligera",
-                "https://example.com/llanta.jpg",
+                "Llantas aleación ligeraX",
+                Arrays.asList(
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2FITEM1%2FIMG%2FR.jpeg?alt=media&token=ae438215-0ae2-43e9-9351-0b7691288be7",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2FITEM1%2FIMG%2Fth.jpeg?alt=media&token=4f15e63c-579a-412f-a9ba-58f611ea0886"
+                ),
                 "https://example.com/llanta.glb"
         );
         product1.setSpecs(new HashMap<String, String>() {{
             put("Material", "Aleación");
             put("Color", "Negro");
+            put("Diámetro", "18 pulgadas");
         }});
         mDatabase.child("products").child("prod_001").setValue(product1);
 
@@ -151,9 +161,16 @@ public class MainActivity extends AppCompatActivity {
                 "Motor",
                 100,
                 "Filtro reutilizable",
-                "https://example.com/filtro.jpg",
+                Arrays.asList(
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fth.jpeg?alt=media&token=02ca6552-af45-4ecb-a343-03bdf01412a0",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/filtro_detalle1.jpg"
+                ),
                 ""
         );
+        product2.setSpecs(new HashMap<String, String>() {{
+            put("Tipo", "Reutilizable");
+            put("Flujo de aire", "Mayor 50%");
+        }});
         mDatabase.child("products").child("prod_002").setValue(product2);
 
         // Producto 3: Pastillas de freno
@@ -163,7 +180,11 @@ public class MainActivity extends AppCompatActivity {
                 "Frenos",
                 30,
                 "Pastillas cerámicas",
-                "https://example.com/pastillas.jpg",
+                Arrays.asList(
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2F20250315_154351%20(2).jpg?alt=media&token=e3fc6cf0-ce28-4cb8-b8d0-bb77061d5622",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/pastillas_detalle1.jpg",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/pastillas_detalle2.jpg"
+                ),
                 ""
         );
         mDatabase.child("products").child("prod_003").setValue(product3);
@@ -175,7 +196,10 @@ public class MainActivity extends AppCompatActivity {
                 "Lubricantes",
                 200,
                 "Aceite para alto rendimiento",
-                "https://example.com/aceite.jpg",
+                Arrays.asList(
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/aceite_principal.jpg",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/aceite_detalle1.jpg"
+                ),
                 ""
         );
         mDatabase.child("products").child("prod_004").setValue(product4);
@@ -187,9 +211,17 @@ public class MainActivity extends AppCompatActivity {
                 "Eléctrico",
                 25,
                 "Batería sellada",
-                "https://example.com/bateria.jpg",
+                Arrays.asList(
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/bateria_principal.jpg",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/bateria_lateral.jpg",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/bateria_especificaciones.jpg"
+                ),
                 ""
         );
+        product5.setSpecs(new HashMap<String, String>() {{
+            put("Capacidad", "800 CCA");
+            put("Tipo", "Sellada AGM");
+        }});
         mDatabase.child("products").child("prod_005").setValue(product5);
     }
 

@@ -139,6 +139,20 @@
             android:textColor="#000000"
             android:drawableLeft="@android:drawable/ic_menu_upload"
             android:drawablePadding="16dp"/>
+
+        <Button
+            android:id="@+id/btnGifCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:drawableLeft="@android:drawable/ic_menu_upload"
+            android:drawablePadding="16dp"
+            android:gravity="start|center_vertical"
+            android:padding="16dp"
+            android:text="Gif Card"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            app:icon="@drawable/ic_credit_card" />
     </LinearLayout>
 
     <!-- Sección de configuración -->

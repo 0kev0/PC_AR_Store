@@ -65,7 +65,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productPrice.setText(String.format("$%.2f", product.getPrice()));
 
             Glide.with(itemView.getContext())
-                    .load(product.getImageUrl())
+                    .load(product.getMainImageUrl())
                     .placeholder(R.drawable.placer_holder)
                     .into(productImage);
 
