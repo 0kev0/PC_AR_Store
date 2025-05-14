@@ -29,7 +29,9 @@
         <activity
             android:name="com.example.pcarstore.Activities.AR_test"
             android:exported="false" />
-        <!-- Tu actividad principal -->
+        <activity
+            android:name=".Activities.CatalogoActivity"
+            android:exported="false" />
         <activity
             android:name=".Activities.MainActivity"
             android:configChanges="orientation|screenSize"

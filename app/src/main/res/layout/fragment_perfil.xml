@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#F2F2F2"
+    android:padding="16dp"
+    tools:context=".Activities.PerfilFragment">
+
+    <!-- Título principal -->
+    <TextView
+        android:id="@+id/tvProfileTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tu Cuenta"
+        android:textSize="22sp"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- Sección de información del usuario -->
+    <LinearLayout
+        android:id="@+id/userInfoSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvProfileTitle"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <!-- Icono de perfil usando TextView -->
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="#DDDDDD"
+                android:gravity="center"
+                android:text="JP"
+                android:textColor="#000000"
+                android:textSize="24sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
+
+                <TextView
+                    android:id="@+id/tvUserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Juan Pérez"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/tvUserEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="juan.perez@example.com"
+                    android:textColor="#565959"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnEditProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:text="Administrar tu perfil"
+            android:textColor="#0066C0"
+            android:textAllCaps="false"
+            android:drawableLeft="@android:drawable/ic_menu_edit"/>
+    </LinearLayout>
+
+    <!-- Sección de opciones -->
+    <LinearLayout
+        android:id="@+id/optionsSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/userInfoSection"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tus opciones"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="16dp"
+            android:paddingBottom="8dp"/>
+
+        <!-- Opción Pedidos -->
+        <Button
+            android:id="@+id/btnOrders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="start|center_vertical"
+            android:padding="16dp"
+            android:text="Tus pedidos"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:drawableLeft="@android:drawable/ic_menu_agenda"
+            android:drawablePadding="16dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F2F2F2"/>
+
+        <!-- Opción Lista de deseos -->
+        <Button
+            android:id="@+id/btnWishlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="start|center_vertical"
+            android:padding="16dp"
+            android:text="Lista de deseos"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:drawableLeft="@android:drawable/ic_menu_upload"
+            android:drawablePadding="16dp"/>
+    </LinearLayout>
+
+    <!-- Sección de configuración -->
+    <LinearLayout
+        android:id="@+id/settingsSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/optionsSection"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Configuración"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="16dp"
+            android:paddingBottom="8dp"/>
+
+        <!-- Opción Configuración -->
+        <Button
+            android:id="@+id/btnSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="start|center_vertical"
+            android:padding="16dp"
+            android:text="Configuración de cuenta"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:drawableLeft="@android:drawable/ic_menu_preferences"
+            android:drawablePadding="16dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F2F2F2"/>
+
+        <!-- Opción Cerrar sesión -->
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="start|center_vertical"
+            android:padding="16dp"
+            android:text="Cerrar sesión"
+            android:textAllCaps="false"
+            android:textColor="#CC0000"
+            android:drawableLeft="@android:drawable/ic_lock_power_off"
+            android:drawablePadding="16dp"
+            android:drawableTint="#CC0000"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
