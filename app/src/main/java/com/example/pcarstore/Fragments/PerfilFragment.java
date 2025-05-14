@@ -1,4 +1,4 @@
-package com.example.pcarstore.Activities;
+package com.example.pcarstore.Fragments;
 
 import android.os.Bundle;
 

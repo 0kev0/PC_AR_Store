@@ -8,17 +8,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.pcarstore.Fragments.CarritoFragment;
+import com.example.pcarstore.Fragments.CatalogoFragment;
+import com.example.pcarstore.Fragments.PerfilFragment;
 import com.example.pcarstore.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class CatalogoActivity extends AppCompatActivity {
+public class InicioActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_catalogo);
+        setContentView(R.layout.activity_inicio);
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(this::onNavigationItemSelected);

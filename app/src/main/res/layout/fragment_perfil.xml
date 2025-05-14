@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="#F2F2F2"
     android:padding="16dp"
-    tools:context=".Activities.PerfilFragment">
+    tools:context=".Fragments.PerfilFragment">
 
     <!-- Título principal -->
     <TextView

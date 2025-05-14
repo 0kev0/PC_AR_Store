@@ -30,7 +30,7 @@
             android:name="com.example.pcarstore.Activities.AR_test"
             android:exported="false" />
         <activity
-            android:name=".Activities.CatalogoActivity"
+            android:name=".Activities.InicioActivity"
             android:exported="false" />
         <activity
             android:name=".Activities.MainActivity"

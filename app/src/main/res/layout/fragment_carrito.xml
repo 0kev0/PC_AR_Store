@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#F2F2F2"
     android:padding="8dp"
-    tools:context=".Activities.CarritoFragment">
+    tools:context=".Fragments.CarritoFragment">
 
     <!-- Header similar a Amazon -->
     <TextView
