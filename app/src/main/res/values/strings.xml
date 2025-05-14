@@ -19,6 +19,7 @@
     <string-array name="instant_placement_options_array" translatable="false">
         <item>Enable Instant Placement</item>
     </string-array>
+    <string name="default_web_client_id" translatable="false">292696914670-bhr4tqfvfmcq1e7hm4d7ie78vp3vi0qh.apps.googleusercontent.com</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

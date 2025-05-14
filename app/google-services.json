@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "292696914670",
+    "project_id": "pcarstore",
+    "storage_bucket": "pcarstore.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292696914670:android:46625accef19ca06f191ff",
+        "android_client_info": {
+          "package_name": "com.example.pcarstore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "292696914670-27dfo8ankj6blrvq57pta4fh3g6uasqa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pcarstore",
+            "certificate_hash": "f6350a3a2340877d2df63903ea170c6099ebe512"
+          }
+        },
+        {
+          "client_id": "292696914670-najbmh673ep82k6km11e7hd3ofnn9ekk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pcarstore",
+            "certificate_hash": "42ff03c9f91853f5f274759a7c0247541c566274"
+          }
+        },
+        {
+          "client_id": "292696914670-bhr4tqfvfmcq1e7hm4d7ie78vp3vi0qh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwLOapb41q-7q5UVhd8X4mQvqjg7Q2JBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "292696914670-bhr4tqfvfmcq1e7hm4d7ie78vp3vi0qh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
