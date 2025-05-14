@@ -7,7 +7,7 @@
     android:padding="16dp"
     android:id="@+id/main"
     android:background="@color/white"
-    tools:context=".MainActivity">
+    tools:context=".Activities.MainActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -145,6 +145,18 @@
                 android:onClick="VerCatologo"
                 android:background="@drawable/button_border_gray"
                 android:text="Continuar sin cuenta"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+            <Button
+                android:id="@+id/test"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/amazon_orange"
+                android:onClick="ARtest"
+                android:background="@drawable/button_border_gray"
+                android:text="AR Prueba"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
                 android:textSize="16sp" />

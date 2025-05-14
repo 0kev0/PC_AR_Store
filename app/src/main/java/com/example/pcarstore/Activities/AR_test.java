@@ -119,7 +119,7 @@ public class AR_test extends AppCompatActivity implements SampleRender.Renderer 
     private Shader virtualObjectShader;
     private Texture virtualObjectAlbedoTexture;
     private Texture virtualObjectAlbedoInstantPlacementTexture;
-    private final List<WrappedAnchor> wrappedAnchors = new ArrayList<>();
+    private final List<wrappedAnchor> wrappedAnchors = new ArrayList<>();
     private Texture dfgTexture;
     private SpecularCubemapFilter cubemapFilter;
     private final float[] modelMatrix = new float[16];
@@ -472,7 +472,7 @@ public class AR_test extends AppCompatActivity implements SampleRender.Renderer 
         updateLightEstimation(frame.getLightEstimate(), viewMatrix);
 
         render.clear(virtualSceneFramebuffer, 0f, 0f, 0f, 0f);
-        for (WrappedAnchor wrappedAnchor : wrappedAnchors) {
+        for (wrappedAnchor wrappedAnchor : wrappedAnchors) {
             Anchor anchor = wrappedAnchor.getAnchor();
             Trackable trackable = wrappedAnchor.getTrackable();
             if (anchor.getTrackingState() != TrackingState.TRACKING) {
@@ -526,7 +526,7 @@ public class AR_test extends AppCompatActivity implements SampleRender.Renderer 
                         wrappedAnchors.remove(0);
                     }
 
-                    wrappedAnchors.add(new WrappedAnchor(hit.createAnchor(), trackable));
+                    wrappedAnchors.add(new wrappedAnchor(hit.createAnchor(), trackable));
                     this.runOnUiThread(this::showOcclusionDialogIfNeeded);
                     break;
                 }
