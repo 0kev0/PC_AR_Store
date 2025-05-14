@@ -3,7 +3,9 @@ package com.example.pcarstore.Adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -52,24 +54,37 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         private final ImageView productImage;
         private final TextView productName;
         private final TextView productPrice;
+        private final RatingBar productRating;
+        private final Button viewDetailsButton;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.productImage);
             productName = itemView.findViewById(R.id.productName);
             productPrice = itemView.findViewById(R.id.productPrice);
+            productRating = itemView.findViewById(R.id.productRating);
+            viewDetailsButton = itemView.findViewById(R.id.viewDetailsButton);
         }
 
         public void bind(Product product, OnProductClickListener listener) {
+            // Configurar datos básicos
             productName.setText(product.getName());
             productPrice.setText(String.format("$%.2f", product.getPrice()));
 
+            // Cargar imagen
             Glide.with(itemView.getContext())
                     .load(product.getMainImageUrl())
                     .placeholder(R.drawable.placer_holder)
                     .into(productImage);
 
+            // Configurar clics
+            viewDetailsButton.setOnClickListener(v -> listener.onProductClick(product));
             itemView.setOnClickListener(v -> listener.onProductClick(product));
         }
+    }
+
+    public void updateProductList(List<Product> newProductList) {
+        productList = newProductList;
+        notifyDataSetChanged();
     }
 }

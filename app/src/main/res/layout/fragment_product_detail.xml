@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Image gallery taking 30% of screen height -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerProductImages"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@color/light_gray"
+        android:clipToPadding="false"
+        android:paddingHorizontal="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="horizontal"
+        tools:listitem="@layout/item_product_image" />
+
+    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+        android:id="@+id/dotsIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recyclerProductImages"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-12dp"
+        app:dotsColor="@color/gray"
+        app:dotsSize="8dp"
+        app:dotsSpacing="4dp"/>
+
+    <!-- Scrollable content container -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/dotsIndicator"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Product information -->
+            <TextView
+                android:id="@+id/productName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                tools:text="Llantas DeportivasX 18''" />
+
+            <TextView
+                android:id="@+id/productPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="20sp"
+                android:textColor="@color/amazon_orange"
+                android:textStyle="bold"
+                tools:text="$199.99" />
+
+            <RatingBar
+                android:id="@+id/productRatingDetail"
+                style="@style/Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:rating="4.5"
+                android:stepSize="0.5"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="16dp"
+                android:background="@color/gray" />
+
+            <!-- Specifications -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Especificaciones"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/productSpecs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/gray"
+                tools:text="Material: Aleación de aluminio\nTamaño: 18 pulgadas\nPeso: 10.5 kg\nColor: Negro mate"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="16dp"
+                android:background="@color/gray" />
+
+            <!-- Description -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Descripción"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/productDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/gray"
+                tools:text="Llantas deportivas de alta calidad fabricadas en aleación ligera para mejorar el rendimiento y reducir el peso no suspendido. Diseño aerodinámico que mejora la refrigeración de los frenos." />
+
+            <!-- Action buttons -->
+            <Button
+                android:id="@+id/btnAddToCart"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="24dp"
+                android:text="Añadir al carrito"
+                android:backgroundTint="@color/amazon_orange"
+                android:textColor="@color/white"
+                android:textAllCaps="false"
+                android:textSize="16sp"/>
+
+            <Button
+                android:id="@+id/btnViewAR"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="16dp"
+                android:text="Ver en Realidad Aumentada"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/amazon_orange"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:textSize="16sp"
+                app:strokeColor="@color/amazon_orange"
+                app:strokeWidth="1dp"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

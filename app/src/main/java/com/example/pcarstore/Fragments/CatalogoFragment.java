@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,10 +42,24 @@ public class CatalogoFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_catalogo, container, false);
 
-        //Realtime Database
+        // Realtime Database
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        // Configurar RecyclerView de categorías
+        // Initialize RecyclerViews
+        initializeRecyclerViews(view);
+
+        // Initialize adapters
+        initializeAdapters();
+
+        // Load data
+        loadCategories();
+        loadProducts();
+
+        return view;
+    }
+
+    private void initializeRecyclerViews(View view) {
+        // Configure categories RecyclerView
         categoriesRecycler = view.findViewById(R.id.categoriesRecycler);
         categoriesRecycler.setLayoutManager(new LinearLayoutManager(
                 getContext(),
@@ -54,31 +67,28 @@ public class CatalogoFragment extends Fragment {
                 false
         ));
 
-        // Configurar RecyclerView de productos
+        // Configure products RecyclerView
         productsRecycler = view.findViewById(R.id.recyclerViewCatalogo);
         productsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
 
-        // Inicializar adapters
+    private void initializeAdapters() {
         productAdapter = new ProductAdapter(productList, product -> {
-            // Manejar clic en producto
-            Toast.makeText(getContext(), "Seleccionado: " + product.getName(), Toast.LENGTH_SHORT).show();
-            // Aquí puedes abrir un detalle del producto
+            // Open product details fragment
+            ProductDetailFragment detailFragment = ProductDetailFragment.newInstance(product.getProductId());
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainerView2, detailFragment)
+                    .addToBackStack(null)
+                    .commit();
         });
 
         categoryAdapter = new CategoryAdapter(getContext(), categoryList, category -> {
-            // Pasar el categoryId (ej: "cat_001") en lugar del nombre
             filterProductsByCategory(category.getCategoryId());
             Toast.makeText(getContext(), "Categoría: " + category.getName(), Toast.LENGTH_SHORT).show();
         });
 
         productsRecycler.setAdapter(productAdapter);
         categoriesRecycler.setAdapter(categoryAdapter);
-
-        // Cargar datos
-        loadCategories();
-        loadProducts();
-
-        return view;
     }
 
     private void loadCategories() {
@@ -102,8 +112,7 @@ public class CatalogoFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "Error al cargar categorías: " + databaseError.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                showErrorToast("Error al cargar categorías: " + databaseError.getMessage());
                 Log.e(TAG, "Error loading categories", databaseError.toException());
             }
         });
@@ -130,8 +139,7 @@ public class CatalogoFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "Error al cargar productos: " + databaseError.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                showErrorToast("Error al cargar productos: " + databaseError.getMessage());
                 Log.e(TAG, "Error loading products", databaseError.toException());
             }
         });
@@ -139,11 +147,10 @@ public class CatalogoFragment extends Fragment {
 
     private void filterProductsByCategory(String categoryId) {
         if (categoryId == null || categoryId.isEmpty()) {
-            loadProducts(); // Mostrar todos si no hay categoría seleccionada
+            loadProducts(); // Show all if no category selected
             return;
         }
 
-        // Primero obtenemos el nombre de la categoría correspondiente al ID
         mDatabase.child("categories").child(categoryId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot categorySnapshot) {
@@ -151,43 +158,48 @@ public class CatalogoFragment extends Fragment {
                     Category category = categorySnapshot.getValue(Category.class);
                     if (category != null) {
                         String categoryName = category.getName();
-
-                        // Ahora filtramos los productos por el nombre de la categoría
-                        mDatabase.child("products").orderByChild("category").equalTo(categoryName)
-                                .addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        productList.clear();
-                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                            try {
-                                                Product product = snapshot.getValue(Product.class);
-                                                if (product != null) {
-                                                    product.setProductId(snapshot.getKey());
-                                                    productList.add(product);
-                                                }
-                                            } catch (Exception e) {
-                                                Log.e(TAG, "Error parsing product: " + e.getMessage());
-                                            }
-                                        }
-                                        productAdapter.notifyDataSetChanged();
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        Toast.makeText(getContext(), "Error al filtrar productos: " + databaseError.getMessage(),
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                        filterProductsByCategoryName(categoryName);
                     }
                 } else {
-                    Toast.makeText(getContext(), "Categoría no encontrada", Toast.LENGTH_SHORT).show();
+                    showErrorToast("Categoría no encontrada");
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "Error al obtener categoría: " + databaseError.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                showErrorToast("Error al obtener categoría: " + databaseError.getMessage());
             }
         });
-    }}
+    }
+
+    private void filterProductsByCategoryName(String categoryName) {
+        mDatabase.child("products").orderByChild("category").equalTo(categoryName)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        productList.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            try {
+                                Product product = snapshot.getValue(Product.class);
+                                if (product != null) {
+                                    product.setProductId(snapshot.getKey());
+                                    productList.add(product);
+                                }
+                            } catch (Exception e) {
+                                Log.e(TAG, "Error parsing product: " + e.getMessage());
+                            }
+                        }
+                        productAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        showErrorToast("Error al filtrar productos: " + databaseError.getMessage());
+                    }
+                });
+    }
+
+    private void showErrorToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+}

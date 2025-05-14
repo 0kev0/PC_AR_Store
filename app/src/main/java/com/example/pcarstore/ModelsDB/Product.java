@@ -8,25 +8,32 @@ public class Product {
     private String productId;
     private String name;
     private double price;
+    private double cost;  // Nuevo campo para el costo
+    private int stock;    // Stock disponible
+    private Double rating; // Nuevo campo para rating (puede ser null)
     private String category;
-    private int stock;
     private String description;
-    private List<String> imageUrls;  // Cambiado de String imageUrl a List<String>
+    private List<String> imageUrls;
     private String model3dUrl;
-    private Map<String, String> specs;
+    private Map<String, String> specifications;  // Especificaciones detalladas
 
-    public Product() {}
+    public Product() {
+        this.specifications = new HashMap<>();
+    }
 
-    public Product(String name, double price, String category, int stock,
-                   String description, List<String> imageUrls, String model3dUrl) {
+    public Product(String name, double price, double cost, int stock, Double rating,
+                   String category, String description, List<String> imageUrls,
+                   String model3dUrl, Map<String, String> specifications) {
         this.name = name;
         this.price = price;
-        this.category = category;
+        this.cost = cost;
         this.stock = stock;
+        this.rating = rating;
+        this.category = category;
         this.description = description;
         this.imageUrls = imageUrls;
         this.model3dUrl = model3dUrl;
-        this.specs = new HashMap<>();
+        this.specifications = specifications != null ? specifications : new HashMap<>();
     }
 
     // Getters y Setters
@@ -55,12 +62,12 @@ public class Product {
         this.price = price;
     }
 
-    public String getCategory() {
-        return category;
+    public double getCost() {
+        return cost;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 
     public int getStock() {
@@ -69,6 +76,22 @@ public class Product {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getDescription() {
@@ -95,16 +118,31 @@ public class Product {
         this.model3dUrl = model3dUrl;
     }
 
-    public Map<String, String> getSpecs() {
-        return specs;
+    public Map<String, String> getSpecifications() {
+        return specifications;
     }
 
-    public void setSpecs(Map<String, String> specs) {
-        this.specs = specs;
+    public void setSpecifications(Map<String, String> specifications) {
+        this.specifications = specifications != null ? specifications : new HashMap<>();
     }
 
-    // Optiene primera img para vista previa
+    // Método para agregar una especificación individual
+    public void addSpecification(String key, String value) {
+        this.specifications.put(key, value);
+    }
+
+    // Método para remover una especificación
+    public void removeSpecification(String key) {
+        this.specifications.remove(key);
+    }
+
+    // Obtiene la primera imagen para vista previa
     public String getMainImageUrl() {
         return (imageUrls != null && !imageUrls.isEmpty()) ? imageUrls.get(0) : null;
+    }
+
+    // Método para calcular el margen de ganancia
+    public double getProfitMargin() {
+        return price - cost;
     }
 }
