@@ -56,4 +56,7 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+
+    <string name="default_web_client_id" translatable="false">292696914670-bhr4tqfvfmcq1e7hm4d7ie78vp3vi0qh.apps.googleusercontent.com</string>
+
 </resources>
