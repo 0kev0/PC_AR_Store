@@ -69,8 +69,10 @@ import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationExceptio
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +83,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ProductShowARActivity extends AppCompatActivity implements SampleRender.Renderer{
-    private static final String TAG = AR_test.class.getSimpleName();
+    private static final String TAG = "ProductShowARActivity";
     private static final String SEARCHING_PLANE_MESSAGE = "Searching for surfaces...";
     private static final String WAITING_FOR_TAP_MESSAGE = "Tap on a surface to place an object.";
     private static final float[] sphericalHarmonicFactors = {
@@ -147,8 +149,11 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
 
     // Product data
     private Product product;
+    private String productId;
     private File modelFile;
     private File textureFile;
+    private String modelPath;
+    private String texturePath;
     private boolean modelLoaded = false;
     private boolean textureLoaded = false;
 
@@ -162,6 +167,19 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        // Inicializar Firebase
+        storage = FirebaseStorage.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        productId = getIntent().getStringExtra("product_id");
+        modelPath = getIntent().getStringExtra("model_path");
+        texturePath = getIntent().getStringExtra("texture_path");
+
+        if (modelPath == null || texturePath == null) {
+            messageSnackbarHelper.showError(this, "Missing model or texture path");
+            finish();
+            return;
+        }
 
         surfaceView = findViewById(R.id.surfaceview);
         displayRotationHelper = new DisplayRotationHelper(this);
@@ -184,31 +202,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                     }
                 });
     }
-    private void loadProductById(String productId) {
-        mDatabase.child("products").child(productId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                try {
-                    Product product = snapshot.getValue(Product.class);
-                    if (product != null) {
-                        product.setProductId(snapshot.getKey());
-                        // Aquí puedes hacer lo que necesites con el producto cargado
-                        // Por ejemplo, puedes guardarlo en una variable de clase o pasarlo a otro método
-                        //displayProductDetails(product);
-                    } else {
-                        Log.e(TAG, "Producto no encontrado con ID: " + productId);
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Error parsing product: " + e.getMessage());
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(TAG, "Error loading product", databaseError.toException());
-            }
-        });
-    }
-
 
     protected boolean settingsMenuClick(MenuItem item) {
         if (item.getItemId() == R.id.depth_settings) {
@@ -370,12 +363,17 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                     new Mesh(
                             render, Mesh.PrimitiveMode.POINTS, null, pointCloudVertexBuffers);
 
-            virtualObjectAlbedoTexture =
-                    Texture.createFromAsset(
-                            render,
-                            "models/lemon/lemon_diff_4k.jpg",
-                            Texture.WrapMode.CLAMP_TO_EDGE,
-                            Texture.ColorFormat.SRGB);
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+            try {
+                virtualObjectAlbedoTexture = Texture.createFromFile(
+                        render,
+                        texturePath,
+                        Texture.WrapMode.CLAMP_TO_EDGE,
+                        Texture.ColorFormat.SRGB);
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to load texture: " + texturePath, e);
+                Toast.makeText(this, "no funca la textura", Toast.LENGTH_SHORT).show();
+            }
             virtualObjectAlbedoInstantPlacementTexture =
                     Texture.createFromAsset(
                             render,
@@ -389,7 +387,15 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                             Texture.WrapMode.CLAMP_TO_EDGE,
                             Texture.ColorFormat.LINEAR);
 
-            virtualObjectMesh = Mesh.createFromAsset(render, "models/lemon/lemon_4k.obj");
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+            try {
+                virtualObjectMesh = Mesh.createFromFile(render, modelPath);
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to load 3D model from path: " + modelPath, e);
+                Toast.makeText(this, "no funca el modelo", Toast.LENGTH_SHORT).show();
+
+            }
+            /// ////////////////////////////////////////////////////////////////////
             virtualObjectShader =
                     Shader.createFromAssets(
                                     render,

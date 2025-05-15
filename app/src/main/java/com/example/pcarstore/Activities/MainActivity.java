@@ -88,18 +88,20 @@ public class MainActivity extends AppCompatActivity {
     private void insertProducts() {
         // Producto 1: Llantas deportivas
         Product product1 = new Product(
+                "prod_001",
                 "Llantas DeportivasX 18''",
-                299.99,  // precio
-                180.00,  // costo
-                50,     // stock
-                4.5,     // rating (1-5)
+                299.99,
+                180.00,
+                50,
+                4.5,
                 "Ruedas",
                 "Llantas aleación ligeraX con diseño aerodinámico y mayor durabilidad",
                 Arrays.asList(
-                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2FITEM1%2FIMG%2FR.jpeg?alt=media&token=ae438215-0ae2-43e9-9351-0b7691288be7",
-                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2FITEM1%2FIMG%2Fth.jpeg?alt=media&token=4f15e63c-579a-412f-a9ba-58f611ea0886"
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FIMG%2FR.jpeg?alt=media&token=1c75d566-d32d-4449-b53b-e7f20578a296",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FIMG%2Fvino.webp?alt=media&token=5f734764-6b38-4654-b818-f98b7c1511f0"
                 ),
-                "https://example.com/llanta.glb",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FMODELO_3D%2Flemon_4k.obj?alt=media&token=c659017a-db13-4450-b5f5-a07e1e9baab8",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FTEXTURAS%2Flemon_diff_4k.jpg?alt=media&token=f307028a-0929-4963-8220-b16a8a821d12",
                 new HashMap<String, String>() {{
                     put("Material", "Aleación de aluminio");
                     put("Color", "Negro mate");
@@ -114,18 +116,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Producto 2: Filtro de aire
         Product product2 = new Product(
+                "prod_002",
                 "Filtro Aire K&N Performance",
-                49.99,   // precio
-                32.50,   // costo
-                100,     // stock
-                4.8,     // rating
+                49.99,
+                32.50,
+                100,
+                4.8,
                 "Motor",
                 "Filtro de aire reutilizable con flujo de aire mejorado y garantía de 1 millón de millas",
                 Arrays.asList(
-                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fth.jpeg?alt=media&token=02ca6552-af45-4ecb-a343-03bdf01412a0",
-                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/filtro_detalle1.jpg"
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631"
                 ),
-                "",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FMODELO_3D%2FLogitech%20Keyboard.obj?alt=media&token=2fb5a2c6-bbfd-4a03-a89b-53b2456786f2",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FTEXTURAS%2FParquet_flooring_06_2K_Roughness.png?alt=media&token=32813acc-b1a0-42e9-b5b2-908b5b5d819d",
                 new HashMap<String, String>() {{
                     put("Tipo", "Reutilizable");
                     put("Flujo de aire", "Mayor 50% que filtros estándar");
@@ -139,18 +143,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Producto 3: Pastillas de freno
         Product product3 = new Product(
+                "prod_003",
                 "Pastillas Brembo Cerámicas",
-                89.50,   // precio
-                60.00,   // costo
-                30,      // stock
-                4.7,     // rating
+                89.50,
+                60.00,
+                30,
+                4.7,
                 "Frenos",
                 "Pastillas de freno cerámicas de alto rendimiento con menor desgaste de discos",
                 Arrays.asList(
-                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2F20250315_154351%20(2).jpg?alt=media&token=e3fc6cf0-ce28-4cb8-b8d0-bb77061d5622",
-                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/pastillas_detalle1.jpg",
-                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/pastillas_detalle2.jpg"
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO5.png?alt=media&token=a0bcea0b-afd0-41bc-88bf-f456cfdf4b65"
                 ),
+                "",
                 "",
                 new HashMap<String, String>() {{
                     put("Material", "Cerámica compuesta");
@@ -165,17 +171,19 @@ public class MainActivity extends AppCompatActivity {
 
         // Producto 4: Aceite sintético
         Product product4 = new Product(
+                "prod_004",
                 "Aceite Mobil 1 5W-30 Full Synthetic",
-                59.99,   // precio
-                38.75,   // costo
-                200,     // stock
-                4.9,     // rating
+                59.99,
+                38.75,
+                200,
+                4.9,
                 "Lubricantes",
                 "Aceite sintético de última generación para protección extrema del motor",
                 Arrays.asList(
-                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/aceite_principal.jpg",
-                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/aceite_detalle1.jpg"
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO5.png?alt=media&token=a0bcea0b-afd0-41bc-88bf-f456cfdf4b65"
                 ),
+                "",
                 "",
                 new HashMap<String, String>() {{
                     put("Tipo", "Sintético completo");
@@ -191,11 +199,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Producto 5: Batería
         Product product5 = new Product(
+                "prod_005",
                 "Batería Optima RedTop 34R",
-                189.99,  // precio
-                125.00,  // costo
-                25,      // stock
-                4.6,     // rating
+                189.99,
+                125.00,
+                25,
+                4.6,
                 "Eléctrico",
                 "Batería sellada AGM de alto rendimiento para arranques en condiciones extremas",
                 Arrays.asList(
@@ -203,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
                         "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/bateria_lateral.jpg",
                         "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/bateria_especificaciones.jpg"
                 ),
+                "",
                 "",
                 new HashMap<String, String>() {{
                     put("Tecnología", "AGM SpiralCell");

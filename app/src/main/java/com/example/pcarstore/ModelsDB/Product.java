@@ -8,22 +8,23 @@ public class Product {
     private String productId;
     private String name;
     private double price;
-    private double cost;  // Nuevo campo para el costo
-    private int stock;    // Stock disponible
-    private Double rating; // Nuevo campo para rating (puede ser null)
+    private double cost;
+    private int stock;
+    private Double rating;
     private String category;
     private String description;
     private List<String> imageUrls;
     private String model3dUrl;
-    private Map<String, String> specifications;  // Especificaciones detalladas
+    private String textureUrl;
+    private Map<String, String> specifications;
 
     public Product() {
         this.specifications = new HashMap<>();
     }
 
-    public Product(String name, double price, double cost, int stock, Double rating,
-                   String category, String description, List<String> imageUrls,
-                   String model3dUrl, Map<String, String> specifications) {
+    public Product(String productId, String name, double price, double cost, int stock, Double rating, String category,
+                   String description, List<String> imageUrls, String model3dUrl, String textureUrl, Map<String, String> specifications) {
+        this.productId = productId;
         this.name = name;
         this.price = price;
         this.cost = cost;
@@ -33,10 +34,10 @@ public class Product {
         this.description = description;
         this.imageUrls = imageUrls;
         this.model3dUrl = model3dUrl;
-        this.specifications = specifications != null ? specifications : new HashMap<>();
+        this.textureUrl = textureUrl;
+        this.specifications = specifications;
     }
-
-    // Getters y Setters
+// Getters y Setters
 
     public String getProductId() {
         return productId;
@@ -116,6 +117,14 @@ public class Product {
 
     public void setModel3dUrl(String model3dUrl) {
         this.model3dUrl = model3dUrl;
+    }
+
+    public String getTextureUrl() {
+        return textureUrl;
+    }
+
+    public void setTextureUrl(String textureUrl) {
+        this.textureUrl = textureUrl;
     }
 
     public Map<String, String> getSpecifications() {

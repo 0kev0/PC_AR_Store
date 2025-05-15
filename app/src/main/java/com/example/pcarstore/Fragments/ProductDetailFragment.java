@@ -1,7 +1,10 @@
 package com.example.pcarstore.Fragments;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +19,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.pcarstore.Activities.ProductShowARActivity;
 import com.example.pcarstore.Adapters.ProductImagesAdapter;
 import com.example.pcarstore.ModelsDB.Product;
@@ -26,20 +28,33 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.io.IOException;
 
 public class ProductDetailFragment extends Fragment {
 
+    private static final String TAG = "ProductDetailFragment";
     private String productId;
     private DatabaseReference productRef;
     private ValueEventListener productListener;
-
-    // UI Components
+    private Product currentProduct;
+    private FirebaseStorage storage;
     private TextView productName, productPrice, productSpecs, productDescription;
     private RatingBar productRating;
     private RecyclerView imagesRecycler;
     private Button btnAddToCart, btnViewAR;
     private ProductImagesAdapter imagesAdapter;
+
+    // Modelo 3D y textura
+    private File modelFile;
+    private File textureFile;
+    private boolean modelLoaded = false;
+    private boolean textureLoaded = false;
+    private ProgressDialog progressDialog;
+
 
     public static ProductDetailFragment newInstance(String productId) {
         ProductDetailFragment fragment = new ProductDetailFragment();
@@ -55,6 +70,7 @@ public class ProductDetailFragment extends Fragment {
         if (getArguments() != null) {
             productId = getArguments().getString("productId");
         }
+        storage = FirebaseStorage.getInstance();
     }
 
     @Nullable
@@ -67,17 +83,17 @@ public class ProductDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize all views
         initializeViews(view);
 
-        // Set up Firebase reference
         productRef = FirebaseDatabase.getInstance().getReference("products").child(productId);
-
-        // Set up realtime listener
         setupRealtimeListener();
-
-        // Set up button click listeners
         setupButtonListeners();
+
+        // Initialize progress dialog
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setTitle("Preparando visualización AR");
+        progressDialog.setMessage("Descargando archivos necesarios...");
+        progressDialog.setCancelable(false);
     }
 
     private void initializeViews(View view) {
@@ -91,34 +107,106 @@ public class ProductDetailFragment extends Fragment {
         btnViewAR = view.findViewById(R.id.btnViewAR);
 
         // Configure RecyclerView
-        imagesRecycler.setLayoutManager(
-                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        imagesRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
     }
 
     private void openARModel() {
-        // Verificar si tenemos un ID de producto
-        if (productId != null && !productId.isEmpty()) {
-            // Crear un Intent para abrir la actividad ProductShowARActivity
-            Intent arIntent = new Intent(getActivity(), ProductShowARActivity.class);
+        // Verificar si tenemos un producto cargado
+        if (currentProduct != null && currentProduct.getModel3dUrl() != null && currentProduct.getTextureUrl() != null) {
+            progressDialog.show();
 
-            // Pasar el ID del producto como extra en el Intent
-            arIntent.putExtra("product_id", productId);
-
-            // Mostrar mensaje informativo
-            Toast.makeText(getContext(), "Iniciando visualización AR", Toast.LENGTH_SHORT).show();
-
-            // Iniciar la actividad
-            startActivity(arIntent);
+            //Iniciar descarga de archivos
+            downloadFiles(currentProduct.getModel3dUrl(), currentProduct.getTextureUrl());
         } else {
-            Toast.makeText(getContext(), "Error: ID de producto no disponible para AR", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Error: Modelo 3D o texturas no disponibles", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @SuppressLint("SetWorldReadable")
+    private void downloadFiles(String modelUrl, String textureUrl) {
+        modelLoaded = false;
+        textureLoaded = false;
+
+        StorageReference modelRef = storage.getReferenceFromUrl(modelUrl);
+        StorageReference textureRef = storage.getReferenceFromUrl(textureUrl);
+
+        try {
+            // Crear archivos temporales con prefijos más descriptivos
+            modelFile = File.createTempFile("model_", ".obj", getContext().getCacheDir());
+            textureFile = File.createTempFile("texture_", ".png", getContext().getCacheDir());
+
+            modelRef.getFile(modelFile).addOnSuccessListener(taskSnapshot -> {
+                Log.d(TAG, "Model downloaded to: " + modelFile.getAbsolutePath());
+                if (modelFile.setReadable(true, false)) {
+                    Log.d(TAG, "Model file permissions set successfully");
+                } else {
+                    Log.w(TAG, "Failed to set model file permissions");
+                }
+                modelLoaded = true;
+                //checkIfFilesAreReady();
+            }).addOnFailureListener(exception -> {
+                Log.e(TAG, "Error downloading model: " + exception.getMessage());
+                Toast.makeText(getContext(), "Error al descargar el modelo 3D", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+            });
+
+            textureRef.getFile(textureFile).addOnSuccessListener(taskSnapshot -> {
+                Log.d(TAG, "Texture downloaded to: " + textureFile.getAbsolutePath());
+                if (textureFile.setReadable(true, false)) {
+                    Log.d(TAG, "Texture file permissions set successfully");
+                } else {
+                    Log.w(TAG, "Failed to set texture file permissions");
+                }
+                textureLoaded = true;
+                checkIfFilesAreReady();
+            }).addOnFailureListener(exception -> {
+                Log.e(TAG, "Error downloading texture: " + exception.getMessage());
+                Toast.makeText(getContext(), "Error al descargar la textura", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+            });
+
+        } catch (IOException e) {
+            Log.e(TAG, "Error creating temp files: " + e.getMessage());
+            Toast.makeText(getContext(), "Error al crear archivos temporales", Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
+        }
+    }
+
+    private void checkIfFilesAreReady() {
+        if (modelLoaded && textureLoaded && modelFile.exists() && textureFile.exists()) {
+            progressDialog.dismiss();
+
+            // Verificación adicional con Toast
+            String verificationMsg = "Archivos listos:\n" +
+                    "Modelo: " + modelFile.getAbsolutePath() + "\n" +
+                    "Textura: " + textureFile.getAbsolutePath() + "\n" +
+                    "Permisos Modelo: " + (modelFile.canRead() ? "LEÍBLE" : "NO LEÍBLE") + "\n" +
+                    "Permisos Textura: " + (textureFile.canRead() ? "LEÍBLE" : "NO LEÍBLE");
+Log.d(TAG, verificationMsg);
+            Toast.makeText(getContext(), verificationMsg, Toast.LENGTH_LONG).show();
+
+            Intent arIntent = new Intent(getActivity(), ProductShowARActivity.class);
+            arIntent.putExtra("product_id", productId);
+            arIntent.putExtra("model_path", modelFile.getAbsolutePath());
+            arIntent.putExtra("texture_path", textureFile.getAbsolutePath());
+            startActivity(arIntent);
+        } else {
+            String errorMsg = "Error: Archivos no disponibles\n" +
+                    "Modelo: " + (modelFile != null ? modelFile.exists() : "null") + "\n" +
+                    "Textura: " + (textureFile != null ? textureFile.exists() : "null");
+
+            Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
+        }
+    }
+
     private void setupRealtimeListener() {
         productListener = productRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Product product = snapshot.getValue(Product.class);
                 if (product != null) {
+                    currentProduct = product;
                     updateUI(product);
                 }
             }
@@ -154,12 +242,14 @@ public class ProductDetailFragment extends Fragment {
         if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
             imagesAdapter = new ProductImagesAdapter(product.getImageUrls());
             imagesRecycler.setAdapter(imagesAdapter);
-
         }
 
         // AR button visibility
-        if (product.getModel3dUrl() == null || product.getModel3dUrl().isEmpty()) {
+        if (product.getModel3dUrl() == null || product.getModel3dUrl().isEmpty() ||
+                product.getTextureUrl() == null || product.getTextureUrl().isEmpty()) {
             btnViewAR.setVisibility(View.GONE);
+        } else {
+            btnViewAR.setVisibility(View.VISIBLE);
         }
     }
 
@@ -179,6 +269,9 @@ public class ProductDetailFragment extends Fragment {
         super.onDestroyView();
         if (productListener != null) {
             productRef.removeEventListener(productListener);
+        }
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
         }
     }
 }
