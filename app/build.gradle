@@ -45,6 +45,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.7.6'
     implementation 'com.tbuonomo:dotsindicator:5.0'
 
+    //animaciones
+    implementation "com.airbnb.android:lottie:6.1.0"
+
     // ARCore
     implementation 'com.google.ar:core:1.48.0'
 
