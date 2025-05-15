@@ -30,6 +30,18 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/placer_holder" />
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieLoading"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/productImage"
+            app:layout_constraintEnd_toEndOf="@id/productImage"
+            app:layout_constraintStart_toStartOf="@id/productImage"
+            app:layout_constraintTop_toTopOf="@id/productImage"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
         <!-- Categoría del producto -->
         <TextView
             android:id="@+id/productCategory"
