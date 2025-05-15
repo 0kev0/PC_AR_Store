@@ -1,5 +1,6 @@
 package com.example.pcarstore.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.pcarstore.Activities.ProductShowARActivity;
 import com.example.pcarstore.Adapters.ProductImagesAdapter;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.R;
@@ -93,6 +95,24 @@ public class ProductDetailFragment extends Fragment {
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
     }
 
+    private void openARModel() {
+        // Verificar si tenemos un ID de producto
+        if (productId != null && !productId.isEmpty()) {
+            // Crear un Intent para abrir la actividad ProductShowARActivity
+            Intent arIntent = new Intent(getActivity(), ProductShowARActivity.class);
+
+            // Pasar el ID del producto como extra en el Intent
+            arIntent.putExtra("product_id", productId);
+
+            // Mostrar mensaje informativo
+            Toast.makeText(getContext(), "Iniciando visualización AR", Toast.LENGTH_SHORT).show();
+
+            // Iniciar la actividad
+            startActivity(arIntent);
+        } else {
+            Toast.makeText(getContext(), "Error: ID de producto no disponible para AR", Toast.LENGTH_SHORT).show();
+        }
+    }
     private void setupRealtimeListener() {
         productListener = productRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -152,12 +172,6 @@ public class ProductDetailFragment extends Fragment {
         // Implement add to cart functionality
         Toast.makeText(getContext(), "Producto añadido al carrito", Toast.LENGTH_SHORT).show();
         // You would typically add the product to a cart database or local storage here
-    }
-
-    private void openARModel() {
-        // Implement AR functionality
-        Toast.makeText(getContext(), "Abriendo modelo en Realidad Aumentada", Toast.LENGTH_SHORT).show();
-        // You would launch your AR activity or fragment here
     }
 
     @Override
