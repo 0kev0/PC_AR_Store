@@ -263,7 +263,6 @@ public class MainActivity extends AppCompatActivity {
         mDatabase.child("categories").child("cat_005").setValue(category5);
     }
 
-
     private void insertUsers() {
         // Usuario 1: Administrador
         User user1 = new User("admin@example.com", "Admin Principal", "admin");
