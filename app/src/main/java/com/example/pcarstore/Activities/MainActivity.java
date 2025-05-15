@@ -128,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
                         "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631",
                         "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631"
                 ),
-                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FMODELO_3D%2FLogitech%20Keyboard.obj?alt=media&token=2fb5a2c6-bbfd-4a03-a89b-53b2456786f2",
-                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FTEXTURAS%2FParquet_flooring_06_2K_Roughness.png?alt=media&token=32813acc-b1a0-42e9-b5b2-908b5b5d819d",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FMODELO_3D%2F10201_Potato_v1-L3.obj?alt=media&token=752b2ae5-e2cf-4988-a2ac-cf3d89d80f06",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FTEXTURAS%2FPotato.jpg?alt=media&token=5cddbe4b-1316-4421-95f3-f6a3af253e03",
                 new HashMap<String, String>() {{
                     put("Tipo", "Reutilizable");
                     put("Flujo de aire", "Mayor 50% que filtros estándar");
