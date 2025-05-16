@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class PerfilFragment extends Fragment {
     private TextView tvUserName, tvUserEmail,tvUserBalance;
     private Button btnEditProfile, btnLogout;
     private Button btnOrders, btnWishlist, btnGifCard, btnSettings;
+    private Spinner spinnerDepartamento, spinnerCiudad;
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
@@ -84,6 +86,7 @@ public class PerfilFragment extends Fragment {
         btnGifCard = view.findViewById(R.id.btnGifCard);
         btnSettings = view.findViewById(R.id.btnSettings);
         tvUserBalance =  view.findViewById(R.id.tvUserBalance);
+
 
         loadUserData();
 
@@ -327,6 +330,8 @@ public class PerfilFragment extends Fragment {
             Button btnSelectImage = dialogView.findViewById(R.id.btnSelectImage);
             Button btnCancel = dialogView.findViewById(R.id.btnCancel);
             Button btnSave = dialogView.findViewById(R.id.btnSave);
+            Spinner spinnerDepartamento = dialogView.findViewById(R.id.spinnerDepartamento);
+            Spinner spinnerCiudad = dialogView.findViewById(R.id.spinnerCiudad);
 
             if (currentUser != null) {
                 etName.setText(currentUser.getDisplayName());

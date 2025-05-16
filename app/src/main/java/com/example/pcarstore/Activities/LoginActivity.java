@@ -84,8 +84,6 @@ public class LoginActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         insertProducts();
-        insertUsers();
-        insertOrders();
         insertCategories();
 
         mAuth = FirebaseAuth.getInstance();
@@ -264,38 +262,6 @@ public class LoginActivity extends AppCompatActivity {
         mDatabase.child("products").child("prod_005").setValue(product5);
     }
 
-    private void insertOrders() {
-        // Productos de ejemplo
-        OrderItem llantas = new OrderItem("prod001", "Llantas Premium", 199.99, 1);
-        OrderItem filtro = new OrderItem("prod002", "Filtro de Aire", 29.99, 1);
-        OrderItem pastillas = new OrderItem("prod003", "Pastillas de Freno", 45.50, 2);
-        OrderItem aceite = new OrderItem("prod004", "Aceite Sintético", 39.99, 3);
-        OrderItem bateria = new OrderItem("prod005", "Batería 12V", 129.99, 1);
-
-        // Crear órdenes de ejemplo
-        Order[] sampleOrders = {
-                createOrder("user_001", "completed", 429.97, new OrderItem[]{llantas, llantas, filtro}),
-                createOrder("user_002", "processing", 91.00, new OrderItem[]{pastillas}),
-                createOrder("user_003", "cancelled", 129.99, new OrderItem[]{bateria}),
-                createOrder("user_004", "pending", 119.97, new OrderItem[]{aceite}),
-                createOrder("user_005", "completed", 349.98, new OrderItem[]{llantas, pastillas})
-        };
-
-        // Insertar órdenes en Firebase
-        OrderManager orderManager = OrderManager.getInstance();
-        for (int i = 0; i < sampleOrders.length; i++) {
-            sampleOrders[i].setOrderId("order_" + (i + 1));
-            orderManager.placeOrder(sampleOrders[i]);
-        }
-    }
-
-    private Order createOrder(String userId, String status, double total, OrderItem[] items) {
-        Order order = new Order(userId, status, total);
-        for (int i = 0; i < items.length; i++) {
-            order.getItems().put("item_" + (i + 1), items[i]);
-        }
-        return order;
-    }
 
     private void insertCategories() {
         // Categoría 1: Ruedas
@@ -344,81 +310,6 @@ public class LoginActivity extends AppCompatActivity {
         mDatabase.child("categories").child("cat_005").setValue(category5);
     }
 
-    private void insertUsers() {
-        // Usuario 1: Administrador
-        User user1 = new User(
-                "admin@example.com",
-                "Admin Principal",
-                "admin",
-                "https://example.com/profiles/admin.jpg",
-                "Lima",
-                "Lima",
-                0.0,
-                false
-        );
-        user1.setCart(new HashMap<String, Integer>() {{
-            put("prod_001", 2);
-        }});
-        mDatabase.child("users").child("user_001").setValue(user1);
-
-        // Usuario 2: Cliente normal
-        User user2 = new User(
-                "cliente1@example.com",
-                "Juan Pérez",
-                "customer",
-                "https://example.com/profiles/juan.jpg",
-                "Arequipa",
-                "Arequipa",
-                150.50,
-                false
-        );
-        user2.setCart(new HashMap<String, Integer>() {{
-            put("prod_003", 1);
-        }});
-        mDatabase.child("users").child("user_002").setValue(user2);
-
-        // Usuario 3: Cliente premium (con membresía Prime)
-        User user3 = new User(
-                "premium@example.com",
-                "María García",
-                "premium",
-                "https://example.com/profiles/maria.jpg",
-                "La Libertad",
-                "Trujillo",
-                500.0,
-                true
-        );
-        user3.setCart(new HashMap<String, Integer>() {{
-            put("prod_002", 3);
-        }});
-        mDatabase.child("users").child("user_003").setValue(user3);
-
-        // Usuario 4: Técnico
-        User user4 = new User(
-                "tecnico@taller.com",
-                "Carlos López",
-                "technician",
-                "https://example.com/profiles/carlos.jpg",
-                "Lima",
-                "Callao",
-                0.0,
-                false
-        );
-        mDatabase.child("users").child("user_004").setValue(user4);
-
-        // Usuario 5: Cliente nuevo con Prime
-        User user5 = new User(
-                "nuevo@cliente.com",
-                "Ana Martínez",
-                "customer",
-                "https://example.com/profiles/ana.jpg",
-                "Cusco",
-                "Cusco",
-                75.25,
-                true
-        );
-        mDatabase.child("users").child("user_005").setValue(user5);
-    }
 
     public void VerCatologo(View view) {
         startActivity(new Intent(this, InicioActivity.class));
