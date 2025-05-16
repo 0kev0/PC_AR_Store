@@ -197,4 +197,45 @@ public class Texture implements Closeable {
     bitmap.recycle();
     return result;
   }
+
+  // Añade este método en la clase Texture
+  public static Texture createFromFile(
+          SampleRender render,
+          String filePath,
+          WrapMode wrapMode,
+          ColorFormat colorFormat
+  ) throws IOException {
+    Texture texture = new Texture(render, Target.TEXTURE_2D, wrapMode);
+    Bitmap bitmap = null;
+    try {
+      bitmap = convertBitmapToConfig(
+              BitmapFactory.decodeFile(filePath),
+              Bitmap.Config.ARGB_8888
+      );
+      ByteBuffer buffer = ByteBuffer.allocateDirect(bitmap.getByteCount());
+      bitmap.copyPixelsToBuffer(buffer);
+      buffer.rewind();
+
+      GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, texture.getTextureId());
+      GLError.maybeThrowGLException("Failed to bind texture", "glBindTexture");
+      GLES30.glTexImage2D(
+              GLES30.GL_TEXTURE_2D,
+              0,
+              colorFormat.glesEnum,
+              bitmap.getWidth(),
+              bitmap.getHeight(),
+              0,
+              GLES30.GL_RGBA,
+              GLES30.GL_UNSIGNED_BYTE,
+              buffer);
+      GLError.maybeThrowGLException("Failed to populate texture data", "glTexImage2D");
+      GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
+      GLError.maybeThrowGLException("Failed to generate mipmaps", "glGenerateMipmap");
+    } finally {
+      if (bitmap != null) {
+        bitmap.recycle();
+      }
+    }
+    return texture;
+  }
 }

@@ -1,66 +1,157 @@
 package com.example.pcarstore.ModelsDB;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Product {
     private String productId;
     private String name;
     private double price;
-    private String category;
+    private double cost;
     private int stock;
+    private Double rating;
+    private String category;
     private String description;
-    private String imageUrl;
+    private List<String> imageUrls;
     private String model3dUrl;
-    private Map<String, String> specs;
+    private String textureUrl;
+    private Map<String, String> specifications;
 
-    public Product() {}
-
-    public Product(String name, double price, String category, int stock,
-                   String description, String imageUrl, String model3dUrl) {
-        this.name = name;
-        this.price = price;
-        this.category = category;
-        this.stock = stock;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.model3dUrl = model3dUrl;
-        this.specs = new HashMap<>();
+    public Product() {
+        this.specifications = new HashMap<>();
     }
 
-    public String getProductId() {return productId;}
+    public Product(String productId, String name, double price, double cost, int stock, Double rating, String category,
+                   String description, List<String> imageUrls, String model3dUrl, String textureUrl, Map<String, String> specifications) {
+        this.productId = productId;
+        this.name = name;
+        this.price = price;
+        this.cost = cost;
+        this.stock = stock;
+        this.rating = rating;
+        this.category = category;
+        this.description = description;
+        this.imageUrls = imageUrls;
+        this.model3dUrl = model3dUrl;
+        this.textureUrl = textureUrl;
+        this.specifications = specifications;
+    }
+// Getters y Setters
 
-    public void setProductId(String productId) {this.productId = productId;}
+    public String getProductId() {
+        return productId;
+    }
 
-    public String getName() {return name;}
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
 
-    public void setName(String name) {this.name = name;}
+    public String getName() {
+        return name;
+    }
 
-    public double getPrice() {return price;}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public void setPrice(double price) {this.price = price;}
+    public double getPrice() {
+        return price;
+    }
 
-    public String getCategory() {return category;}
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
-    public void setCategory(String category) {this.category = category;}
+    public double getCost() {
+        return cost;
+    }
 
-    public int getStock() {return stock;}
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
 
-    public void setStock(int stock) {this.stock = stock;}
+    public int getStock() {
+        return stock;
+    }
 
-    public String getDescription() {return description;}
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
 
-    public void setDescription(String description) {this.description = description;}
+    public Double getRating() {
+        return rating;
+    }
 
-    public String getImageUrl() {return imageUrl;}
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
 
-    public void setImageUrl(String imageUrl) {this.imageUrl = imageUrl;}
+    public String getCategory() {
+        return category;
+    }
 
-    public String getModel3dUrl() {return model3dUrl;}
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-    public void setModel3dUrl(String model3dUrl) {this.model3dUrl = model3dUrl;}
+    public String getDescription() {
+        return description;
+    }
 
-    public Map<String, String> getSpecs() {return specs;}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public void setSpecs(Map<String, String> specs) {this.specs = specs;}
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public String getModel3dUrl() {
+        return model3dUrl;
+    }
+
+    public void setModel3dUrl(String model3dUrl) {
+        this.model3dUrl = model3dUrl;
+    }
+
+    public String getTextureUrl() {
+        return textureUrl;
+    }
+
+    public void setTextureUrl(String textureUrl) {
+        this.textureUrl = textureUrl;
+    }
+
+    public Map<String, String> getSpecifications() {
+        return specifications;
+    }
+
+    public void setSpecifications(Map<String, String> specifications) {
+        this.specifications = specifications != null ? specifications : new HashMap<>();
+    }
+
+    // Método para agregar una especificación individual
+    public void addSpecification(String key, String value) {
+        this.specifications.put(key, value);
+    }
+
+    // Método para remover una especificación
+    public void removeSpecification(String key) {
+        this.specifications.remove(key);
+    }
+
+    // Obtiene la primera imagen para vista previa
+    public String getMainImageUrl() {
+        return (imageUrls != null && !imageUrls.isEmpty()) ? imageUrls.get(0) : null;
+    }
+
+    // Método para calcular el margen de ganancia
+    public double getProfitMargin() {
+        return price - cost;
+    }
 }

@@ -40,21 +40,19 @@
             android:orientation="horizontal"
             android:layout_marginBottom="16dp">
 
-            <!-- Icono de perfil usando TextView -->
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="#DDDDDD"
-                android:gravity="center"
-                android:text="JP"
-                android:textColor="#000000"
-                android:textSize="24sp"/>
+            <ImageView
+                android:id="@+id/ivProfilePicture"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/circle_image_view"                 android:contentDescription="Foto de perfil"
+                android:src="@drawable/limo"
+            android:layout_marginEnd="16dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="16dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvUserName"
@@ -85,7 +83,7 @@
             android:drawableLeft="@android:drawable/ic_menu_edit"/>
     </LinearLayout>
 
-    <!-- Sección de opciones -->
+    <!-- Resto del layout se mantiene igual -->
     <LinearLayout
         android:id="@+id/optionsSection"
         android:layout_width="0dp"
@@ -139,6 +137,20 @@
             android:textColor="#000000"
             android:drawableLeft="@android:drawable/ic_menu_upload"
             android:drawablePadding="16dp"/>
+
+        <Button
+            android:id="@+id/btnGifCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:drawableLeft="@android:drawable/ic_menu_upload"
+            android:drawablePadding="16dp"
+            android:gravity="start|center_vertical"
+            android:padding="16dp"
+            android:text="Gif Card"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            app:icon="@drawable/ic_credit_card" />
     </LinearLayout>
 
     <!-- Sección de configuración -->

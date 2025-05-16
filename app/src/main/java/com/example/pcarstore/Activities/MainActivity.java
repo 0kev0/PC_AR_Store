@@ -1,6 +1,7 @@
 package com.example.pcarstore.Activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.util.Log;
@@ -35,7 +36,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 
@@ -81,6 +85,147 @@ public class MainActivity extends AppCompatActivity {
         loginGoogle.setOnClickListener(v -> registerGoogle());
     }
 
+    private void insertProducts() {
+        // Producto 1: Llantas deportivas
+        Product product1 = new Product(
+                "prod_001",
+                "Llantas DeportivasX 18''",
+                299.99,
+                180.00,
+                50,
+                4.5,
+                "Ruedas",
+                "Llantas aleación ligeraX con diseño aerodinámico y mayor durabilidad",
+                Arrays.asList(
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FIMG%2FR.jpeg?alt=media&token=1c75d566-d32d-4449-b53b-e7f20578a296",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FIMG%2Fvino.webp?alt=media&token=5f734764-6b38-4654-b818-f98b7c1511f0"
+                ),
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FMODELO_3D%2Flemon_4k.obj?alt=media&token=c659017a-db13-4450-b5f5-a07e1e9baab8",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FTEXTURAS%2Flemon_diff_4k.jpg?alt=media&token=f307028a-0929-4963-8220-b16a8a821d12",
+                new HashMap<String, String>() {{
+                    put("Material", "Aleación de aluminio");
+                    put("Color", "Negro mate");
+                    put("Diámetro", "18 pulgadas");
+                    put("Ancho", "8.5 pulgadas");
+                    put("PCD", "5x114.3");
+                    put("Offset", "+35mm");
+                    put("Peso", "9.2 kg");
+                }}
+        );
+        mDatabase.child("products").child("prod_001").setValue(product1);
+
+        // Producto 2: Filtro de aire
+        Product product2 = new Product(
+                "prod_002",
+                "Filtro Aire K&N Performance",
+                49.99,
+                32.50,
+                100,
+                4.8,
+                "Motor",
+                "Filtro de aire reutilizable con flujo de aire mejorado y garantía de 1 millón de millas",
+                Arrays.asList(
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631"
+                ),
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FMODELO_3D%2F10201_Potato_v1-L3.obj?alt=media&token=752b2ae5-e2cf-4988-a2ac-cf3d89d80f06",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FTEXTURAS%2FPotato.jpg?alt=media&token=5cddbe4b-1316-4421-95f3-f6a3af253e03",
+                new HashMap<String, String>() {{
+                    put("Tipo", "Reutilizable");
+                    put("Flujo de aire", "Mayor 50% que filtros estándar");
+                    put("Material", "Algodón impregnado en aceite");
+                    put("Limpieza", "Cada 80,000 km");
+                    put("Garantía", "1,000,000 millas");
+                    put("Compatibilidad", "Universal");
+                }}
+        );
+        mDatabase.child("products").child("prod_002").setValue(product2);
+
+        // Producto 3: Pastillas de freno
+        Product product3 = new Product(
+                "prod_003",
+                "Pastillas Brembo Cerámicas",
+                89.50,
+                60.00,
+                30,
+                4.7,
+                "Frenos",
+                "Pastillas de freno cerámicas de alto rendimiento con menor desgaste de discos",
+                Arrays.asList(
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO5.png?alt=media&token=a0bcea0b-afd0-41bc-88bf-f456cfdf4b65"
+                ),
+                "",
+                "",
+                new HashMap<String, String>() {{
+                    put("Material", "Cerámica compuesta");
+                    put("Temperatura operación", "0-800°C");
+                    put("Dust Level", "Bajo");
+                    put("Ruido", "Mínimo");
+                    put("Vida útil", "60,000-80,000 km");
+                    put("Compatibilidad", "Ver lista de aplicaciones");
+                }}
+        );
+        mDatabase.child("products").child("prod_003").setValue(product3);
+
+        // Producto 4: Aceite sintético
+        Product product4 = new Product(
+                "prod_004",
+                "Aceite Mobil 1 5W-30 Full Synthetic",
+                59.99,
+                38.75,
+                200,
+                4.9,
+                "Lubricantes",
+                "Aceite sintético de última generación para protección extrema del motor",
+                Arrays.asList(
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO4.png?alt=media&token=aef36664-50ae-482b-92d3-ea267331d631",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FLOGO5.png?alt=media&token=a0bcea0b-afd0-41bc-88bf-f456cfdf4b65"
+                ),
+                "",
+                "",
+                new HashMap<String, String>() {{
+                    put("Tipo", "Sintético completo");
+                    put("Viscosidad", "5W-30");
+                    put("API", "SN Plus");
+                    put("Capacidad", "1 Litro");
+                    put("Intervalo cambio", "15,000-20,000 km");
+                    put("Protección turbo", "Sí");
+                    put("Aditivos", "Anti-desgaste avanzado");
+                }}
+        );
+        mDatabase.child("products").child("prod_004").setValue(product4);
+
+        // Producto 5: Batería
+        Product product5 = new Product(
+                "prod_005",
+                "Batería Optima RedTop 34R",
+                189.99,
+                125.00,
+                25,
+                4.6,
+                "Eléctrico",
+                "Batería sellada AGM de alto rendimiento para arranques en condiciones extremas",
+                Arrays.asList(
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/bateria_principal.jpg",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/bateria_lateral.jpg",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.appspot.com/PRODUCTS/bateria_especificaciones.jpg"
+                ),
+                "",
+                "",
+                new HashMap<String, String>() {{
+                    put("Tecnología", "AGM SpiralCell");
+                    put("Voltaje", "12V");
+                    put("CCA", "800 Amperios");
+                    put("RC", "100 minutos");
+                    put("Ciclos carga", "3x más que baterías convencionales");
+                    put("Posición instalación", "Cualquier ángulo");
+                    put("Vibración", "Resistente 15x más");
+                }}
+        );
+        mDatabase.child("products").child("prod_005").setValue(product5);
+    }
     private void insertCategories() {
         // Categoría 1: Ruedas
         Category category1 = new Category(
@@ -126,71 +271,6 @@ public class MainActivity extends AppCompatActivity {
         );
         category5.setProductCount(12);
         mDatabase.child("categories").child("cat_005").setValue(category5);
-    }
-    private void insertProducts() {
-        // Producto 1: Llantas deportivas
-        Product product1 = new Product(
-                "Llantas Deportivas 18''",
-                199.99,
-                "Ruedas",
-                50,
-                "Llantas aleación ligera",
-                "https://example.com/llanta.jpg",
-                "https://example.com/llanta.glb"
-        );
-        product1.setSpecs(new HashMap<String, String>() {{
-            put("Material", "Aleación");
-            put("Color", "Negro");
-        }});
-        mDatabase.child("products").child("prod_001").setValue(product1);
-
-        // Producto 2: Filtro de aire
-        Product product2 = new Product(
-                "Filtro Aire K&N",
-                29.99,
-                "Motor",
-                100,
-                "Filtro reutilizable",
-                "https://example.com/filtro.jpg",
-                ""
-        );
-        mDatabase.child("products").child("prod_002").setValue(product2);
-
-        // Producto 3: Pastillas de freno
-        Product product3 = new Product(
-                "Pastillas Brembo",
-                45.50,
-                "Frenos",
-                30,
-                "Pastillas cerámicas",
-                "https://example.com/pastillas.jpg",
-                ""
-        );
-        mDatabase.child("products").child("prod_003").setValue(product3);
-
-        // Producto 4: Aceite sintético
-        Product product4 = new Product(
-                "Aceite Mobil 1 5W-30",
-                39.99,
-                "Lubricantes",
-                200,
-                "Aceite para alto rendimiento",
-                "https://example.com/aceite.jpg",
-                ""
-        );
-        mDatabase.child("products").child("prod_004").setValue(product4);
-
-        // Producto 5: Batería
-        Product product5 = new Product(
-                "Batería Optima RedTop",
-                129.99,
-                "Eléctrico",
-                25,
-                "Batería sellada",
-                "https://example.com/bateria.jpg",
-                ""
-        );
-        mDatabase.child("products").child("prod_005").setValue(product5);
     }
 
     private void insertUsers() {
