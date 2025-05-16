@@ -1,7 +1,9 @@
 package com.example.pcarstore.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,8 +24,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pcarstore.Activities.InicioActivity;
 import com.example.pcarstore.Activities.ProductShowARActivity;
 import com.example.pcarstore.Adapters.ProductImagesAdapter;
+import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,6 +53,10 @@ public class ProductDetailFragment extends Fragment {
     private RecyclerView imagesRecycler;
     private Button btnAddToCart, btnViewAR;
     private ProductImagesAdapter imagesAdapter;
+    private InicioActivity inicioActivity;
+    private Context context;
+
+
 
     // Modelo 3D y textura
     private File modelFile;
@@ -71,7 +80,17 @@ public class ProductDetailFragment extends Fragment {
         if (getArguments() != null) {
             productId = getArguments().getString("productId");
         }
+
         storage = FirebaseStorage.getInstance();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+        if (context instanceof InicioActivity) {
+            inicioActivity = (InicioActivity) context;
+        }
     }
 
     @Nullable
@@ -252,20 +271,117 @@ public class ProductDetailFragment extends Fragment {
         btnViewAR.setOnClickListener(v -> openARModel());
     }
 
+    // Fixed method - No arguments version that uses currentProduct
     private void addToCart() {
-        if (currentProduct != null) {
-            InicioActivity inicioActivity = (InicioActivity) getActivity();
-            if (inicioActivity != null) {
-                inicioActivity.incrementCartCount();
+        if (currentProduct == null) {
+            showToast("Error: No se puede agregar al carrito, producto no disponible");
+            return;
+        }
 
-                Toast.makeText(getContext(), currentProduct.getName() + " añadido al carrito", Toast.LENGTH_SHORT).show();
+        // Default quantity is 1, you can modify this if needed
+        addToCart(currentProduct, 1);
+    }
 
-                // agregar a lista de carrito!!
+    private void addToCart(Product product, int quantity) {
+        // Update the item count
+        if (inicioActivity != null) {
+            inicioActivity.incrementCartCount();
+        }
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            showToast("Debes iniciar sesión para agregar al carrito");
+            return;
+        }
+
+        String userId = currentUser.getUid();
+        DatabaseReference cartRef = FirebaseDatabase.getInstance()
+                .getReference("carts")
+                .child(userId);
+
+        cartRef.child("items").child(product.getProductId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    updateExistingProduct(snapshot, cartRef, product, quantity);
+                } else {
+                    addNewProduct(cartRef, product, quantity);
+                }
             }
-        } else {
-            Toast.makeText(getContext(), "Error al agregar al carrito", Toast.LENGTH_SHORT).show();
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                showToast("Error al acceder al carrito: " + error.getMessage());
+            }
+        });
+    }
+
+    private void updateExistingProduct(DataSnapshot snapshot, DatabaseReference cartRef, Product product, int quantity) {
+        Integer currentQuantity = snapshot.child("quantity").getValue(Integer.class);
+        int newQuantity = (currentQuantity != null ? currentQuantity : 0) + quantity;
+
+        cartRef.child("items").child(product.getProductId()).child("quantity")
+                .setValue(newQuantity)
+                .addOnSuccessListener(aVoid -> {
+                    updateCartTotal(cartRef);
+                    showToast("Cantidad actualizada en el carrito");
+                })
+                .addOnFailureListener(e -> showToast("Error al actualizar cantidad"));
+    }
+
+    private void updateCartTotal(DatabaseReference cartRef) {
+        cartRef.child("items").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                double total = 0.0;
+                for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
+                    OrderItem item = itemSnapshot.getValue(OrderItem.class);
+                    if (item != null) {
+                        total += item.getPrice() * item.getQuantity();
+                    }
+                }
+                cartRef.child("total").setValue(total);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error al calcular total del carrito: " + error.getMessage());
+            }
+        });
+    }
+
+    private void addNewProduct(DatabaseReference cartRef, Product product, int quantity) {
+        OrderItem newItem = new OrderItem(
+                product.getProductId(),
+                product.getName(),
+                product.getPrice(),
+                quantity
+        );
+
+        if (product.getMainImageUrl() != null) {
+            newItem.setImageUrl(product.getMainImageUrl());
+        }
+
+        cartRef.child("items").child(product.getProductId()).setValue(newItem)
+                .addOnSuccessListener(aVoid -> {
+                    updateCartTotal(cartRef);
+                    showToast("Producto agregado al carrito");
+                })
+                .addOnFailureListener(e -> showToast("Error al agregar producto"));
+    }
+    private void showToast(String message) {
+        if (getContext() != null) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void showError(String message) {
+        if (getContext() != null) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, message);
+        }
+    }
+
 
     @Override
     public void onDestroyView() {

@@ -120,40 +120,37 @@ public class CatalogoFragment extends Fragment {
     }
 
     private void addToCart(Product product, int quantity) {
-
         // Update the item count
         if (inicioActivity != null) {
             inicioActivity.incrementCartCount();
         }
 
-//        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-////        if (currentUser == null) {
-////            showToast("Debes iniciar sesión para agregar al carrito");
-////            return;
-////        }
-//
-//        String userId = currentUser.getUid();
-//        DatabaseReference cartRef = FirebaseDatabase.getInstance()
-//                .getReference("carts")
-//                .child(userId);
-//
-//        cartRef.child("items").child(product.getProductId()).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                if (snapshot.exists()) {
-//                    updateExistingProduct(snapshot, cartRef, product, quantity);
-//                } else {
-//                    addNewProduct(cartRef, product, quantity);
-//                }
-//
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                showToast("Error al acceder al carrito: " + error.getMessage());
-//            }
-//        });
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            showToast("Debes iniciar sesión para agregar al carrito");
+            return;
+        }
+
+        String userId = currentUser.getUid();
+        DatabaseReference cartRef = FirebaseDatabase.getInstance()
+                .getReference("carts")
+                .child(userId);
+
+        cartRef.child("items").child(product.getProductId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    updateExistingProduct(snapshot, cartRef, product, quantity);
+                } else {
+                    addNewProduct(cartRef, product, quantity);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                showToast("Error al acceder al carrito: " + error.getMessage());
+            }
+        });
     }
 
     private void updateExistingProduct(DataSnapshot snapshot, DatabaseReference cartRef, Product product, int quantity) {
