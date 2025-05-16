@@ -1,5 +1,7 @@
+
 package com.example.pcarstore.Fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pcarstore.Activities.InicioActivity;
 import com.example.pcarstore.Adapters.CategoryAdapter;
 import com.example.pcarstore.Adapters.ProductAdapter;
 import com.example.pcarstore.ModelsDB.Category;
@@ -41,11 +44,15 @@ public class CatalogoFragment extends Fragment {
     private final List<Category> categoryList = new ArrayList<>();
     private DatabaseReference mDatabase;
     private Context context;
+    private InicioActivity inicioActivity; // Reference to the activity
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context.getApplicationContext();
+        if (context instanceof Activity) {
+            inicioActivity = (InicioActivity) context;
+        }
     }
 
     @Nullable
@@ -67,14 +74,12 @@ public class CatalogoFragment extends Fragment {
     }
 
     private void setupRecyclerViews(View view) {
-        // Configuración del RecyclerView de categorías
         categoriesRecycler.setLayoutManager(new LinearLayoutManager(
                 context,
                 LinearLayoutManager.HORIZONTAL,
                 false
         ));
 
-        // Configuración del RecyclerView de productos
         productsRecycler.setLayoutManager(new LinearLayoutManager(context));
     }
 
@@ -115,32 +120,40 @@ public class CatalogoFragment extends Fragment {
     }
 
     private void addToCart(Product product, int quantity) {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            showToast("Debes iniciar sesión para agregar al carrito");
-            return;
+
+        // Update the item count
+        if (inicioActivity != null) {
+            inicioActivity.incrementCartCount();
         }
 
-        String userId = currentUser.getUid();
-        DatabaseReference cartRef = FirebaseDatabase.getInstance()
-                .getReference("carts")
-                .child(userId);
-
-        cartRef.child("items").child(product.getProductId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    updateExistingProduct(snapshot, cartRef, product, quantity);
-                } else {
-                    addNewProduct(cartRef, product, quantity);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                showToast("Error al acceder al carrito: " + error.getMessage());
-            }
-        });
+//        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+////        if (currentUser == null) {
+////            showToast("Debes iniciar sesión para agregar al carrito");
+////            return;
+////        }
+//
+//        String userId = currentUser.getUid();
+//        DatabaseReference cartRef = FirebaseDatabase.getInstance()
+//                .getReference("carts")
+//                .child(userId);
+//
+//        cartRef.child("items").child(product.getProductId()).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (snapshot.exists()) {
+//                    updateExistingProduct(snapshot, cartRef, product, quantity);
+//                } else {
+//                    addNewProduct(cartRef, product, quantity);
+//                }
+//
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                showToast("Error al acceder al carrito: " + error.getMessage());
+//            }
+//        });
     }
 
     private void updateExistingProduct(DataSnapshot snapshot, DatabaseReference cartRef, Product product, int quantity) {
@@ -298,5 +311,4 @@ public class CatalogoFragment extends Fragment {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         Log.e(TAG, message);
     }
-
 }

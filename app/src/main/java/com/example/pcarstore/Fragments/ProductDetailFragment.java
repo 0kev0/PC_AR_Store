@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pcarstore.Activities.InicioActivity;
 import com.example.pcarstore.Activities.ProductShowARActivity;
 import com.example.pcarstore.Adapters.ProductImagesAdapter;
 import com.example.pcarstore.ModelsDB.Product;
@@ -131,7 +132,7 @@ public class ProductDetailFragment extends Fragment {
         StorageReference textureRef = storage.getReferenceFromUrl(textureUrl);
 
         try {
-            // Crear archivos temporales con prefijos más descriptivos
+            // archivos para AR
             modelFile = File.createTempFile("model_", ".obj", getContext().getCacheDir());
             textureFile = File.createTempFile("texture_", ".png", getContext().getCacheDir());
 
@@ -143,7 +144,6 @@ public class ProductDetailFragment extends Fragment {
                     Log.w(TAG, "Failed to set model file permissions");
                 }
                 modelLoaded = true;
-                //checkIfFilesAreReady();
             }).addOnFailureListener(exception -> {
                 Log.e(TAG, "Error downloading model: " + exception.getMessage());
                 Toast.makeText(getContext(), "Error al descargar el modelo 3D", Toast.LENGTH_SHORT).show();
@@ -182,8 +182,7 @@ public class ProductDetailFragment extends Fragment {
                     "Textura: " + textureFile.getAbsolutePath() + "\n" +
                     "Permisos Modelo: " + (modelFile.canRead() ? "LEÍBLE" : "NO LEÍBLE") + "\n" +
                     "Permisos Textura: " + (textureFile.canRead() ? "LEÍBLE" : "NO LEÍBLE");
-Log.d(TAG, verificationMsg);
-            Toast.makeText(getContext(), verificationMsg, Toast.LENGTH_LONG).show();
+            Log.d(TAG, verificationMsg);
 
             Intent arIntent = new Intent(getActivity(), ProductShowARActivity.class);
             arIntent.putExtra("product_id", productId);
@@ -219,17 +218,14 @@ Log.d(TAG, verificationMsg);
     }
 
     private void updateUI(Product product) {
-        // Basic product info
         productName.setText(product.getName());
         productPrice.setText(String.format("$%.2f", product.getPrice()));
         productDescription.setText(product.getDescription());
 
-        // Rating
         if (product.getRating() != null) {
             productRating.setRating(product.getRating().floatValue());
         }
 
-        // Specifications (assuming specs is a Map<String, String> in Product model)
         if (product.getSpecifications() != null) {
             StringBuilder specsBuilder = new StringBuilder();
             for (String key : product.getSpecifications().keySet()) {
@@ -238,13 +234,11 @@ Log.d(TAG, verificationMsg);
             productSpecs.setText(specsBuilder.toString().trim());
         }
 
-        // Images gallery
         if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
             imagesAdapter = new ProductImagesAdapter(product.getImageUrls());
             imagesRecycler.setAdapter(imagesAdapter);
         }
 
-        // AR button visibility
         if (product.getModel3dUrl() == null || product.getModel3dUrl().isEmpty() ||
                 product.getTextureUrl() == null || product.getTextureUrl().isEmpty()) {
             btnViewAR.setVisibility(View.GONE);
@@ -259,9 +253,18 @@ Log.d(TAG, verificationMsg);
     }
 
     private void addToCart() {
-        // Implement add to cart functionality
-        Toast.makeText(getContext(), "Producto añadido al carrito", Toast.LENGTH_SHORT).show();
-        // You would typically add the product to a cart database or local storage here
+        if (currentProduct != null) {
+            InicioActivity inicioActivity = (InicioActivity) getActivity();
+            if (inicioActivity != null) {
+                inicioActivity.incrementCartCount();
+
+                Toast.makeText(getContext(), currentProduct.getName() + " añadido al carrito", Toast.LENGTH_SHORT).show();
+
+                // agregar a lista de carrito!!
+            }
+        } else {
+            Toast.makeText(getContext(), "Error al agregar al carrito", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
