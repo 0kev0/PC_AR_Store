@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textSize="20sp"
-                android:textColor="@color/amazon_orange"
+                android:textColor="#3A59D1"
                 android:textStyle="bold"
                 tools:text="$199.99" />
 
@@ -126,7 +126,7 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="24dp"
                 android:text="Añadir al carrito"
-                android:backgroundTint="@color/amazon_orange"
+                android:backgroundTint="#7AC6D2"
                 android:textColor="@color/white"
                 android:textAllCaps="false"
                 android:textSize="16sp"/>
@@ -139,11 +139,11 @@
                 android:layout_marginBottom="16dp"
                 android:text="Ver en Realidad Aumentada"
                 android:backgroundTint="@color/white"
-                android:textColor="@color/amazon_orange"
+                android:textColor="#7AC6D2"
                 android:textAllCaps="false"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:textSize="16sp"
-                app:strokeColor="@color/amazon_orange"
+                app:strokeColor="#3A59D1"
                 app:strokeWidth="1dp"/>
         </LinearLayout>
     </ScrollView>

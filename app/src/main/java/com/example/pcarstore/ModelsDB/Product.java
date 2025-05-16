@@ -154,4 +154,5 @@ public class Product {
     public double getProfitMargin() {
         return price - cost;
     }
+
 }
