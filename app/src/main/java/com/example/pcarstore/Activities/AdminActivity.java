@@ -4,10 +4,13 @@ import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
+import android.widget.TextView;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -19,36 +22,38 @@ import com.example.pcarstore.R;
 
 public class AdminActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityAdminBinding binding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_admin); // Asegúrate que sea el layout correcto
 
-        binding = ActivityAdminBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        setSupportActionBar(binding.toolbar);
-
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_admin);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab)
-                        .setAction("Action", null).show();
-            }
-        });
+        // Configuración básica
+        setupToolbar();
+        loadInitialFragment();
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_admin);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar); // ID debe coincidir con tu XML
+        setSupportActionBar(toolbar);
+
+        TextView toolbarTitle = findViewById(R.id.toolbar_title);
+        if (toolbarTitle != null) {
+            toolbarTitle.setText("Administración");
+        }
+    }
+
+    private void loadInitialFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainerView, new FirstFragment())
+                .commit();
+    }
+
+    // Método seguro para encontrar vistas
+    private <T extends View> T findView(@IdRes int id) {
+        T view = findViewById(id);
+        if (view == null) {
+            throw new IllegalArgumentException("ID "+getResources().getResourceName(id)+" no encontrado");
+        }
+        return view;
     }
 }

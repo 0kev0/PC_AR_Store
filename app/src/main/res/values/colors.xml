@@ -17,5 +17,6 @@
     <color name="orange">#BB7200</color>
     <color name="blue">#2196F3</color>
     <color name="fondo">#E3F2FD</color>
+    <color name="colorPrimary">#76ABDC</color>
 
 </resources>
