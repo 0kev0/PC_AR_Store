@@ -41,7 +41,11 @@
             android:name=".Activities.InicioActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.MainActivity"
+            android:name=".Activities.RegisterActivity"
+            android:exported="false">
+        </activity>
+        <activity
+            android:name=".Activities.LoginActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:screenOrientation="locked">
