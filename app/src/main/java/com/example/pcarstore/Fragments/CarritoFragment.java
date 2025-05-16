@@ -1,6 +1,7 @@
 package com.example.pcarstore.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pcarstore.Adapters.CartAdapter;
+import com.example.pcarstore.Dialogs.PaymentConfirmationDialog;
 import com.example.pcarstore.ModelsDB.Cart;
 import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.R;
@@ -115,8 +117,48 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
             return;
         }
 
-        // Aquí implementar la lógica para proceder al pago
-        Toast.makeText(getContext(), "Procesando pago...", Toast.LENGTH_SHORT).show();
+        // Convertir el Map de items a List<OrderItem>
+        List<OrderItem> orderItems = new ArrayList<>(currentCart.getItems().values());
+        showPaymentDialog(orderItems); // Ahora pasas la lista correctamente
+    }
+
+    private void showPaymentDialog(List<OrderItem> orderItems) {
+        // Calcular el total del carrito
+        double cartTotal = 0;
+        for (OrderItem item : orderItems) {
+            cartTotal += item.getTotalPrice();
+        }
+
+        PaymentConfirmationDialog dialog = new PaymentConfirmationDialog(
+                orderItems,
+                cartTotal,
+                new PaymentConfirmationDialog.PaymentConfirmationListener() {
+                    @Override
+                    public void onPaymentConfirmed() {
+                        // Lógica cuando se confirma el pago
+                        processPayment(orderItems);
+                    }
+
+                    @Override
+                    public void onPaymentCancelled() {
+                        // Lógica cuando se cancela
+                        Toast.makeText(getContext(), "Pago cancelado", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+// Cambia esto:
+        dialog.show(getChildFragmentManager(), "PaymentConfirmationDialog");
+    }
+
+    private void processPayment(List<OrderItem> orderItems) {
+        // Implementa tu lógica de pago aquí
+        // Puedes acceder a todos los OrderItems y sus propiedades
+        for (OrderItem item : orderItems) {
+            Log.d("Payment", "Producto: " + item.getProductName() +
+                    ", Cantidad: " + item.getQuantity() +
+                    ", Total: " + item.getTotalPrice());
+        }
+        // ... resto de la lógica de pago
     }
 
     @Override
