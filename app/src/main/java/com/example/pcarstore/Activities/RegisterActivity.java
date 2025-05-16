@@ -9,7 +9,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Pattern;
 
@@ -17,11 +23,17 @@ public class RegisterActivity extends AppCompatActivity {
 
     private EditText etFullName, etEmail, etPassword, etConfirmPassword;
     private Button btnRegister;
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        // Inicializar Firebase
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Inicializar vistas
         etFullName = findViewById(R.id.etFullName);
@@ -30,7 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnRegister = findViewById(R.id.btnRegister);
 
-        // validacion tiempo real
+        // Validación en tiempo real
         setupTextWatchers();
 
         // Configurar el botón de registro
@@ -131,8 +143,11 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void validateAndRegister() {
-        // Validar email solo al presionar el botón
         String email = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+        String fullName = etFullName.getText().toString().trim();
+
+        // Validar email
         if (email.isEmpty()) {
             etEmail.setError("El correo electrónico es requerido");
             return;
@@ -141,10 +156,71 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Si todo está correcto, proceder con el registro
-        if (btnRegister.isEnabled()) {
-            registerSuccess();
+        // Validar contraseña
+        if (password.isEmpty()) {
+            etPassword.setError("La contraseña es requerida");
+            return;
+        } else if (!isPasswordSecure(password)) {
+            etPassword.setError("La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas y números");
+            return;
         }
+
+        // Validar confirmación de contraseña
+        String confirmPassword = etConfirmPassword.getText().toString().trim();
+        if (!confirmPassword.equals(password)) {
+            etConfirmPassword.setError("Las contraseñas no coinciden");
+            return;
+        }
+
+        registerUser(email, password, fullName);
+    }
+
+    private void registerUser(String email, String password, String fullName) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            // Actualizar nombre en Firebase Auth
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(fullName)
+                                    .build();
+
+                            firebaseUser.updateProfile(profileUpdates)
+                                    .addOnCompleteListener(profileTask -> {
+                                        if (profileTask.isSuccessful()) {
+                                            // Crear objeto User con Builder
+                                            User user = new User.Builder(email)
+                                                    .setName(fullName)
+                                                    .setRole("client")
+                                                    .setSaldo(0.0)
+                                                    .setMembresiaPrime(false)
+                                                    .build();
+
+                                            // Guardar en Realtime Database
+                                            mDatabase.child("users").child(firebaseUser.getUid())
+                                                    .setValue(user)
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        Toast.makeText(RegisterActivity.this,
+                                                                "¡Registro exitoso!", Toast.LENGTH_LONG).show();
+                                                        finish();
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Toast.makeText(RegisterActivity.this,
+                                                                "Error al guardar datos adicionales", Toast.LENGTH_SHORT).show();
+                                                    });
+                                        } else {
+                                            Toast.makeText(RegisterActivity.this,
+                                                    "Error al actualizar perfil", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
+                    } else {
+                        Toast.makeText(RegisterActivity.this,
+                                "Error en el registro: " + task.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     // Métodos auxiliares
