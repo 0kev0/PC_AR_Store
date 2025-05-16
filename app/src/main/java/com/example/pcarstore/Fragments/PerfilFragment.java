@@ -12,15 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.pcarstore.Activities.MainActivity;
+import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Activities.OrdersActivity;
 import com.example.pcarstore.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,7 +28,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import android.content.Intent;
+
 import static android.app.Activity.RESULT_OK;
 //import static android.os.Build.VERSION_CODES.R;
 
@@ -114,7 +111,7 @@ public class PerfilFragment extends Fragment {
 
     private void logout() {
         mAuth.signOut();
-        startActivity(new Intent(getActivity(), MainActivity.class));
+        startActivity(new Intent(getActivity(), LoginActivity.class));
         if (getActivity() != null) {
             getActivity().finish();
         }
