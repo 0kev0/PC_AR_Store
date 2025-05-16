@@ -17,11 +17,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pcarstore.Activities.InicioActivity;
+import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Activities.ProductShowARActivity;
 import com.example.pcarstore.Adapters.ProductImagesAdapter;
 import com.example.pcarstore.ModelsDB.OrderItem;
@@ -283,18 +285,50 @@ public class ProductDetailFragment extends Fragment {
     }
 
     private void addToCart(Product product, int quantity) {
-        // Update the item count
+        // Verificar primero si el fragment/activity está disponible
+        if (getContext() == null || (this instanceof Fragment && !((Fragment) this).isAdded())) {
+            return;
+        }
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Si el usuario no está autenticado, mostrar diálogo de confirmación
+        if (currentUser == null) {
+            showLoginRequiredDialog(product, quantity);
+            return;
+        }
+
+        // Usuario autenticado - proceder con la lógica del carrito
+        proceedWithAddToCart(currentUser.getUid(), product, quantity);
+    }
+
+    private void showLoginRequiredDialog(Product product, int quantity) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Inicio de sesión requerido")
+                .setMessage("Para agregar productos al carrito necesitas iniciar sesión. ¿Deseas iniciar sesión ahora?")
+                .setPositiveButton("Iniciar sesión", (dialog, which) -> {
+                    // Redirigir a LoginActivity
+                    Intent loginIntent = new Intent(getContext(), LoginActivity.class);
+                    loginIntent.putExtra("redirect_to", "cart");
+                    loginIntent.putExtra("product_id", product.getProductId()); // Opcional: para agregar después del login
+                    loginIntent.putExtra("quantity", quantity); // Opcional: cantidad deseada
+                    startActivity(loginIntent);
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> {
+                    showToast("Puedes iniciar sesión más tarde desde el menú");
+                    dialog.dismiss();
+                })
+                .setIcon(R.drawable.ic_home)
+                .setCancelable(true)
+                .show();
+    }
+
+    private void proceedWithAddToCart(String userId, Product product, int quantity) {
+        // Actualizar contador del carrito
         if (inicioActivity != null) {
             inicioActivity.incrementCartCount();
         }
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            showToast("Debes iniciar sesión para agregar al carrito");
-            return;
-        }
-
-        String userId = currentUser.getUid();
         DatabaseReference cartRef = FirebaseDatabase.getInstance()
                 .getReference("carts")
                 .child(userId);
@@ -307,6 +341,7 @@ public class ProductDetailFragment extends Fragment {
                 } else {
                     addNewProduct(cartRef, product, quantity);
                 }
+                showToast("Producto agregado al carrito");
             }
 
             @Override

@@ -3,6 +3,7 @@ package com.example.pcarstore.Fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Activities.OrdersActivity;
+import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -26,6 +30,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -42,7 +51,7 @@ public class PerfilFragment extends Fragment {
     private SharedPreferences sharedPreferences;
 
     private ImageView ivProfilePicture;
-    private TextView tvUserName, tvUserEmail;
+    private TextView tvUserName, tvUserEmail,tvUserBalance;
     private Button btnEditProfile, btnLogout;
     private Button btnOrders, btnWishlist, btnGifCard, btnSettings;
 
@@ -74,6 +83,7 @@ public class PerfilFragment extends Fragment {
         btnWishlist = view.findViewById(R.id.btnWishlist);
         btnGifCard = view.findViewById(R.id.btnGifCard);
         btnSettings = view.findViewById(R.id.btnSettings);
+        tvUserBalance =  view.findViewById(R.id.tvUserBalance);
 
         loadUserData();
 
@@ -89,12 +99,18 @@ public class PerfilFragment extends Fragment {
     }
 
     private void loadUserData() {
-        if (currentUser != null) {
-            tvUserName.setText(currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "Usuario");
-            tvUserEmail.setText(currentUser.getEmail() != null ? currentUser.getEmail() : "No especificado");
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        if (currentUser != null) {
+            // Mostrar información básica del usuario de Firebase
+            tvUserName.setText(currentUser.getDisplayName() != null ?
+                    currentUser.getDisplayName() : "Usuario");
+            tvUserEmail.setText(currentUser.getEmail() != null ?
+                    currentUser.getEmail() : "No especificado");
+
+            // Cargar imagen de perfil desde Firebase Auth
             if (currentUser.getPhotoUrl() != null) {
-                Glide.with(this)
+                Glide.with(requireContext())
                         .load(currentUser.getPhotoUrl())
                         .circleCrop()
                         .placeholder(R.drawable.ic_account_circle)
@@ -102,11 +118,78 @@ public class PerfilFragment extends Fragment {
             } else {
                 ivProfilePicture.setImageResource(R.drawable.ic_account_circle);
             }
+
+            // Cargar datos adicionales desde Realtime Database
+            loadUserDetailsFromDatabase(currentUser.getUid());
         } else {
+            // Modo invitado
             tvUserName.setText("Invitado");
             tvUserEmail.setText("No has iniciado sesión");
             ivProfilePicture.setImageResource(R.drawable.ic_account_circle);
+            tvUserBalance.setText("S/ 0.00");
+            tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
         }
+    }
+
+    private void loadUserDetailsFromDatabase(String userId) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(userId);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Cargar datos básicos que pueden estar en diferentes nodos
+                    String name = snapshot.child("name").getValue(String.class);
+                    String email = snapshot.child("email").getValue(String.class);
+                    String role = snapshot.child("role").getValue(String.class);
+
+                    // Actualizar UI con datos básicos si es necesario
+                    if (name != null && !name.isEmpty()) {
+                        tvUserName.setText(name);
+                    }
+
+                    // Cargar y mostrar saldo
+                    Double saldo = snapshot.child("saldo").getValue(Double.class);
+                    if (saldo != null) {
+                        tvUserBalance.setText(String.format("S/ %.2f", saldo));
+                        int colorId = saldo < 20.0 ? R.color.red : R.color.green;
+                        tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), colorId));
+                    }
+
+                    // Cargar y mostrar membresía Prime
+                    Boolean membresiaPrime = snapshot.child("membresiaPrime").getValue(Boolean.class);
+                    if (membresiaPrime != null) {
+                        // Puedes mostrar un icono o texto indicando el estado
+                        if (membresiaPrime) {
+                            // Mostrar que tiene membresía Prime
+                        }
+                    }
+
+                    // Cargar datos de ubicación si existen
+                    String departamento = snapshot.child("departamento").getValue(String.class);
+                    String ciudad = snapshot.child("ciudad").getValue(String.class);
+
+                    // Cargar imagen de perfil personalizada si existe
+                    String profileImageUrl = snapshot.child("profileImageUrl").getValue(String.class);
+                    if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                        Glide.with(requireContext())
+                                .load(profileImageUrl)
+                                .circleCrop()
+                                .into(ivProfilePicture);
+                    }
+                } else {
+                    Log.d("PerfilFragment", "No se encontraron datos adicionales del usuario");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("PerfilFragment", "Error al cargar detalles del usuario", error.toException());
+                tvUserBalance.setText("S/ --");
+            }
+        });
     }
 
     private void logout() {

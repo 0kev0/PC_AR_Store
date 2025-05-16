@@ -45,9 +45,10 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:scaleType="centerCrop"
-                android:background="@drawable/circle_image_view"                 android:contentDescription="Foto de perfil"
+                android:background="@drawable/circle_image_view"
+                android:contentDescription="Foto de perfil"
                 android:src="@drawable/limo"
-            android:layout_marginEnd="16dp"/>
+                android:layout_marginEnd="16dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -69,6 +70,31 @@
                     android:text="juan.perez@example.com"
                     android:textColor="#565959"
                     android:layout_marginTop="4dp"/>
+
+                <!-- Nuevo TextView para mostrar el saldo -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_credit_card"
+                        app:tint="#4CAF50"/>
+
+                    <TextView
+                        android:id="@+id/tvUserBalance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Saldo actual: $ ##.##"
+                        android:textSize="16sp"
+                        android:textColor="#4CAF50"
+                        android:textStyle="bold"
+                        android:layout_marginStart="8dp"/>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 

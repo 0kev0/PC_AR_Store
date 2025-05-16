@@ -346,32 +346,77 @@ public class LoginActivity extends AppCompatActivity {
 
     private void insertUsers() {
         // Usuario 1: Administrador
-        User user1 = new User("admin@example.com", "Admin Principal", "admin");
+        User user1 = new User(
+                "admin@example.com",
+                "Admin Principal",
+                "admin",
+                "https://example.com/profiles/admin.jpg",
+                "Lima",
+                "Lima",
+                0.0,
+                false
+        );
         user1.setCart(new HashMap<String, Integer>() {{
-            put("prod_001", 2); // 2 llantas en carrito
+            put("prod_001", 2);
         }});
         mDatabase.child("users").child("user_001").setValue(user1);
 
         // Usuario 2: Cliente normal
-        User user2 = new User("cliente1@example.com", "Juan Pérez", "customer");
+        User user2 = new User(
+                "cliente1@example.com",
+                "Juan Pérez",
+                "customer",
+                "https://example.com/profiles/juan.jpg",
+                "Arequipa",
+                "Arequipa",
+                150.50,
+                false
+        );
         user2.setCart(new HashMap<String, Integer>() {{
-            put("prod_003", 1); // 1 pastilla de freno
+            put("prod_003", 1);
         }});
         mDatabase.child("users").child("user_002").setValue(user2);
 
-        // Usuario 3: Cliente premium
-        User user3 = new User("premium@example.com", "María García", "premium");
+        // Usuario 3: Cliente premium (con membresía Prime)
+        User user3 = new User(
+                "premium@example.com",
+                "María García",
+                "premium",
+                "https://example.com/profiles/maria.jpg",
+                "La Libertad",
+                "Trujillo",
+                500.0,
+                true
+        );
         user3.setCart(new HashMap<String, Integer>() {{
-            put("prod_002", 3); // 3 filtros de aire
+            put("prod_002", 3);
         }});
         mDatabase.child("users").child("user_003").setValue(user3);
 
         // Usuario 4: Técnico
-        User user4 = new User("tecnico@taller.com", "Carlos López", "technician");
+        User user4 = new User(
+                "tecnico@taller.com",
+                "Carlos López",
+                "technician",
+                "https://example.com/profiles/carlos.jpg",
+                "Lima",
+                "Callao",
+                0.0,
+                false
+        );
         mDatabase.child("users").child("user_004").setValue(user4);
 
-        // Usuario 5: Cliente nuevo
-        User user5 = new User("nuevo@cliente.com", "Ana Martínez", "customer");
+        // Usuario 5: Cliente nuevo con Prime
+        User user5 = new User(
+                "nuevo@cliente.com",
+                "Ana Martínez",
+                "customer",
+                "https://example.com/profiles/ana.jpg",
+                "Cusco",
+                "Cusco",
+                75.25,
+                true
+        );
         mDatabase.child("users").child("user_005").setValue(user5);
     }
 
