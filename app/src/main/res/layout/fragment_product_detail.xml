@@ -19,24 +19,12 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_product_image" />
 
-    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-        android:id="@+id/dotsIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/recyclerProductImages"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-12dp"
-        android:layout_marginHorizontal="16dp"
-    app:dotsColor="@color/gray"
-    app:dotsSize="8dp"
-    app:dotsSpacing="4dp"/>
-
     <!-- Scrollable content container -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
-        android:layout_below="@id/dotsIndicator"
+        android:layout_below="@id/recyclerProductImages"
         android:fillViewport="true"
         android:background="@drawable/rounded_shadow_recycler">
 

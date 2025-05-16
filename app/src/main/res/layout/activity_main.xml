@@ -7,7 +7,7 @@
     android:padding="16dp"
     android:id="@+id/main"
     android:background="@color/white"
-    tools:context=".Activities.MainActivity">
+    tools:context=".Activities.LoginActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -123,7 +123,10 @@
                 android:paddingHorizontal="8dp"
                 android:text="No tienes una cuenta?"
                 android:textColor="#3A59D1"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:onClick="goToRegister"
+            android:clickable="true"
+            android:focusable="true"/>
 
             <Button
                 android:id="@+id/RegisterGoogle"
