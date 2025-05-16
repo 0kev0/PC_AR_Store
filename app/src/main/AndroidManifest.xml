@@ -42,6 +42,9 @@
             android:exported="false" />
         <activity
             android:name=".Activities.RegisterActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".Activities.AdminActivity"
             android:exported="false">
         </activity>
         <activity

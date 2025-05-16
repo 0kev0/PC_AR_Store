@@ -1,11 +1,13 @@
 package com.example.pcarstore.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -39,18 +41,28 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 public class LoginActivity extends AppCompatActivity {
     private Button catalogo, loginGoogle, RegisterGoogle, test;
     private FirebaseAuth mAuth;
+    private EditText etEmail, etPassword;
+    private ProgressDialog progressDialog;
+
     private CredentialManager credentialManager;
     private GoogleSignInClient mGoogleSignInClient;
     private DatabaseReference mDatabase;
@@ -102,9 +114,11 @@ public class LoginActivity extends AppCompatActivity {
         RegisterGoogle = findViewById(R.id.RegisterGoogle);
         credentialManager = CredentialManager.create(this);
 
-        loginGoogle = findViewById(R.id.LoginGoogle);
+        etEmail = findViewById(R.id.etEmail);
+        etPassword = findViewById(R.id.etPassword);
 
-        // Configurar listeners
+        findViewById(R.id.LoginGoogle).setOnClickListener(v -> loginUser());
+
         RegisterGoogle.setOnClickListener(v -> registerGoogle());
     }
 
@@ -456,5 +470,157 @@ public class LoginActivity extends AppCompatActivity {
     public void goToRegister(View view) {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
+    }
+
+    private void loginUser() {
+        String email = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+
+        if (!validateInputs(email, password)) return;
+
+        showProgressDialog("Verificando credenciales...");
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            verifyUserRole(user.getUid());
+                        } else {
+                            dismissProgressDialog();
+                            Toast.makeText(this, "Error al obtener usuario", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        handleLoginError(task.getException());
+                    }
+                });
+    }
+
+    private boolean validateInputs(String email, String password) {
+        if (email.isEmpty()) {
+            etEmail.setError("Ingrese su correo electrónico");
+            return false;
+        }
+        if (password.isEmpty()) {
+            etPassword.setError("Ingrese su contraseña");
+            return false;
+        }
+        return true;
+    }
+
+    private void verifyUserRole(String userId) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(userId);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dismissProgressDialog();
+
+                if (!snapshot.exists()) {
+                    registerNewUser(userId);
+                    return;
+                }
+
+                try {
+                    String role = snapshot.child("role").getValue(String.class);
+                    if (role != null && !role.isEmpty()) {
+                        navigateToRoleScreen(role);
+                    } else {
+                        handleInvalidRole();
+                    }
+                } catch (Exception e) {
+                    Log.e("ROLE_ERROR", "Error al leer rol", e);
+                    handleInvalidRole();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                dismissProgressDialog();
+                Log.e("DB_ERROR", "Error en base de datos: " + error.getMessage());
+                Toast.makeText(LoginActivity.this,
+                        "Error al verificar información del usuario",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void registerNewUser(String userId) {
+        showProgressDialog("Registrando nuevo usuario...");
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null || currentUser.getEmail() == null) {
+            dismissProgressDialog();
+            Toast.makeText(this, "Error al obtener datos del usuario", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("email", currentUser.getEmail());
+        userData.put("role", "client"); // Rol por defecto
+        userData.put("createdAt", ServerValue.TIMESTAMP);
+
+        FirebaseDatabase.getInstance().getReference("users").child(userId)
+                .setValue(userData)
+                .addOnCompleteListener(task -> {
+                    dismissProgressDialog();
+                    if (task.isSuccessful()) {
+                        navigateToRoleScreen("client");
+                    } else {
+                        Toast.makeText(LoginActivity.this,
+                                "Error al registrar usuario",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void navigateToRoleScreen(String role) {
+        Log.d("NAVIGATION", "Rol detectado: " + role);
+        if (role.equals("admin")) {
+            startActivity(new Intent(LoginActivity.this, AdminActivity.class));
+        } else if (role.equals("client")) {
+            startActivity(new Intent(LoginActivity.this, InicioActivity.class));
+        }
+    }
+
+    private void handleInvalidRole() {
+        Toast.makeText(this,
+                "Rol de usuario no válido. Contacte al administrador" ,
+                Toast.LENGTH_LONG).show();
+        mAuth.signOut();
+    }
+
+    private void handleLoginError(Exception exception) {
+        dismissProgressDialog();
+        String errorMessage = "Error de autenticación";
+
+        if (exception instanceof FirebaseAuthInvalidUserException) {
+            errorMessage = "Usuario no registrado";
+        } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
+            errorMessage = "Correo o contraseña incorrectos";
+        } else {
+            Log.e("LOGIN_ERROR", "Error en login", exception);
+        }
+
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showProgressDialog(String message) {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setCancelable(false);
+        }
+        progressDialog.setMessage(message);
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 }
