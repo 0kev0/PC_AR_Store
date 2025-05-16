@@ -144,7 +144,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     cartUpdateListener.onCartUpdated(product, 1);
                 }
 
-                showToast(itemView.getContext(), product.getName() + " agregado al carrito");
             });
 
             itemView.setOnClickListener(v -> {

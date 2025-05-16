@@ -2,7 +2,9 @@
 package com.example.pcarstore.Fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pcarstore.Activities.InicioActivity;
+import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Adapters.CategoryAdapter;
 import com.example.pcarstore.Adapters.ProductAdapter;
 import com.example.pcarstore.ModelsDB.Category;
@@ -120,18 +123,34 @@ public class CatalogoFragment extends Fragment {
     }
 
     private void addToCart(Product product, int quantity) {
-        // Update the item count
-        if (inicioActivity != null) {
-            inicioActivity.incrementCartCount();
-        }
-
+        // Verificar primero si hay usuario autenticado
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            showToast("Debes iniciar sesión para agregar al carrito");
+            // Crear AlertDialog
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Inicio de sesión requerido")
+                    .setMessage("Debes iniciar sesión para agregar productos al carrito. ¿Deseas iniciar sesión ahora?")
+                    .setPositiveButton("Sí", (dialog, which) -> {
+                        // Redirigir al login
+                        Intent loginIntent = new Intent(getContext(), LoginActivity.class);
+                        loginIntent.putExtra("redirect_to", "cart");
+                        startActivity(loginIntent);
+                    })
+                    .setNegativeButton("Cancelar", (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .setIcon(R.drawable.ic_home)
+                    .setCancelable(false)
+                    .show();
             return;
         }
 
         String userId = currentUser.getUid();
+
+        if (inicioActivity != null) {
+            inicioActivity.incrementCartCount();
+        }
+
         DatabaseReference cartRef = FirebaseDatabase.getInstance()
                 .getReference("carts")
                 .child(userId);
