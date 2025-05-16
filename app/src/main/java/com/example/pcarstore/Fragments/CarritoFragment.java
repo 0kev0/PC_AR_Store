@@ -121,7 +121,7 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
 
     @Override
     public void updateCartSummary(double subtotal) {
-        double shipping = subtotal > 50 ? 0.0 : 5.99; // Envío gratis para compras > $50
+        double shipping = subtotal > 50 ? 0.0 : 0.00;
         double total = subtotal + shipping;
 
         tvSubtotal.setText(String.format("$%.2f", subtotal));

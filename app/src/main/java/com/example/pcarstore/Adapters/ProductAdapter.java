@@ -24,6 +24,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private List<Product> productList;
     private OnProductClickListener listener;
     private Context context;
+    private static FirebaseAuth mAuth;
     private OnCartUpdateListener cartUpdateListener; // Interface for cart updates
 
     public interface OnProductClickListener {
@@ -88,6 +90,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             viewDetailsButton = itemView.findViewById(R.id.viewDetailsButton);
             addToCartButton = itemView.findViewById(R.id.addToCartButton);
             lottieLoading = itemView.findViewById(R.id.lottieLoading);
+            mAuth = FirebaseAuth.getInstance();
 
             lottieLoading.setAnimation(R.raw.loading_animation);
             lottieLoading.loop(true);
@@ -130,6 +133,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             addToCartButton.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onAddToCart(product);
+                    if (mAuth.getCurrentUser() != null) {
+                        Toast.makeText(itemView.getContext(),
+                                "Producto agregado al carrito",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
 
                 if (cartUpdateListener != null) {
