@@ -13,10 +13,13 @@ import com.example.pcarstore.Fragments.CatalogoFragment;
 import com.example.pcarstore.Fragments.PerfilFragment;
 import com.example.pcarstore.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.badge.BadgeDrawable;
 
 public class InicioActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private BadgeDrawable cartBadge;
+    private int cartItemCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +29,33 @@ public class InicioActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(this::onNavigationItemSelected);
 
+        // Configurar el badge
+        cartBadge = bottomNavigationView.getOrCreateBadge(R.id.Carrito);
+
+        updateCartBadge(0);
+
         if (savedInstanceState == null) {
             loadFragment(new CatalogoFragment());
         }
+    }
+
+    public void updateCartBadge(int itemCount) {
+        if (itemCount > 0) {
+            cartBadge.setNumber(itemCount);
+            cartBadge.setVisible(true);
+        } else {
+            cartBadge.setVisible(false);
+        }
+    }
+    public void incrementCartCount() {
+        cartItemCount++;
+        updateCartBadge(cartItemCount);
+
+    }
+
+
+    private int getCartItemCount() {
+        return cartItemCount;
     }
 
     private boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -49,7 +76,6 @@ public class InicioActivity extends AppCompatActivity {
         }
         return false;
     }
-
 
     private void loadFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
