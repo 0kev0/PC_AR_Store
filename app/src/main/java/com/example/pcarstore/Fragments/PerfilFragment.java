@@ -10,18 +10,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Activities.OrdersActivity;
-import com.example.pcarstore.ModelsDB.User;
+import com.example.pcarstore.ModelsDB.GiftCard;
 import com.example.pcarstore.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -35,6 +37,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -46,11 +52,14 @@ import androidx.appcompat.app.AppCompatDelegate;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 public class PerfilFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private SharedPreferences sharedPreferences;
-
     private ImageView ivProfilePicture;
     private TextView tvUserName, tvUserEmail,tvUserBalance;
     private Button btnEditProfile, btnLogout;
@@ -232,33 +241,166 @@ public class PerfilFragment extends Fragment {
         View dialogView = inflater.inflate(R.layout.dialog_discount, null);
         EditText etCode = dialogView.findViewById(R.id.etDiscountCode);
         Button btnRedeem = dialogView.findViewById(R.id.btnRedeem);
+        ProgressBar progressBar = dialogView.findViewById(R.id.progressBar);
 
         builder.setView(dialogView)
-                .setTitle("Canjear Descuento")
+                .setTitle("Canjear Gift Card")
                 .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
 
         AlertDialog dialog = builder.create();
 
         btnRedeem.setOnClickListener(v -> {
             String code = etCode.getText().toString().trim();
-            if(validateDiscountCode(code)) {
-                applyDiscount(code);
-                dialog.dismiss();
-            } else {
-                Toast.makeText(requireContext(), "Código inválido", Toast.LENGTH_SHORT).show();
+            if(code.isEmpty()) {
+                etCode.setError("Ingrese un código");
+                return;
             }
+
+            // Mostrar progreso
+            progressBar.setVisibility(View.VISIBLE);
+            btnRedeem.setEnabled(false);
+
+            validateAndRedeemGiftCard(code, new GiftCardCallback() {
+                @Override
+                public void onSuccess(double amount) {
+                    progressBar.setVisibility(View.GONE);
+                    btnRedeem.setEnabled(true);
+                    applyGiftCard(amount);
+                    dialog.dismiss();
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    progressBar.setVisibility(View.GONE);
+                    btnRedeem.setEnabled(true);
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         dialog.show();
     }
 
-    private boolean validateDiscountCode(String code) {
-        return code != null && code.matches("GIFCARD\\d{4}");
+    interface GiftCardCallback {
+        void onSuccess(double amount);
+        void onFailure(String error);
     }
 
-    private void applyDiscount(String code) {
-        double discountPercentage = 0.15;
-        Toast.makeText(requireContext(), "Descuento aplicado: 15%", Toast.LENGTH_SHORT).show();
+    private void validateAndRedeemGiftCard(String code, GiftCardCallback callback) {
+        if(!code.startsWith("PDM-") || code.length() != 10) { // PDM- + 6 caracteres
+            callback.onFailure("Formato de código inválido");
+            return;
+        }
+
+        DatabaseReference giftCardsRef = FirebaseDatabase.getInstance().getReference("giftCards");
+        Query query = giftCardsRef.orderByChild("code").equalTo(code);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!snapshot.exists()) {
+                    callback.onFailure("Gift Card no encontrada");
+                    return;
+                }
+
+                for(DataSnapshot cardSnapshot : snapshot.getChildren()) {
+                    GiftCard giftCard = cardSnapshot.getValue(GiftCard.class);
+                    if(giftCard == null) {
+                        callback.onFailure("Error al leer Gift Card");
+                        return;
+                    }
+
+                    // Validaciones
+                    if("redeemed".equals(giftCard.getStatus())) {
+                        callback.onFailure("Esta Gift Card ya fue canjeada");
+                        return;
+                    }
+
+                    if(giftCard.getExpirationDate() != null &&
+                            giftCard.getExpirationDate().before(new Date())) {
+                        callback.onFailure("Gift Card expirada");
+                        return;
+                    }
+
+                    if(!"active".equals(giftCard.getStatus())) {
+                        callback.onFailure("Gift Card no está activa");
+                        return;
+                    }
+
+                    // Actualizar estado a canjeada
+                    String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("status", "redeemed");
+                    updates.put("redeemedBy", currentUserId);
+                    updates.put("redeemedDate", ServerValue.TIMESTAMP);
+
+                    cardSnapshot.getRef().updateChildren(updates)
+                            .addOnSuccessListener(aVoid -> {
+                                callback.onSuccess(giftCard.getAmount());
+                            })
+                            .addOnFailureListener(e -> {
+                                callback.onFailure("Error al canjear Gift Card");
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onFailure("Error de conexión");
+            }
+        });
+    }
+
+    private void applyGiftCard(double amount) {
+        Toast.makeText(requireContext(),
+                String.format("Gift Card canjeada! Crédito agregado: $%.2f", amount),
+                Toast.LENGTH_LONG).show();
+
+        saveCreditToUser(amount);
+    }
+
+    private void saveCreditToUser(double amount) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if(userId == null) return;
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(userId)
+                .child("saldo"); // Cambiado a "saldo" para coincidir con tu modelo
+
+        userRef.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData currentData) {
+                Double currentSaldo = currentData.getValue(Double.class);
+                if(currentSaldo == null) {
+                    currentData.setValue(amount);
+                } else {
+                    currentData.setValue(currentSaldo + amount);
+                }
+                return Transaction.success(currentData);
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
+                if(error != null) {
+                    Log.e("GiftCard", "Error al actualizar saldo", error.toException());
+                    Toast.makeText(requireContext(), "Error al actualizar saldo", Toast.LENGTH_SHORT).show();
+                } else if(committed) {
+                    Toast.makeText(requireContext(),
+                            String.format("¡Saldo actualizado! +$%.2f", amount),
+                            Toast.LENGTH_LONG).show();
+
+                    updateUISaldo(currentData.getValue(Double.class));
+                }
+            }
+        });
+    }
+    private void updateUISaldo(Double newSaldo) {
+        if(newSaldo != null) {
+                tvUserBalance.setText(String.format("Saldo: $%.2f", newSaldo));
+        }
     }
 
     private void showSettings() {

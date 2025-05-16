@@ -25,6 +25,7 @@ import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 
 import com.example.pcarstore.ModelsDB.Category;
+import com.example.pcarstore.ModelsDB.GiftCard;
 import com.example.pcarstore.ModelsDB.Order;
 import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.Product;
@@ -53,6 +54,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -85,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         insertProducts();
         insertCategories();
+        insertGiftCards();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -261,8 +264,6 @@ public class LoginActivity extends AppCompatActivity {
         );
         mDatabase.child("products").child("prod_005").setValue(product5);
     }
-
-
     private void insertCategories() {
         // Categoría 1: Ruedas
         Category category1 = new Category(
@@ -309,7 +310,93 @@ public class LoginActivity extends AppCompatActivity {
         category5.setProductCount(12);
         mDatabase.child("categories").child("cat_005").setValue(category5);
     }
+    private void insertGiftCards() {
+        // GiftCard 1
+        GiftCard gc1 = new GiftCard(GiftCard.generateGiftCardCode(), 50.00, "admin1");
+        gc1.setCardId("gc_001");
+        mDatabase.child("giftCards").child(gc1.getCardId()).setValue(gc1);
 
+        // GiftCard 2
+        GiftCard gc2 = new GiftCard(GiftCard.generateGiftCardCode(), 25.00, "admin1");
+        gc2.setCardId("gc_002");
+        mDatabase.child("giftCards").child(gc2.getCardId()).setValue(gc2);
+
+        // GiftCard 3
+        GiftCard gc3 = new GiftCard(GiftCard.generateGiftCardCode(), 100.00, "admin2");
+        gc3.setCardId("gc_003");
+        mDatabase.child("giftCards").child(gc3.getCardId()).setValue(gc3);
+
+        // GiftCard 4 (Redimida)
+        GiftCard gc4 = new GiftCard(GiftCard.generateGiftCardCode(), 75.00, "admin1");
+        gc4.setCardId("gc_004");
+        gc4.setStatus("redeemed");
+        gc4.setRedeemedBy("user123");
+        gc4.setRedeemedDate(new Date());
+        mDatabase.child("giftCards").child(gc4.getCardId()).setValue(gc4);
+
+        // GiftCard 5
+        GiftCard gc5 = new GiftCard(GiftCard.generateGiftCardCode(), 150.00, "admin3");
+        gc5.setCardId("gc_005");
+        mDatabase.child("giftCards").child(gc5.getCardId()).setValue(gc5);
+
+        // GiftCard 6 (Expirada)
+        GiftCard gc6 = new GiftCard(GiftCard.generateGiftCardCode(), 30.00, "admin2");
+        gc6.setCardId("gc_006");
+        gc6.setExpirationDate(new Date(System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000))); // Expiró hace 30 días
+        mDatabase.child("giftCards").child(gc6.getCardId()).setValue(gc6);
+
+        // GiftCard 7
+        GiftCard gc7 = new GiftCard(GiftCard.generateGiftCardCode(), 200.00, "admin1");
+        gc7.setCardId("gc_007");
+        mDatabase.child("giftCards").child(gc7.getCardId()).setValue(gc7);
+
+        // GiftCard 8
+        GiftCard gc8 = new GiftCard(GiftCard.generateGiftCardCode(), 10.00, "admin3");
+        gc8.setCardId("gc_008");
+        mDatabase.child("giftCards").child(gc8.getCardId()).setValue(gc8);
+
+        // GiftCard 9 (Redimida)
+        GiftCard gc9 = new GiftCard(GiftCard.generateGiftCardCode(), 50.00, "admin2");
+        gc9.setCardId("gc_009");
+        gc9.setStatus("redeemed");
+        gc9.setRedeemedBy("user456");
+        gc9.setRedeemedDate(new Date(System.currentTimeMillis() - (15L * 24 * 60 * 60 * 1000))); // Redimida hace 15 días
+        mDatabase.child("giftCards").child(gc9.getCardId()).setValue(gc9);
+
+        // GiftCard 10
+        GiftCard gc10 = new GiftCard(GiftCard.generateGiftCardCode(), 125.00, "admin1");
+        gc10.setCardId("gc_010");
+        mDatabase.child("giftCards").child(gc10.getCardId()).setValue(gc10);
+
+        // GiftCard 11 (Inactiva)
+        GiftCard gc11 = new GiftCard(GiftCard.generateGiftCardCode(), 40.00, "admin3");
+        gc11.setCardId("gc_011");
+        gc11.setStatus("inactive");
+        mDatabase.child("giftCards").child(gc11.getCardId()).setValue(gc11);
+
+        // GiftCard 12
+        GiftCard gc12 = new GiftCard(GiftCard.generateGiftCardCode(), 80.00, "admin2");
+        gc12.setCardId("gc_012");
+        mDatabase.child("giftCards").child(gc12.getCardId()).setValue(gc12);
+
+        // GiftCard 13
+        GiftCard gc13 = new GiftCard(GiftCard.generateGiftCardCode(), 60.00, "admin1");
+        gc13.setCardId("gc_013");
+        mDatabase.child("giftCards").child(gc13.getCardId()).setValue(gc13);
+
+        // GiftCard 14 (Redimida)
+        GiftCard gc14 = new GiftCard(GiftCard.generateGiftCardCode(), 90.00, "admin3");
+        gc14.setCardId("gc_014");
+        gc14.setStatus("redeemed");
+        gc14.setRedeemedBy("user789");
+        gc14.setRedeemedDate(new Date(System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000))); // Redimida hace 7 días
+        mDatabase.child("giftCards").child(gc14.getCardId()).setValue(gc14);
+
+        // GiftCard 15
+        GiftCard gc15 = new GiftCard(GiftCard.generateGiftCardCode(), 35.00, "admin2");
+        gc15.setCardId("gc_015");
+        mDatabase.child("giftCards").child(gc15.getCardId()).setValue(gc15);
+    }
 
     public void VerCatologo(View view) {
         startActivity(new Intent(this, InicioActivity.class));
