@@ -14,18 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigationView"
-            android:layout_width="0dp"
-            app:itemTextColor="@color/black"
-            app:itemIconTint="#3A59D1"
-            android:background="@drawable/bootomnavegationstyle"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/buttonnav" />
-
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
@@ -35,23 +23,33 @@
             android:textSize="25dp"
             android:textColor="#3A59D1"
             android:textStyle="bold"
-            android:layout_marginBottom="76dp"
             android:text="Tiendita el Angel Corinto"
-            app:layout_constraintBottom_toTopOf="@+id/fragmentContainerView2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentContainerView2"
             android:name="com.example.pcarstore.Fragments.CatalogoFragment"
-            android:layout_width="395dp"
-            android:layout_height="730dp"
-            android:layout_marginBottom="52dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bootomnavegationstyle"
+            app:itemTextColor="@color/black"
+            app:itemIconTint="#3A59D1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/buttonnav" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
