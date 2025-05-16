@@ -1,13 +1,14 @@
 package com.example.pcarstore.Adapters;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,15 +28,18 @@ import java.util.List;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
     private List<Product> productList;
-    private OnProductClickListener listener;
+    private OnProductClickListener  listener;
+    private Context context;
 
     public interface OnProductClickListener {
         void onProductClick(Product product);
+        void onAddToCart(Product product);  // Changed from OnAddToCartListener to onAddToCart
     }
 
-    public ProductAdapter(List<Product> productList, OnProductClickListener listener) {
+    public ProductAdapter(List<Product> productList, OnProductClickListener listener, Context context) {
         this.productList = productList;
         this.listener = listener;
+        this.context = context;
     }
 
     @NonNull
@@ -54,15 +58,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     @Override
     public int getItemCount() {
-        return productList.size();
+        return productList != null ? productList.size() : 0;
     }
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
         private final ImageView productImage;
         private final TextView productName;
         private final TextView productPrice;
-        private final RatingBar productRating;
-        private final Button viewDetailsButton;
+        private final Button viewDetailsButton, addToCartButton;
         private final LottieAnimationView lottieLoading;
 
         public ProductViewHolder(@NonNull View itemView) {
@@ -70,25 +73,21 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productImage = itemView.findViewById(R.id.productImage);
             productName = itemView.findViewById(R.id.productName);
             productPrice = itemView.findViewById(R.id.productPrice);
-            productRating = itemView.findViewById(R.id.productRating);
             viewDetailsButton = itemView.findViewById(R.id.viewDetailsButton);
+            addToCartButton = itemView.findViewById(R.id.addToCartButton);
             lottieLoading = itemView.findViewById(R.id.lottieLoading);
 
-            // Configuración inicial de Lottie
-            lottieLoading.setAnimation(R.raw.loading_animation); // Asegúrate de tener este archivo en res/raw/
+            lottieLoading.setAnimation(R.raw.loading_animation);
             lottieLoading.loop(true);
         }
 
-        public void bind(Product product, OnProductClickListener listener) {
-            // Configurar datos básicos
+        public void bind(Product product, OnProductClickListener  listener) {
             productName.setText(product.getName());
             productPrice.setText(String.format("$%.2f", product.getPrice()));
 
-            // Mostrar animación antes de cargar
             lottieLoading.setVisibility(View.VISIBLE);
             lottieLoading.playAnimation();
 
-            // Cargar imagen con Glide
             Glide.with(itemView.getContext())
                     .load(product.getMainImageUrl())
                     .listener(new RequestListener<Drawable>() {
@@ -109,13 +108,41 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     })
                     .into(productImage);
 
-            viewDetailsButton.setOnClickListener(v -> listener.onProductClick(product));
-            itemView.setOnClickListener(v -> listener.onProductClick(product));
+            viewDetailsButton.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onProductClick(product);
+                }
+            });
+
+            addToCartButton.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onAddToCart(product);
+                    showToast(itemView.getContext(), "Producto agregado al carrito");
+                }
+            });
+
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onProductClick(product);
+                }
+            });
+        }
+
+        private void showToast(Context context, String message) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     }
 
     public void updateProductList(List<Product> newProductList) {
-        productList = newProductList;
-        notifyDataSetChanged();
+        if (newProductList != null) {
+            productList = newProductList;
+            notifyDataSetChanged();
+        }
+    }
+
+    private void showToast(String message) {
+        if (context != null) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        }
     }
 }

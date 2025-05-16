@@ -29,10 +29,18 @@ import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
+import com.example.pcarstore.Services.OrderManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -44,10 +52,12 @@ import java.util.HashMap;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
-    private Button catalogo, loginGoogle, test;
+    private Button catalogo, loginGoogle, RegisterGoogle, test;
     private FirebaseAuth mAuth;
     private CredentialManager credentialManager;
+    private GoogleSignInClient mGoogleSignInClient;
     private DatabaseReference mDatabase;
+    private static final int RC_SIGN_IN = 9001;
 
     private static final String TAG = "MainActivity";
 
@@ -71,6 +81,20 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            startActivity(new Intent(MainActivity.this, InicioActivity.class));
+            finish();
+            return;
+        }
+
         catalogo = findViewById(R.id.ContinueWithoutAcount);
         catalogo.setOnClickListener(v -> VerCatologo(v));
 
@@ -78,11 +102,13 @@ public class MainActivity extends AppCompatActivity {
         test = findViewById(R.id.test);
         test.setOnClickListener(v -> ARtest(v));
 
-        loginGoogle = findViewById(R.id.LoginGoogle);
+        RegisterGoogle = findViewById(R.id.RegisterGoogle);
         credentialManager = CredentialManager.create(this);
 
+        loginGoogle = findViewById(R.id.LoginGoogle);
+
         // Configurar listeners
-        loginGoogle.setOnClickListener(v -> registerGoogle());
+        RegisterGoogle.setOnClickListener(v -> registerGoogle());
     }
 
     private void insertProducts() {
@@ -226,6 +252,40 @@ public class MainActivity extends AppCompatActivity {
         );
         mDatabase.child("products").child("prod_005").setValue(product5);
     }
+
+    private void insertOrders() {
+        // Productos de ejemplo
+        OrderItem llantas = new OrderItem("prod001", "Llantas Premium", 199.99, 1);
+        OrderItem filtro = new OrderItem("prod002", "Filtro de Aire", 29.99, 1);
+        OrderItem pastillas = new OrderItem("prod003", "Pastillas de Freno", 45.50, 2);
+        OrderItem aceite = new OrderItem("prod004", "Aceite Sintético", 39.99, 3);
+        OrderItem bateria = new OrderItem("prod005", "Batería 12V", 129.99, 1);
+
+        // Crear órdenes de ejemplo
+        Order[] sampleOrders = {
+                createOrder("user_001", "completed", 429.97, new OrderItem[]{llantas, llantas, filtro}),
+                createOrder("user_002", "processing", 91.00, new OrderItem[]{pastillas}),
+                createOrder("user_003", "cancelled", 129.99, new OrderItem[]{bateria}),
+                createOrder("user_004", "pending", 119.97, new OrderItem[]{aceite}),
+                createOrder("user_005", "completed", 349.98, new OrderItem[]{llantas, pastillas})
+        };
+
+        // Insertar órdenes en Firebase
+        OrderManager orderManager = OrderManager.getInstance();
+        for (int i = 0; i < sampleOrders.length; i++) {
+            sampleOrders[i].setOrderId("order_" + (i + 1));
+            orderManager.placeOrder(sampleOrders[i]);
+        }
+    }
+
+    private Order createOrder(String userId, String status, double total, OrderItem[] items) {
+        Order order = new Order(userId, status, total);
+        for (int i = 0; i < items.length; i++) {
+            order.getItems().put("item_" + (i + 1), items[i]);
+        }
+        return order;
+    }
+
     private void insertCategories() {
         // Categoría 1: Ruedas
         Category category1 = new Category(
@@ -304,44 +364,7 @@ public class MainActivity extends AppCompatActivity {
         mDatabase.child("users").child("user_005").setValue(user5);
     }
 
-    private void insertOrders() {
-        // Orden 1: Completa (con items)
-        Order order1 = new Order("user_001", "completed", 429.97);
-        order1.setItems(new HashMap<String, OrderItem>() {{
-            put("item_001", new OrderItem(2, 199.99)); // 2 llantas
-            put("item_002", new OrderItem(1, 29.99));  // 1 filtro
-        }});
-        mDatabase.child("orders").child("order_001").setValue(order1);
 
-        // Orden 2: En proceso
-        Order order2 = new Order("user_002", "processing", 91.00);
-        order2.setItems(new HashMap<String, OrderItem>() {{
-            put("item_003", new OrderItem(2, 45.50)); // 2 pastillas
-        }});
-        mDatabase.child("orders").child("order_002").setValue(order2);
-
-        // Orden 3: Cancelada
-        Order order3 = new Order("user_003", "cancelled", 129.99);
-        order3.setItems(new HashMap<String, OrderItem>() {{
-            put("item_005", new OrderItem(1, 129.99)); // 1 batería
-        }});
-        mDatabase.child("orders").child("order_003").setValue(order3);
-
-        // Orden 4: Pendiente
-        Order order4 = new Order("user_004", "pending", 119.97);
-        order4.setItems(new HashMap<String, OrderItem>() {{
-            put("item_004", new OrderItem(3, 39.99)); // 3 aceites
-        }});
-        mDatabase.child("orders").child("order_004").setValue(order4);
-
-        // Orden 5: Con descuento
-        Order order5 = new Order("user_005", "completed", 349.98);
-        order5.setItems(new HashMap<String, OrderItem>() {{
-            put("item_001", new OrderItem(1, 199.99)); // 1 llanta
-            put("item_003", new OrderItem(3, 45.50));  // 3 pastillas
-        }});
-        mDatabase.child("orders").child("order_005").setValue(order5);
-    }
 
     public void VerCatologo(View view) {
         startActivity(new Intent(this, InicioActivity.class));
@@ -417,5 +440,21 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    // Manejo del resultado si usas startActivityForResult
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account.getIdToken());
+            } catch (ApiException e) {
+                Log.w(TAG, "Google sign in failed", e);
+            }
+        }
     }
 }
