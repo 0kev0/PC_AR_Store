@@ -1,7 +1,9 @@
+
 package com.example.pcarstore.Adapters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,18 +30,28 @@ import java.util.List;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
     private List<Product> productList;
-    private OnProductClickListener  listener;
+    private OnProductClickListener listener;
     private Context context;
+    private OnCartUpdateListener cartUpdateListener; // Interface for cart updates
 
     public interface OnProductClickListener {
         void onProductClick(Product product);
-        void onAddToCart(Product product);  // Changed from OnAddToCartListener to onAddToCart
+        void onAddToCart(Product product); // Make sure this method is included
+    }
+
+    // Interface for handling cart updates
+    public interface OnCartUpdateListener {
+        void onCartUpdated(Product product, int quantity);
     }
 
     public ProductAdapter(List<Product> productList, OnProductClickListener listener, Context context) {
         this.productList = productList;
         this.listener = listener;
         this.context = context;
+    }
+
+    public void setOnCartUpdateListener(OnCartUpdateListener listener) {
+        this.cartUpdateListener = listener;
     }
 
     @NonNull
@@ -53,7 +65,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = productList.get(position);
-        holder.bind(product, listener);
+        holder.bind(product, listener, cartUpdateListener);
     }
 
     @Override
@@ -81,7 +93,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             lottieLoading.loop(true);
         }
 
-        public void bind(Product product, OnProductClickListener  listener) {
+        public void bind(Product product, OnProductClickListener listener,
+                         OnCartUpdateListener cartUpdateListener) {
             productName.setText(product.getName());
             productPrice.setText(String.format("$%.2f", product.getPrice()));
 
@@ -117,8 +130,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             addToCartButton.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onAddToCart(product);
-                    showToast(itemView.getContext(), "Producto agregado al carrito");
                 }
+
+                if (cartUpdateListener != null) {
+                    cartUpdateListener.onCartUpdated(product, 1);
+                }
+
+                showToast(itemView.getContext(), product.getName() + " agregado al carrito");
             });
 
             itemView.setOnClickListener(v -> {
@@ -137,12 +155,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         if (newProductList != null) {
             productList = newProductList;
             notifyDataSetChanged();
-        }
-    }
-
-    private void showToast(String message) {
-        if (context != null) {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     }
 }
