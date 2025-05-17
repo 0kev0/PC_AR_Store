@@ -17,16 +17,27 @@
         android:padding="16dp">
 
         <ImageView
+            android:id="@+id/ic_heart"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_heart"
+            android:tint="#9E9E9E"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
             android:id="@+id/productImage"
             android:layout_width="0dp"
             android:layout_height="150dp"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
             android:background="@drawable/image_rounded_corners"
+            android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ic_heart"
             tools:src="@drawable/placer_holder" />
 
         <com.airbnb.lottie.LottieAnimationView
