@@ -4,6 +4,8 @@
     <!-- Permisos necesarios para ARCore -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- Opcional para Android T+ -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- Requerimientos de hardware -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -33,19 +35,28 @@
             android:name=".Activities.AR_test"
             android:exported="false" />
         <activity
+            android:name=".Activities.OrdersActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.InicioActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.MainActivity"
+            android:name=".Activities.RegisterActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".Activities.AdminActivity"
+            android:exported="false">
+        </activity>
+        <activity
+            android:name=".Activities.LoginActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:screenOrientation="locked">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Metadatos para ARCore -->
+        </activity>
         <meta-data
             android:name="com.google.ar.core"
             android:value="required" />

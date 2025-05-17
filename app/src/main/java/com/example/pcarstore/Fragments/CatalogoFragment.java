@@ -1,5 +1,10 @@
+
 package com.example.pcarstore.Fragments;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,11 +18,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pcarstore.Activities.InicioActivity;
+import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Adapters.CategoryAdapter;
 import com.example.pcarstore.Adapters.ProductAdapter;
 import com.example.pcarstore.ModelsDB.Category;
+import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,86 +43,194 @@ public class CatalogoFragment extends Fragment {
     private RecyclerView productsRecycler, categoriesRecycler;
     private ProductAdapter productAdapter;
     private CategoryAdapter categoryAdapter;
-    private List<Product> productList = new ArrayList<>();
-    private List<Category> categoryList = new ArrayList<>();
+    private final List<Product> productList = new ArrayList<>();
+    private final List<Category> categoryList = new ArrayList<>();
     private DatabaseReference mDatabase;
+    private Context context;
+    private InicioActivity inicioActivity; // Reference to the activity
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context.getApplicationContext();
+        if (context instanceof Activity) {
+            inicioActivity = (InicioActivity) context;
+        }
+    }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_catalogo, container, false);
-
-        // Realtime Database
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
-        // Initialize RecyclerViews
-        initializeRecyclerViews(view);
-
-        // Initialize adapters
+        initViews(view);
+        setupRecyclerViews(view);
         initializeAdapters();
-
-        // Load data
-        loadCategories();
-        loadProducts();
-
+        loadData();
         return view;
     }
 
-    private void initializeRecyclerViews(View view) {
-        // Configure categories RecyclerView
+    private void initViews(View view) {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        productsRecycler = view.findViewById(R.id.recyclerViewCatalogo);
         categoriesRecycler = view.findViewById(R.id.categoriesRecycler);
+    }
+
+    private void setupRecyclerViews(View view) {
         categoriesRecycler.setLayoutManager(new LinearLayoutManager(
-                getContext(),
+                context,
                 LinearLayoutManager.HORIZONTAL,
                 false
         ));
 
-        // Configure products RecyclerView
-        productsRecycler = view.findViewById(R.id.recyclerViewCatalogo);
-        productsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        productsRecycler.setLayoutManager(new LinearLayoutManager(context));
     }
 
     private void initializeAdapters() {
-        productAdapter = new ProductAdapter(productList, product -> {
-            // Open product details fragment
-            ProductDetailFragment detailFragment = ProductDetailFragment.newInstance(product.getProductId());
-            requireActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainerView2, detailFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
+        // Adapter de productos
+        productAdapter = new ProductAdapter(productList, new ProductAdapter.OnProductClickListener() {
+            @Override
+            public void onProductClick(Product product) {
+                openProductDetail(product.getProductId());
+            }
 
-        categoryAdapter = new CategoryAdapter(getContext(), categoryList, category -> {
-            filterProductsByCategory(category.getCategoryId());
-            Toast.makeText(getContext(), "Categoría: " + category.getName(), Toast.LENGTH_SHORT).show();
-        });
+            @Override
+            public void onAddToCart(Product product) {
+                addToCart(product, 1);
+            }
+        }, context);
+
+        // Adapter de categorías
+        categoryAdapter = new CategoryAdapter(context, categoryList, category ->
+                filterProductsByCategoryName(category.getName())
+        );
 
         productsRecycler.setAdapter(productAdapter);
         categoriesRecycler.setAdapter(categoryAdapter);
+    }
+
+    private void loadData() {
+        loadCategories();
+        loadProducts();
+    }
+
+    private void openProductDetail(String productId) {
+        ProductDetailFragment detailFragment = ProductDetailFragment.newInstance(productId);
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainerView2, detailFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void addToCart(Product product, int quantity) {
+        // Verificar primero si hay usuario autenticado
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            // Crear AlertDialog
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Inicio de sesión requerido")
+                    .setMessage("Debes iniciar sesión para agregar productos al carrito. ¿Deseas iniciar sesión ahora?")
+                    .setPositiveButton("Sí", (dialog, which) -> {
+                        // Redirigir al login
+                        Intent loginIntent = new Intent(getContext(), LoginActivity.class);
+                        loginIntent.putExtra("redirect_to", "cart");
+                        startActivity(loginIntent);
+                    })
+                    .setNegativeButton("Cancelar", (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .setIcon(R.drawable.ic_home)
+                    .setCancelable(false)
+                    .show();
+            return;
+        }
+
+        String userId = currentUser.getUid();
+
+        if (inicioActivity != null) {
+            inicioActivity.incrementCartCount();
+        }
+
+        DatabaseReference cartRef = FirebaseDatabase.getInstance()
+                .getReference("carts")
+                .child(userId);
+
+        cartRef.child("items").child(product.getProductId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    updateExistingProduct(snapshot, cartRef, product, quantity);
+                } else {
+                    addNewProduct(cartRef, product, quantity);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                showToast("Error al acceder al carrito: " + error.getMessage());
+            }
+        });
+    }
+
+    private void updateExistingProduct(DataSnapshot snapshot, DatabaseReference cartRef, Product product, int quantity) {
+        Integer currentQuantity = snapshot.child("quantity").getValue(Integer.class);
+        int newQuantity = (currentQuantity != null ? currentQuantity : 0) + quantity;
+
+        cartRef.child("items").child(product.getProductId()).child("quantity")
+                .setValue(newQuantity)
+                .addOnSuccessListener(aVoid -> {
+                    updateCartTotal(cartRef);
+                    showToast("Cantidad actualizada en el carrito");
+                })
+                .addOnFailureListener(e -> showToast("Error al actualizar cantidad"));
+    }
+
+    private void addNewProduct(DatabaseReference cartRef, Product product, int quantity) {
+        OrderItem newItem = new OrderItem(
+                product.getProductId(),
+                product.getName(),
+                product.getPrice(),
+                quantity
+        );
+
+        if (product.getMainImageUrl() != null) {
+            newItem.setImageUrl(product.getMainImageUrl());
+        }
+
+        cartRef.child("items").child(product.getProductId()).setValue(newItem)
+                .addOnSuccessListener(aVoid -> {
+                    updateCartTotal(cartRef);
+                    showToast("Producto agregado al carrito");
+                })
+                .addOnFailureListener(e -> showToast("Error al agregar producto"));
     }
 
     private void loadCategories() {
         mDatabase.child("categories").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                categoryList.clear();
+                List<Category> newCategories = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     try {
                         Category category = snapshot.getValue(Category.class);
                         if (category != null) {
                             category.setCategoryId(snapshot.getKey());
-                            categoryList.add(category);
+                            newCategories.add(category);
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing category: " + e.getMessage());
                     }
                 }
-                categoryAdapter.notifyDataSetChanged();
+                if (categoryAdapter != null) {
+                    categoryList.clear();
+                    categoryList.addAll(newCategories);
+                    categoryAdapter.notifyDataSetChanged();
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                showErrorToast("Error al cargar categorías: " + databaseError.getMessage());
+                showError("Error al cargar categorías: " + databaseError.getMessage());
                 Log.e(TAG, "Error loading categories", databaseError.toException());
             }
         });
@@ -122,52 +240,29 @@ public class CatalogoFragment extends Fragment {
         mDatabase.child("products").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                productList.clear();
+                List<Product> newProducts = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     try {
                         Product product = snapshot.getValue(Product.class);
                         if (product != null) {
                             product.setProductId(snapshot.getKey());
-                            productList.add(product);
+                            newProducts.add(product);
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing product: " + e.getMessage());
                     }
                 }
-                productAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                showErrorToast("Error al cargar productos: " + databaseError.getMessage());
-                Log.e(TAG, "Error loading products", databaseError.toException());
-            }
-        });
-    }
-
-    private void filterProductsByCategory(String categoryId) {
-        if (categoryId == null || categoryId.isEmpty()) {
-            loadProducts(); // Show all if no category selected
-            return;
-        }
-
-        mDatabase.child("categories").child(categoryId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot categorySnapshot) {
-                if (categorySnapshot.exists()) {
-                    Category category = categorySnapshot.getValue(Category.class);
-                    if (category != null) {
-                        String categoryName = category.getName();
-                        filterProductsByCategoryName(categoryName);
-                    }
-                } else {
-                    showErrorToast("Categoría no encontrada");
+                if (productAdapter != null) {
+                    productList.clear();
+                    productList.addAll(newProducts);
+                    productAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                showErrorToast("Error al obtener categoría: " + databaseError.getMessage());
+                showError("Error al cargar productos: " + databaseError.getMessage());
+                Log.e(TAG, "Error loading products", databaseError.toException());
             }
         });
     }
@@ -177,29 +272,59 @@ public class CatalogoFragment extends Fragment {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        productList.clear();
+                        List<Product> filteredProducts = new ArrayList<>();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             try {
                                 Product product = snapshot.getValue(Product.class);
                                 if (product != null) {
                                     product.setProductId(snapshot.getKey());
-                                    productList.add(product);
+                                    filteredProducts.add(product);
                                 }
                             } catch (Exception e) {
                                 Log.e(TAG, "Error parsing product: " + e.getMessage());
                             }
                         }
-                        productAdapter.notifyDataSetChanged();
+                        if (productAdapter != null) {
+                            productList.clear();
+                            productList.addAll(filteredProducts);
+                            productAdapter.notifyDataSetChanged();
+                        }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        showErrorToast("Error al filtrar productos: " + databaseError.getMessage());
+                        showError("Error al filtrar productos: " + databaseError.getMessage());
                     }
                 });
     }
 
-    private void showErrorToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    private void updateCartTotal(DatabaseReference cartRef) {
+        cartRef.child("items").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                double total = 0.0;
+                for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
+                    OrderItem item = itemSnapshot.getValue(OrderItem.class);
+                    if (item != null) {
+                        total += item.getPrice() * item.getQuantity();
+                    }
+                }
+                cartRef.child("total").setValue(total);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error al calcular total del carrito: " + error.getMessage());
+            }
+        });
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showError(String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        Log.e(TAG, message);
     }
 }

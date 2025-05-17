@@ -7,4 +7,16 @@
     <color name="amazon_orange">#FF9900</color>
     <color name="light_gray">#E0E0E0</color>
     <color name="amazon_blue">#0066C0</color>
+    <color name="primary_color">#2196F3</color>
+    <color name="gray_light">#E0E0E0</color>
+    <color name="gray_dark">#757575</color>
+    <color name="gray_very_light">#F5F5F5</color>
+    <color name="green_dark">#388E3C</color>
+    <color name="green">#1FB622</color>
+    <color name="red">#FF5722</color>
+    <color name="orange">#BB7200</color>
+    <color name="blue">#2196F3</color>
+    <color name="fondo">#E3F2FD</color>
+    <color name="colorPrimary">#76ABDC</color>
+
 </resources>

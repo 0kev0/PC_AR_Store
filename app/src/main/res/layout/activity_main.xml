@@ -7,17 +7,16 @@
     android:padding="16dp"
     android:id="@+id/main"
     android:background="@color/white"
-    tools:context=".Activities.MainActivity">
+    tools:context=".Activities.LoginActivity">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="217dp"
         android:layout_height="76dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="12dp"
         android:contentDescription="@string/app_name"
         android:src="@drawable/logo_amazon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -56,6 +55,7 @@
                 android:textSize="14sp" />
 
             <EditText
+                android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="@drawable/amazon_edittext_bg"
@@ -81,12 +81,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:id="@+id/forgotPassword"
                     android:text="Forgot your password?"
-                    android:textColor="@color/amazon_blue"
+                    android:textColor="#3A59D1"
                     android:textSize="13sp" />
+
             </LinearLayout>
 
             <EditText
+                android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="4dp"
@@ -97,10 +100,11 @@
                 android:textSize="14sp" />
 
             <Button
+                android:id="@+id/LoginGoogle"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/amazon_button_bg"
+                android:backgroundTint="#7AC6D2"
                 android:text="Sign-In"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
@@ -122,15 +126,18 @@
                 android:background="@color/white"
                 android:paddingHorizontal="8dp"
                 android:text="No tienes una cuenta?"
-                android:textColor="@color/dark_gray"
-                android:textSize="13sp" />
+                android:textColor="#3A59D1"
+                android:textSize="13sp"
+                android:onClick="goToRegister"
+            android:clickable="true"
+            android:focusable="true"/>
 
             <Button
-                android:id="@+id/LoginGoogle"
+                android:id="@+id/RegisterGoogle"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/amazon_secondary_button_bg"
+                android:backgroundTint="#B5FCCD"
                 android:text="Continuar con Google"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
@@ -141,9 +148,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="16dp"
-                android:backgroundTint="@color/amazon_orange"
+                android:backgroundTint="#B5FCCD"
                 android:onClick="VerCatologo"
-                android:background="@drawable/button_border_gray"
                 android:text="Continuar sin cuenta"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
