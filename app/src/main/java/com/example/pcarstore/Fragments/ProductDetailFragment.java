@@ -127,6 +127,8 @@ public class ProductDetailFragment extends Fragment {
         imagesRecycler = view.findViewById(R.id.recyclerProductImages);
         btnAddToCart = view.findViewById(R.id.btnAddToCart);
         btnViewAR = view.findViewById(R.id.btnViewAR);
+        productRating.setNumStars(5);
+        productRating.setStepSize(0.5f);
 
         // Configure RecyclerView
         imagesRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -219,7 +221,6 @@ public class ProductDetailFragment extends Fragment {
             progressDialog.dismiss();
         }
     }
-
     private void setupRealtimeListener() {
         productListener = productRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -237,14 +238,30 @@ public class ProductDetailFragment extends Fragment {
             }
         });
     }
-
     private void updateUI(Product product) {
         productName.setText(product.getName());
         productPrice.setText(String.format("$%.2f", product.getPrice()));
         productDescription.setText(product.getDescription());
 
         if (product.getRating() != null) {
-            productRating.setRating(product.getRating().floatValue());
+            // Configurar el RatingBar basado en la calificación
+            float rating = product.getRating().floatValue();
+
+            if (rating > 5.0f) {
+                productRating.setNumStars((int) Math.ceil(rating));
+            } else {
+                productRating.setNumStars(5);
+            }
+
+            // Establecer la calificación
+            productRating.setRating(rating);
+
+            // Configurar el paso (para permitir medias estrellas)
+            productRating.setStepSize(0.5f);
+        } else {
+            //sin rating
+            productRating.setNumStars(5);
+            productRating.setRating(0);
         }
 
         if (product.getSpecifications() != null) {
@@ -273,7 +290,6 @@ public class ProductDetailFragment extends Fragment {
         btnViewAR.setOnClickListener(v -> openARModel());
     }
 
-    // Fixed method - No arguments version that uses currentProduct
     private void addToCart() {
         if (currentProduct == null) {
             showToast("Error: No se puede agregar al carrito, producto no disponible");
@@ -285,14 +301,12 @@ public class ProductDetailFragment extends Fragment {
     }
 
     private void addToCart(Product product, int quantity) {
-        // Verificar primero si el fragment/activity está disponible
         if (getContext() == null || (this instanceof Fragment && !((Fragment) this).isAdded())) {
             return;
         }
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        // Si el usuario no está autenticado, mostrar diálogo de confirmación
         if (currentUser == null) {
             showLoginRequiredDialog(product, quantity);
             return;

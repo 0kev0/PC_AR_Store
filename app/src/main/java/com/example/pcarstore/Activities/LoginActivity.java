@@ -133,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                 299.99,
                 180.00,
                 50,
-                4.5,
+                3.0,
                 "Ruedas",
                 "Llantas aleación ligeraX con diseño aerodinámico y mayor durabilidad",
                 Arrays.asList(
