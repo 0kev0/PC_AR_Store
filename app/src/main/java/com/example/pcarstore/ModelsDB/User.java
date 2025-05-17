@@ -28,6 +28,9 @@ public class User {
         this.cart = builder.cart != null ? builder.cart : new HashMap<>();
     }
 
+    public User() {
+    }
+
     // Builder class
     public static class Builder {
         // Campos requeridos

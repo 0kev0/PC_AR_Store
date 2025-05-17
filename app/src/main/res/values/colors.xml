@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="dark_gray">#444444</color>
     <color name="gray">#888888</color>
+    <color name="yellow">#FFEB3B</color>
     <color name="amazon_orange">#FF9900</color>
     <color name="light_gray">#E0E0E0</color>
     <color name="amazon_blue">#0066C0</color>
@@ -20,5 +21,6 @@
     <color name="colorPrimary">#76ABDC</color>
     <color name="colorSuccess">#4CAF50</color>
     <color name="colorError">#F44336</color>
+    <color name="prime_member_background">#FFF8E1</color>
 
 </resources>

@@ -29,9 +29,9 @@
     <!-- Bottom Navigation -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
-        android:name="com.example.pcarstore.Activities.FirstFragment"
+        android:name="com.example.pcarstore.Fragments.FirstFragment"
         android:layout_width="match_parent"
-        android:layout_height="588dp" />
+        android:layout_height="674dp" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/admin_bottom_nav"
