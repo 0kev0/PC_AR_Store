@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemListener, CartAdapter.OnCartUpdatedListener {
 
@@ -133,10 +135,15 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
                 orderItems,
                 cartTotal,
                 new PaymentConfirmationDialog.PaymentConfirmationListener() {
+
                     @Override
-                    public void onPaymentConfirmed() {
-                        // Lógica cuando se confirma el pago
-                        processPayment(orderItems);
+                    public void onPaymentConfirmed(double discountApplied) {
+                        // Limpiar el carrito después de pago exitoso
+                        clearCart();
+                        Toast.makeText(getContext(),
+                                String.format(Locale.getDefault(),
+                                        "Pago exitoso! Descuento: %.2f €", discountApplied),
+                                Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -144,21 +151,54 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
                         // Lógica cuando se cancela
                         Toast.makeText(getContext(), "Pago cancelado", Toast.LENGTH_SHORT).show();
                     }
+
+                    @Override
+                    public void onInsufficientBalance(double missingAmount) {
+                        // Mostrar diálogo para agregar saldo
+                        showAddBalanceDialog(missingAmount);
+                    }
                 });
 
-// Cambia esto:
         dialog.show(getChildFragmentManager(), "PaymentConfirmationDialog");
     }
 
-    private void processPayment(List<OrderItem> orderItems) {
-        // Implementa tu lógica de pago aquí
-        // Puedes acceder a todos los OrderItems y sus propiedades
-        for (OrderItem item : orderItems) {
-            Log.d("Payment", "Producto: " + item.getProductName() +
-                    ", Cantidad: " + item.getQuantity() +
-                    ", Total: " + item.getTotalPrice());
+    private void clearCart() {
+        if (mAuth.getCurrentUser() != null && currentCart != null) {
+            // Crear un nuevo carrito vacío
+            Cart emptyCart = new Cart(mAuth.getCurrentUser().getUid());
+
+            // Actualizar en Firebase
+            cartRef.setValue(emptyCart)
+                    .addOnSuccessListener(aVoid -> {
+                        // Actualizar UI
+                        cartItems.clear();
+                        cartAdapter.updateCartItems(cartItems);
+                        updateCartSummary(0.0);
+                        tvItemCount.setText("0 artículos");
+                        btnProceedToCheckout.setText("Proceder al pago (0 artículos)");
+
+                        Toast.makeText(getContext(), "Carrito vaciado", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(getContext(),
+                                "Error al vaciar carrito: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    });
         }
-        // ... resto de la lógica de pago
+    }
+
+    private void showAddBalanceDialog(double missingAmount) {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Saldo insuficiente")
+                .setMessage(String.format(Locale.getDefault(),
+                        "Necesitas %.2f € más para completar esta compra. ¿Deseas agregar saldo ahora?",
+                        missingAmount))
+                .setPositiveButton("Agregar Saldo", (dialog, which) -> {
+                    // Navegar a la pantalla de agregar saldo
+                   // navigateToAddBalanceScreen(missingAmount);
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     @Override
