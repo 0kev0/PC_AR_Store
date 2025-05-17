@@ -27,7 +27,34 @@ public class AdminActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin); // Asegúrate que sea el layout correcto
+        setContentView(R.layout.activity_admin);
 
+        setupToolbar();
+        loadInitialFragment();
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        TextView toolbarTitle = findViewById(R.id.toolbar_title);
+        if (toolbarTitle != null) {
+            toolbarTitle.setText("Administración");
+        }
+    }
+
+    private void loadInitialFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainerView, new FirstFragment())
+                .commit();
+    }
+
+    // Método seguro para encontrar vistas
+    private <T extends View> T findView(@IdRes int id) {
+        T view = findViewById(id);
+        if (view == null) {
+            throw new IllegalArgumentException("ID "+getResources().getResourceName(id)+" no encontrado");
+        }
+        return view;
     }
 }

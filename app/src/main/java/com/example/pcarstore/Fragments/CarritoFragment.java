@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -24,10 +25,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pcarstore.Adapters.CartAdapter;
 import com.example.pcarstore.Dialogs.PaymentConfirmationDialog;
 import com.example.pcarstore.ModelsDB.Cart;
+import com.example.pcarstore.ModelsDB.Departamento;
 import com.example.pcarstore.ModelsDB.Order;
 import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.R;
 import com.example.pcarstore.Services.OrderManager;
+import com.example.pcarstore.Services.ShippingCostCalculator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,6 +39,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -51,7 +57,7 @@ import java.util.Map;
 public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemListener, CartAdapter.OnCartUpdatedListener {
 
     private RecyclerView rvCartItems;
-    private TextView tvItemCount, tvSubtotal, tvShipping, tvTotal;
+    private TextView tvItemCount, tvTotal;
     private Button btnProceedToCheckout;
 
     private CartAdapter cartAdapter;
@@ -63,6 +69,8 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     private DatabaseReference cartRef;
     private DatabaseReference userBalanceRef;
     private DatabaseReference ordersRef;
+    private double shippingCost = 0.0;
+    private boolean isPrimeMember = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,8 +89,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         // Inicializar vistas
         rvCartItems = view.findViewById(R.id.rvCartItems);
         tvItemCount = view.findViewById(R.id.tvItemCount);
-        tvSubtotal = view.findViewById(R.id.tvSubtotal);
-        tvShipping = view.findViewById(R.id.tvShipping);
         tvTotal = view.findViewById(R.id.tvTotal);
         btnProceedToCheckout = view.findViewById(R.id.btnProceedToCheckout);
 
@@ -95,8 +101,66 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         loadCart();
 
         btnProceedToCheckout.setOnClickListener(v -> proceedToCheckout());
+        loadUserDataForShipping();
+
 
         return view;
+    }
+
+    private void loadUserDataForShipping() {
+        String userId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
+        if (userId.isEmpty()) return;
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(userId);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Obtener membresía Prime
+                Boolean prime = snapshot.child("membresiaPrime").getValue(Boolean.class);
+                isPrimeMember = prime != null && prime;
+
+                // Obtener ubicación y calcular envío
+                String departamento = snapshot.child("departamento").getValue(String.class);
+                String ciudad = snapshot.child("ciudad").getValue(String.class);
+
+                calculateShippingCost(departamento, ciudad);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Usar valores por defecto en caso de error
+                calculateShippingCost("", "");
+            }
+        });
+    }
+
+    private void calculateShippingCost(String departamento, String ciudad) {
+        ShippingCostCalculator.calculateShippingCost(
+                departamento,
+                ciudad,
+                isPrimeMember,
+                currentCart != null ? currentCart.getTotal() : 0.0,
+                cost -> {
+                    shippingCost = cost;
+                    updateCartSummary(currentCart != null ? currentCart.getTotal() : 0.0);
+                }
+        );
+    }
+
+    @Override
+    public void updateCartSummary(double subtotal) {
+        // Aplicar descuento por compra mayor a $50
+        double finalShippingCost = subtotal > 50 ? shippingCost * 0.5 : shippingCost;
+        double total = subtotal + finalShippingCost;
+
+        tvTotal.setText(String.format("$%.2f", total));
+
+        if (currentCart != null) {
+            currentCart.setTotal(subtotal);
+        }
     }
 
     private void loadCart() {
@@ -175,36 +239,54 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        userBalanceRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Use runTransaction to ensure atomic operation
+        userBalanceRef.runTransaction(new Transaction.Handler() {
+            @NonNull
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Double currentBalance = snapshot.getValue(Double.class);
-                if (currentBalance == null) currentBalance = 0.0;
-
-                if (currentBalance >= amountToPay) {
-                    // Actualizar saldo y crear orden
-                    double newBalance = currentBalance - amountToPay;
-                    userBalanceRef.setValue(newBalance)
-                            .addOnSuccessListener(aVoid -> createOrder(newBalance, amountToPay))
-                            .addOnFailureListener(e -> {
-                                progressDialog.dismiss();
-                                showError("Error al actualizar saldo: " + e.getMessage());
-                            });
-                } else {
-                    progressDialog.dismiss();
-                    double missingAmount = amountToPay - currentBalance;
-                    showAddBalanceDialog(missingAmount);
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                Double currentBalance = mutableData.getValue(Double.class);
+                if (currentBalance == null) {
+                    currentBalance = 0.0;
                 }
+
+                if (currentBalance < amountToPay) {
+                    // Mark transaction as aborted but still valid
+                    return Transaction.success(mutableData);
+                }
+
+                // Update balance
+                mutableData.setValue(currentBalance - amountToPay);
+                return Transaction.success(mutableData);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                progressDialog.dismiss();
-                showError("Error al verificar saldo: " + error.getMessage());
+            public void onComplete(@Nullable DatabaseError error, boolean committed,
+                                   @Nullable DataSnapshot currentData) {
+                if (error != null) {
+                    progressDialog.dismiss();
+                    showError("Error en la transacción: " + error.getMessage());
+                    return;
+                }
+
+                Double updatedBalance = currentData.getValue(Double.class);
+                Double initialBalance = updatedBalance != null ? updatedBalance + amountToPay : amountToPay;
+
+                if (initialBalance < amountToPay) {
+                    // Insufficient balance
+                    progressDialog.dismiss();
+                    double missingAmount = amountToPay - initialBalance;
+                    showAddBalanceDialog(missingAmount);
+                } else if (committed) {
+                    // Successfully updated balance, now create the order
+                    createOrder(updatedBalance, amountToPay);
+                    progressDialog.dismiss();
+                } else {
+                    progressDialog.dismiss();
+                    showError("Error al procesar pago");
+                }
             }
         });
     }
-
     private void createOrder(double newBalance, double amountPaid) {
         Order order = new Order(
                 mAuth.getCurrentUser().getUid(),
@@ -362,20 +444,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
 
     private void showSuccess(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void updateCartSummary(double subtotal) {
-        double shipping = subtotal > 50 ? 0.0 : 0.00;
-        double total = subtotal + shipping;
-
-        tvSubtotal.setText(String.format("$%.2f", subtotal));
-        tvShipping.setText(String.format("$%.2f", shipping));
-        tvTotal.setText(String.format("$%.2f", total));
-
-        if (currentCart != null) {
-            currentCart.setTotal(subtotal);
-        }
     }
 
     // Implementación de interfaces del adaptador
