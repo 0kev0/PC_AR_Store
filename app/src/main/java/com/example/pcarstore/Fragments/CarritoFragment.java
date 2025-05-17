@@ -138,7 +138,12 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
 
                     @Override
                     public void onPaymentConfirmed(double discountApplied) {
-
+                        // Limpiar el carrito después de pago exitoso
+                        clearCart();
+                        Toast.makeText(getContext(),
+                                String.format(Locale.getDefault(),
+                                        "Pago exitoso! Descuento: %.2f €", discountApplied),
+                                Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -157,6 +162,31 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         dialog.show(getChildFragmentManager(), "PaymentConfirmationDialog");
     }
 
+    private void clearCart() {
+        if (mAuth.getCurrentUser() != null && currentCart != null) {
+            // Crear un nuevo carrito vacío
+            Cart emptyCart = new Cart(mAuth.getCurrentUser().getUid());
+
+            // Actualizar en Firebase
+            cartRef.setValue(emptyCart)
+                    .addOnSuccessListener(aVoid -> {
+                        // Actualizar UI
+                        cartItems.clear();
+                        cartAdapter.updateCartItems(cartItems);
+                        updateCartSummary(0.0);
+                        tvItemCount.setText("0 artículos");
+                        btnProceedToCheckout.setText("Proceder al pago (0 artículos)");
+
+                        Toast.makeText(getContext(), "Carrito vaciado", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(getContext(),
+                                "Error al vaciar carrito: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    });
+        }
+    }
+
     private void showAddBalanceDialog(double missingAmount) {
         new AlertDialog.Builder(getContext())
                 .setTitle("Saldo insuficiente")
@@ -169,27 +199,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
-    }
-
-    private void processPayment(List<OrderItem> orderItems, double discountApplied) {
-        // Aquí tu lógica para procesar el pago
-        Toast.makeText(getContext(),
-                String.format(Locale.getDefault(),
-                        "Pago exitoso! Descuento aplicado: %.2f €", discountApplied),
-                Toast.LENGTH_SHORT).show();
-
-        // Limpiar carrito, etc.
-    }
-
-    private void processPayment(List<OrderItem> orderItems) {
-        // Implementa tu lógica de pago aquí
-        // Puedes acceder a todos los OrderItems y sus propiedades
-        for (OrderItem item : orderItems) {
-            Log.d("Payment", "Producto: " + item.getProductName() +
-                    ", Cantidad: " + item.getQuantity() +
-                    ", Total: " + item.getTotalPrice());
-        }
-        // ... resto de la lógica de pago
     }
 
     @Override
