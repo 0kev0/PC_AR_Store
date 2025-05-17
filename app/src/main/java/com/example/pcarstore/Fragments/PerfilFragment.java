@@ -42,6 +42,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -52,8 +55,10 @@ import androidx.appcompat.app.AppCompatDelegate;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class PerfilFragment extends Fragment {
@@ -131,16 +136,71 @@ public class PerfilFragment extends Fragment {
                 ivProfilePicture.setImageResource(R.drawable.ic_account_circle);
             }
 
-            // Cargar datos adicionales desde Realtime Database
+            // Cargar detalles adicionales desde Firestore
             loadUserDetailsFromDatabase(currentUser.getUid());
+
+            // Mostrar saldo inicial como "Cargando..."
+            tvUserBalance.setText("Cargando saldo...");
+
+            // Cargar saldo desde Firestore
+            loadUserBalance(currentUser.getUid());
         } else {
             // Modo invitado
             tvUserName.setText("Invitado");
             tvUserEmail.setText("No has iniciado sesión");
             ivProfilePicture.setImageResource(R.drawable.ic_account_circle);
-            tvUserBalance.setText("S/ 0.00");
+            tvUserBalance.setText("S/ ----");
             tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
         }
+    }
+
+    private void loadUserBalance(String userId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userRef = db.collection("users").document(userId);
+
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    // Obtener el saldo (0.0 si no existe el campo)
+                    double balance = document.contains("saldo") ?
+                            document.getDouble("saldo") : 0.0;
+
+                    // Formatear y mostrar el saldo
+                    String formattedBalance = String.format(Locale.getDefault(), "S/ %.2f", balance);
+                    tvUserBalance.setText(formattedBalance);
+
+                    // Cambiar color según el saldo (opcional)
+                    if (balance < 0) {
+                        tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorError));
+                    } else {
+                        tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorSuccess));
+                    }
+                } else {
+                    tvUserBalance.setText("S/ 0.00");
+                    // Crear documento si no existe
+                    userRef.set(Collections.singletonMap("saldo", 0.0));
+                }
+            } else {
+                tvUserBalance.setText("Error al cargar");
+                Log.e("ProfileFragment", "Error al obtener saldo", task.getException());
+            }
+        });
+
+        // Escuchar cambios en tiempo real (opcional)
+        userRef.addSnapshotListener((snapshot, error) -> {
+            if (error != null) {
+                Log.w("ProfileFragment", "Listen failed.", error);
+                return;
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                double balance = snapshot.contains("saldo") ?
+                        snapshot.getDouble("saldo") : 0.0;
+                String formattedBalance = String.format(Locale.getDefault(), "S/ %.2f", balance);
+                tvUserBalance.setText(formattedBalance);
+            }
+        });
     }
 
     private void loadUserDetailsFromDatabase(String userId) {

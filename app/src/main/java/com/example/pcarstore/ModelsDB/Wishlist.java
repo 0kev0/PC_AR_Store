@@ -17,6 +17,22 @@ public class Wishlist {
         this.userId = userId;
     }
 
+    public Map<String, OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(Map<String, OrderItem> items) {
+        this.items = items;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     // Getters y setters
 
     public void addItem(OrderItem item) {

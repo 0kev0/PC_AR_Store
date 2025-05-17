@@ -59,4 +59,16 @@
     </string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="total_label">Total:</string>
+    <string name="view_details">Ver detalles</string>
+    <string name="order_id_format">Pedido #%s</string>
+    <string name="price_format">$%.2f</string>
+    <string name="status_completed">Completado</string>
+    <string name="status_cancelled">Cancelado</string>
+    <string name="status_processing">En proceso</string>
+    <string name="status_pending">Pendiente</string>
+    <plurals name="items_count">
+        <item quantity="one">%d artículo</item>
+        <item quantity="other">%d artículos</item>
+    </plurals>
 </resources>

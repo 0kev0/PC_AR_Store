@@ -1,16 +1,22 @@
 package com.example.pcarstore.Fragments;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,18 +24,29 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pcarstore.Adapters.CartAdapter;
 import com.example.pcarstore.Dialogs.PaymentConfirmationDialog;
 import com.example.pcarstore.ModelsDB.Cart;
+import com.example.pcarstore.ModelsDB.Order;
 import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.R;
+import com.example.pcarstore.Services.OrderManager;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemListener, CartAdapter.OnCartUpdatedListener {
 
@@ -39,10 +56,13 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
 
     private CartAdapter cartAdapter;
     private List<OrderItem> cartItems;
+    private Cart currentCart;
 
+    // Referencias a la base de datos
     private FirebaseAuth mAuth;
     private DatabaseReference cartRef;
-    private Cart currentCart;
+    private DatabaseReference userBalanceRef;
+    private DatabaseReference ordersRef;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +72,11 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
         String userId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
+
+        // Inicializar referencias a la base de datos
         cartRef = FirebaseDatabase.getInstance().getReference("carts").child(userId);
+        userBalanceRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("saldo");
+        ordersRef = FirebaseDatabase.getInstance().getReference("orders");
 
         // Inicializar vistas
         rvCartItems = view.findViewById(R.id.rvCartItems);
@@ -68,10 +92,8 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         rvCartItems.setLayoutManager(new LinearLayoutManager(getContext()));
         rvCartItems.setAdapter(cartAdapter);
 
-        // Cargar carrito
         loadCart();
 
-        // Configurar botón de checkout
         btnProceedToCheckout.setOnClickListener(v -> proceedToCheckout());
 
         return view;
@@ -86,7 +108,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
                     currentCart = new Cart(mAuth.getCurrentUser().getUid());
                 }
 
-                // Convertir Map a List para el adapter
                 cartItems.clear();
                 if (currentCart.getItems() != null) {
                     cartItems.addAll(currentCart.getItems().values());
@@ -95,7 +116,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
                 cartAdapter.updateCartItems(cartItems);
                 updateCartSummary(currentCart.getTotal());
 
-                // Actualizar UI
                 int itemCount = currentCart.getItems() != null ? currentCart.getItems().size() : 0;
                 tvItemCount.setText(itemCount + (itemCount == 1 ? " artículo" : " artículos"));
                 btnProceedToCheckout.setText("Proceder al pago (" + itemCount + " artículos)");
@@ -119,42 +139,29 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
             return;
         }
 
-        // Convertir el Map de items a List<OrderItem>
         List<OrderItem> orderItems = new ArrayList<>(currentCart.getItems().values());
-        showPaymentDialog(orderItems); // Ahora pasas la lista correctamente
+        showPaymentDialog(orderItems);
     }
 
     private void showPaymentDialog(List<OrderItem> orderItems) {
-        // Calcular el total del carrito
-        double cartTotal = 0;
-        for (OrderItem item : orderItems) {
-            cartTotal += item.getTotalPrice();
-        }
+        double cartTotal = currentCart.getTotal();
 
         PaymentConfirmationDialog dialog = new PaymentConfirmationDialog(
                 orderItems,
                 cartTotal,
                 new PaymentConfirmationDialog.PaymentConfirmationListener() {
-
                     @Override
                     public void onPaymentConfirmed(double discountApplied) {
-                        // Limpiar el carrito después de pago exitoso
-                        clearCart();
-                        Toast.makeText(getContext(),
-                                String.format(Locale.getDefault(),
-                                        "Pago exitoso! Descuento: %.2f €", discountApplied),
-                                Toast.LENGTH_SHORT).show();
+                        processOrderPayment(cartTotal - discountApplied);
                     }
 
                     @Override
                     public void onPaymentCancelled() {
-                        // Lógica cuando se cancela
                         Toast.makeText(getContext(), "Pago cancelado", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onInsufficientBalance(double missingAmount) {
-                        // Mostrar diálogo para agregar saldo
                         showAddBalanceDialog(missingAmount);
                     }
                 });
@@ -162,43 +169,199 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         dialog.show(getChildFragmentManager(), "PaymentConfirmationDialog");
     }
 
-    private void clearCart() {
-        if (mAuth.getCurrentUser() != null && currentCart != null) {
-            // Crear un nuevo carrito vacío
-            Cart emptyCart = new Cart(mAuth.getCurrentUser().getUid());
+    private void processOrderPayment(double amountToPay) {
+        ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Procesando pago...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
-            // Actualizar en Firebase
-            cartRef.setValue(emptyCart)
-                    .addOnSuccessListener(aVoid -> {
-                        // Actualizar UI
-                        cartItems.clear();
-                        cartAdapter.updateCartItems(cartItems);
-                        updateCartSummary(0.0);
-                        tvItemCount.setText("0 artículos");
-                        btnProceedToCheckout.setText("Proceder al pago (0 artículos)");
+        userBalanceRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Double currentBalance = snapshot.getValue(Double.class);
+                if (currentBalance == null) currentBalance = 0.0;
 
-                        Toast.makeText(getContext(), "Carrito vaciado", Toast.LENGTH_SHORT).show();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(getContext(),
-                                "Error al vaciar carrito: " + e.getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    });
+                if (currentBalance >= amountToPay) {
+                    // Actualizar saldo y crear orden
+                    double newBalance = currentBalance - amountToPay;
+                    userBalanceRef.setValue(newBalance)
+                            .addOnSuccessListener(aVoid -> createOrder(newBalance, amountToPay))
+                            .addOnFailureListener(e -> {
+                                progressDialog.dismiss();
+                                showError("Error al actualizar saldo: " + e.getMessage());
+                            });
+                } else {
+                    progressDialog.dismiss();
+                    double missingAmount = amountToPay - currentBalance;
+                    showAddBalanceDialog(missingAmount);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                progressDialog.dismiss();
+                showError("Error al verificar saldo: " + error.getMessage());
+            }
+        });
+    }
+
+    private void createOrder(double newBalance, double amountPaid) {
+        Order order = new Order(
+                mAuth.getCurrentUser().getUid(),
+                "completada",
+                amountPaid
+        );
+
+        if (currentCart.getItems() != null) {
+            order.setItems(new HashMap<>(currentCart.getItems()));
         }
+
+        OrderManager.getInstance().placeOrder(order, new OrderManager.OrderCallback() {
+            @Override
+            public void onSuccess(String orderId) {
+                showSuccess(String.format(Locale.getDefault(),
+                        "Orden #%s creada. Saldo restante: %.2f €",
+                        orderId, newBalance));
+                clearCart();
+            }
+
+            @Override
+            public void onFailure(String error) {
+                showError("Error al crear orden: " + error);
+            }
+        });
     }
 
     private void showAddBalanceDialog(double missingAmount) {
-        new AlertDialog.Builder(getContext())
-                .setTitle("Saldo insuficiente")
-                .setMessage(String.format(Locale.getDefault(),
-                        "Necesitas %.2f € más para completar esta compra. ¿Deseas agregar saldo ahora?",
-                        missingAmount))
-                .setPositiveButton("Agregar Saldo", (dialog, which) -> {
-                    // Navegar a la pantalla de agregar saldo
-                   // navigateToAddBalanceScreen(missingAmount);
+        if (getContext() == null || mAuth.getCurrentUser() == null) return;
+
+        ProgressDialog loadingDialog = new ProgressDialog(getContext());
+        loadingDialog.setMessage("Verificando saldo...");
+        loadingDialog.setCancelable(false);
+        loadingDialog.show();
+
+        userBalanceRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                loadingDialog.dismiss();
+                Double currentBalance = snapshot.getValue(Double.class);
+                if (currentBalance == null) currentBalance = 0.0;
+
+                if (currentBalance >= missingAmount) {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Saldo suficiente")
+                            .setMessage(String.format(Locale.getDefault(),
+                                    "Tienes %.2f € disponibles. ¿Deseas continuar con la compra?",
+                                    currentBalance))
+                            .setPositiveButton("Continuar", (dialog, which) ->
+                                    processOrderPayment(missingAmount))
+                            .setNegativeButton("Cancelar", null)
+                            .show();
+                } else {
+                    double remainingAmount = missingAmount - currentBalance;
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Saldo insuficiente")
+                            .setMessage(String.format(Locale.getDefault(),
+                                    "Necesitas %.2f € más (Tienes %.2f €). ¿Deseas agregar saldo ahora?",
+                                    remainingAmount, currentBalance))
+                            .setPositiveButton("Agregar Saldo", (dialog, which) ->
+                                    showCreditCardPaymentDialog(remainingAmount))
+                            .setNegativeButton("Cancelar", null)
+                            .show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                loadingDialog.dismiss();
+                showError("Error al verificar saldo: " + error.getMessage());
+            }
+        });
+    }
+
+    private void showCreditCardPaymentDialog(double amountToAdd) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_credit_card_payment, null);
+
+        TextInputEditText etAmount = dialogView.findViewById(R.id.etAmount);
+        etAmount.setText(String.format(Locale.getDefault(), "%.2f", amountToAdd));
+
+        builder.setView(dialogView)
+                .setTitle("Agregar saldo con tarjeta")
+                .setPositiveButton("Confirmar pago", (dialog, which) -> {
+                    try {
+                        double amount = Double.parseDouble(etAmount.getText().toString());
+                        if (amount > 0) {
+                            processCardPayment(amount);
+                        } else {
+                            showError("La cantidad debe ser mayor a 0");
+                        }
+                    } catch (NumberFormatException e) {
+                        showError("Cantidad inválida");
+                    }
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
+    }
+
+    private void processCardPayment(double amount) {
+        ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Procesando pago con tarjeta...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        // Simular procesamiento de tarjeta
+        new Handler().postDelayed(() -> {
+            userBalanceRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Double currentBalance = snapshot.getValue(Double.class);
+                    if (currentBalance == null) currentBalance = 0.0;
+
+                    double newBalance = currentBalance + amount;
+                    userBalanceRef.setValue(newBalance)
+                            .addOnSuccessListener(aVoid -> {
+                                progressDialog.dismiss();
+                                showSuccess(String.format(Locale.getDefault(),
+                                        "Se agregaron %.2f € a tu cuenta. Saldo total: %.2f €",
+                                        amount, newBalance));
+                            })
+                            .addOnFailureListener(e -> {
+                                progressDialog.dismiss();
+                                showError("Error al agregar saldo: " + e.getMessage());
+                            });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    progressDialog.dismiss();
+                    showError("Error al verificar saldo: " + error.getMessage());
+                }
+            });
+        }, 3000);
+    }
+
+    private void clearCart() {
+        Cart emptyCart = new Cart(mAuth.getCurrentUser().getUid());
+
+        cartRef.setValue(emptyCart)
+                .addOnSuccessListener(aVoid -> {
+                    cartItems.clear();
+                    cartAdapter.updateCartItems(cartItems);
+                    updateCartSummary(0.0);
+                    tvItemCount.setText("0 artículos");
+                    btnProceedToCheckout.setText("Proceder al pago (0 artículos)");
+                })
+                .addOnFailureListener(e -> showError("Error al vaciar carrito: " + e.getMessage()));
+    }
+
+    // Métodos auxiliares
+    private void showError(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showSuccess(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -210,12 +373,12 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         tvShipping.setText(String.format("$%.2f", shipping));
         tvTotal.setText(String.format("$%.2f", total));
 
-        // Actualizar total en el carrito
         if (currentCart != null) {
             currentCart.setTotal(subtotal);
         }
     }
 
+    // Implementación de interfaces del adaptador
     @Override
     public void onIncreaseQuantity(String productId, int newQuantity) {
         updateItemQuantity(productId, newQuantity);
@@ -232,24 +395,19 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     }
 
     private void updateItemQuantity(String productId, int newQuantity) {
-        if (currentCart != null && currentCart.getItems() != null) {
-            OrderItem item = currentCart.getItems().get(productId);
-            if (item != null) {
-                if (newQuantity <= 0) {
-                    removeItemFromCart(productId);
-                } else {
-                    item.setQuantity(newQuantity);
-                    currentCart.calculateTotal();
-                    cartRef.setValue(currentCart);
-                }
+        if (currentCart.getItems() != null && currentCart.getItems().containsKey(productId)) {
+            if (newQuantity <= 0) {
+                removeItemFromCart(productId);
+            } else {
+                currentCart.getItems().get(productId).setQuantity(newQuantity);
+                currentCart.calculateTotal();
+                cartRef.setValue(currentCart);
             }
         }
     }
 
     private void removeItemFromCart(String productId) {
-        if (currentCart != null && currentCart.getItems() != null) {
-            currentCart.removeItem(productId);
-            cartRef.setValue(currentCart);
-        }
+        currentCart.removeItem(productId);
+        cartRef.setValue(currentCart);
     }
 }
