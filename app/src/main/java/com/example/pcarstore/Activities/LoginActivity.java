@@ -25,6 +25,7 @@ import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 
 import com.example.pcarstore.ModelsDB.Category;
+import com.example.pcarstore.ModelsDB.DiscountCode;
 import com.example.pcarstore.ModelsDB.GiftCard;
 import com.example.pcarstore.ModelsDB.Order;
 import com.example.pcarstore.ModelsDB.OrderItem;
@@ -88,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
         insertProducts();
         insertCategories();
         insertGiftCards();
+        insertDiscountCodes();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -396,6 +398,104 @@ public class LoginActivity extends AppCompatActivity {
         GiftCard gc15 = new GiftCard(GiftCard.generateGiftCardCode(), 35.00, "admin2");
         gc15.setCardId("gc_015");
         mDatabase.child("giftCards").child(gc15.getCardId()).setValue(gc15);
+    }
+    private void insertDiscountCodes() {
+        // Código 1: Descuento del 10%
+        DiscountCode code1 = new DiscountCode(
+                DiscountCode.generateDiscountCode(),
+                10.0,
+                "admin1"
+        );
+        code1.setCodeId("dc_001");
+        code1.setMinPurchaseRequired(50.0);
+        mDatabase.child("discountCodes").child(code1.getCodeId()).setValue(code1);
+
+        // Código 2: Descuento del 15%
+        DiscountCode code2 = new DiscountCode(
+                DiscountCode.generateDiscountCode(),
+                15.0,
+                "admin1"
+        );
+        code2.setCodeId("dc_002");
+        mDatabase.child("discountCodes").child(code2.getCodeId()).setValue(code2);
+
+        // Código 3: Descuento del 20% (mínimo $100)
+        DiscountCode code3 = new DiscountCode(
+                DiscountCode.generateDiscountCode(),
+                20.0,
+                "admin2"
+        );
+        code3.setCodeId("dc_003");
+        code3.setMinPurchaseRequired(100.0);
+        mDatabase.child("discountCodes").child(code3.getCodeId()).setValue(code3);
+
+        // Código 4: Descuento del 5%
+        DiscountCode code4 = new DiscountCode(
+                DiscountCode.generateDiscountCode(),
+                5.0,
+                "admin1"
+        );
+        code4.setCodeId("dc_004");
+        mDatabase.child("discountCodes").child(code4.getCodeId()).setValue(code4);
+
+        // Código 5: Descuento del 25% (para compras mayores a $200)
+        DiscountCode code5 = new DiscountCode(
+                DiscountCode.generateDiscountCode(),
+                25.0,
+                "admin3"
+        );
+        code5.setCodeId("dc_005");
+        code5.setMinPurchaseRequired(200.0);
+        mDatabase.child("discountCodes").child(code5.getCodeId()).setValue(code5);
+
+        // Código 6: Descuento del 10%
+        DiscountCode code6 = new DiscountCode(
+                DiscountCode.generateDiscountCode(),
+                10.0,
+                "admin2"
+        );
+        code6.setCodeId("dc_006");
+        mDatabase.child("discountCodes").child(code6.getCodeId()).setValue(code6);
+
+        // Código 7: Descuento del 30% (promoción especial)
+        DiscountCode code7 = new DiscountCode(
+                DiscountCode.generateDiscountCode(),
+                30.0,
+                "admin3"
+        );
+        code7.setCodeId("dc_007");
+        code7.setExpirationDate(new Date(System.currentTimeMillis() + (7L * 24 * 60 * 60 * 1000))); // Válido por 7 días
+        mDatabase.child("discountCodes").child(code7.getCodeId()).setValue(code7);
+
+        // Código 8: Descuento del 15%
+        DiscountCode code8 = new DiscountCode(
+                DiscountCode.generateDiscountCode(),
+                15.0,
+                "admin1"
+        );
+        code8.setCodeId("dc_008");
+        mDatabase.child("discountCodes").child(code8.getCodeId()).setValue(code8);
+
+        // Código 9: Descuento del 10% (para primera compra)
+        DiscountCode code9 = new DiscountCode(
+                "PRIMERACOMPRA10",
+                10.0,
+                "admin1"
+        );
+        code9.setCodeId("dc_009");
+        code9.setMinPurchaseRequired(0.0);
+        mDatabase.child("discountCodes").child(code9.getCodeId()).setValue(code9);
+
+        // Código 10: Descuento del 50% (black friday)
+        DiscountCode code10 = new DiscountCode(
+                "BLACKFRIDAY50",
+                50.0,
+                "admin1"
+        );
+        code10.setCodeId("dc_010");
+        code10.setMinPurchaseRequired(300.0);
+        code10.setExpirationDate(new Date(System.currentTimeMillis() + (2L * 24 * 60 * 60 * 1000))); // Válido por 48 horas
+        mDatabase.child("discountCodes").child(code10.getCodeId()).setValue(code10);
     }
 
     public void VerCatologo(View view) {
