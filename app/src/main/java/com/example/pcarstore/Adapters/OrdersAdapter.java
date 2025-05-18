@@ -25,6 +25,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     private List<Order> orders;
     private final OnOrderClickListener listener;
+    private final SimpleDateFormat dateFormat;
 
     public interface OnOrderClickListener {
         void onOrderClick(Order order);
@@ -33,6 +34,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public OrdersAdapter(OnOrderClickListener listener) {
         this.orders = new ArrayList<>();
         this.listener = listener;
+        this.dateFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault());
     }
 
     public void setOrders(List<Order> orders) {
@@ -63,6 +65,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         private final TextView tvOrderId;
         private final TextView tvStatus;
         private final TextView tvOrderDate;
+        private final TextView tvDeliveryDate;
         private final TextView tvItemsCount;
         private final TextView tvTotalAmount;
         private final Button btnViewDetails;
@@ -72,6 +75,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             tvOrderId = itemView.findViewById(R.id.tvOrderId);
             tvStatus = itemView.findViewById(R.id.tvStatus);
             tvOrderDate = itemView.findViewById(R.id.tvOrderDate);
+            tvDeliveryDate = itemView.findViewById(R.id.tvDeliveryDate);
             tvItemsCount = itemView.findViewById(R.id.tvItemsCount);
             tvTotalAmount = itemView.findViewById(R.id.tvTotalAmount);
             btnViewDetails = itemView.findViewById(R.id.btnViewDetails);
@@ -98,10 +102,19 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             tvOrderId.setText(context.getString(R.string.order_id_format,
                     order.getOrderId().substring(0, 8).toUpperCase()));
 
+            // Formatear fecha de orden
+            if (order.getDate() != null) {
+                tvOrderDate.setText(dateFormat.format(order.getDate()));
+            } else {
+                tvOrderDate.setText(context.getString(R.string.not_available));
+            }
 
-            // Formatear fecha
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault());
-            tvOrderDate.setText(sdf.format(order.getDate()));
+            // Formatear fecha de entrega
+            if (order.getDeliveryDate() != null) {
+                tvDeliveryDate.setText(dateFormat.format(order.getDeliveryDate()));
+            } else {
+                tvDeliveryDate.setText(context.getString(R.string.not_available));
+            }
 
             // Configurar total
             tvTotalAmount.setText(context.getString(R.string.price_format, order.getTotal()));

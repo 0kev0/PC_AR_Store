@@ -48,7 +48,9 @@ public class OrderManager {
         Map<String, Object> orderValues = new HashMap<>();
         orderValues.put("orderId", order.getOrderId());
         orderValues.put("userId", order.getUserId());
-        orderValues.put("date", order.getDate().getTime()); // Guardar timestamp
+        //variables de delivery
+        orderValues.put("date", order.getDate().getTime());
+        orderValues.put("deliveryDate", order.getDeliveryDate().getTime());
         orderValues.put("status", order.getStatus());
         orderValues.put("total", order.getTotal());
 
@@ -73,6 +75,12 @@ public class OrderManager {
 
     public void updateOrderStatus(String orderId, String newStatus, OrderCallback callback) {
         ordersRef.child(orderId).child("status").setValue(newStatus)
+                .addOnSuccessListener(aVoid -> callback.onSuccess(orderId))
+                .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
+    }
+
+    public void updateDeliveryDate(String orderId, long deliveryTimestamp, OrderCallback callback) {
+        ordersRef.child(orderId).child("deliveryDate").setValue(deliveryTimestamp)
                 .addOnSuccessListener(aVoid -> callback.onSuccess(orderId))
                 .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
