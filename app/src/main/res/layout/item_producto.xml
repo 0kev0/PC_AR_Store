@@ -173,8 +173,6 @@
                 android:insetBottom="0dp"
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_heart"
-                app:iconTint="#FF4081"
-                app:strokeColor="#FF4081"
                 app:strokeWidth="1dp" />
 
             <!-- Botón Añadir al carrito -->

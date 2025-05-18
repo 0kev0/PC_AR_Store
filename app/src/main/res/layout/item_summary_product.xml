@@ -35,9 +35,10 @@
             <!-- Nombre del producto -->
             <TextView
                 android:id="@+id/tv_product_name"
+                android:text="test"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="end"
@@ -46,18 +47,20 @@
             <!-- Precio unitario -->
             <TextView
                 android:id="@+id/tv_product_price"
+                android:text="test"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
+                android:textSize="10sp"
                 android:layout_marginTop="4dp"
                 android:textColor="#757575"/>
 
             <!-- Cantidad -->
             <TextView
                 android:id="@+id/tv_product_quantity"
+                android:text="test"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
+                android:textSize="10sp"
                 android:layout_marginTop="4dp"
                 android:textColor="#757575"/>
         </LinearLayout>
@@ -65,9 +68,10 @@
         <!-- Subtotal (precio x cantidad) -->
         <TextView
             android:id="@+id/tv_product_subtotal"
+            android:text="test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textStyle="bold"
             android:layout_gravity="center_vertical"
             android:textColor="@android:color/black"/>
