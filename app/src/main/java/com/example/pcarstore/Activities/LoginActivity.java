@@ -24,6 +24,7 @@ import androidx.credentials.GetCredentialRequest;
 import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 
+import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.example.pcarstore.Services.DatabaseSeederService;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -75,6 +76,8 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Initialize the DatabaseService
         DatabaseSeederService dbService = new DatabaseSeederService();
@@ -176,6 +179,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "Usuario registrado con éxito");
+                        saveUserToDatabase(mAuth.getCurrentUser().getEmail(),mAuth.getCurrentUser().getDisplayName(),mAuth.getCurrentUser().getUid());
                         startActivity(new Intent(LoginActivity.this, InicioActivity.class));
                         finish();
                     } else if (task == null) {
@@ -189,6 +193,27 @@ public class LoginActivity extends AppCompatActivity {
                                 "Error en autenticación con Firebase",
                                 Toast.LENGTH_SHORT).show();
                     }
+                });
+    }
+
+    private void saveUserToDatabase(String email, String fullName, String userId) {
+        User user = new User.Builder(email)
+                .setName(fullName)
+                .setRole("client")
+                .setSaldo(0.0)
+                .setMembresiaPrime(false)
+                .build();
+
+        mDatabase.child("users").child(userId)
+                .setValue(user)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "¡Registro exitoso!", Toast.LENGTH_LONG).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this,
+                            "Error al guardar datos adicionales",
+                            Toast.LENGTH_SHORT).show();
                 });
     }
 
