@@ -50,26 +50,87 @@
         </LinearLayout>
 
         <!-- Order Date -->
-        <TextView
-            android:id="@+id/tvOrderDate"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:drawablePadding="8dp"
-            android:drawableTint="?attr/colorPrimary"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            tools:text="15 Jun 2023 - 10:30 AM" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <!-- Order Summary -->
-        <TextView
-            android:id="@+id/tvItemsCount"
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                app:tint="?attr/colorPrimary"
+                android:contentDescription="@string/order_date" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/order_date"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:layout_marginStart="8dp"/>
+
+            <TextView
+                android:id="@+id/tvOrderDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                tools:text="15 Jun 2023 - 10:30 AM" />
+        </LinearLayout>
+
+        <!-- Delivery Date -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:drawablePadding="8dp"
-            android:drawableTint="?attr/colorPrimary"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            tools:text="3 artículos" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                app:tint="?attr/colorPrimary"
+                android:contentDescription="@string/delivery_date" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delivery_date"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:layout_marginStart="8dp"/>
+
+            <TextView
+                android:id="@+id/tvDeliveryDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                tools:text="16 Jun 2023 - 10:30 AM" />
+        </LinearLayout>
+
+        <!-- Order Summary -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                app:tint="?attr/colorPrimary"
+ />
+
+            <TextView
+                android:id="@+id/tvItemsCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                tools:text="3 artículos" />
+        </LinearLayout>
 
         <!-- Total Amount -->
         <LinearLayout

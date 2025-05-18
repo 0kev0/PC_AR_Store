@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pcarstore.Adapters.OrdersAdapter;
+import com.example.pcarstore.Dialogs.OrderDetailsDialog;
 import com.example.pcarstore.ModelsDB.Order;
 import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.R;
@@ -125,10 +126,19 @@ public class OrdersActivity extends AppCompatActivity {
             order.setStatus(orderSnapshot.child("status").getValue(String.class));
             order.setTotal(orderSnapshot.child("total").getValue(Double.class));
 
-            // Parsear fecha
+            // Parsear fecha de orden
             Long timestamp = orderSnapshot.child("date").getValue(Long.class);
             if (timestamp != null) {
                 order.setDate(new Date(timestamp));
+            }
+
+            // Parsear fecha de entrega
+            Long deliveryTimestamp = orderSnapshot.child("deliveryDate").getValue(Long.class);
+            if (deliveryTimestamp != null) {
+                order.setDeliveryDate(new Date(deliveryTimestamp));
+            } else if (timestamp != null) {
+                // Si no hay fecha de entrega pero sí hay fecha de orden, calcular automáticamente
+                order.setDate(new Date(timestamp)); // Esto activará el cálculo automático de la fecha de entrega
             }
 
             // Parsear items
@@ -155,10 +165,9 @@ public class OrdersActivity extends AppCompatActivity {
         // Aquí puedes implementar la navegación al detalle de la orden
         Toast.makeText(this, "Pedido seleccionado: " + order.getOrderId(), Toast.LENGTH_SHORT).show();
 
-        // Ejemplo de cómo abrir una actividad de detalle:
-        // Intent intent = new Intent(this, OrderDetailActivity.class);
-        // intent.putExtra("order_id", order.getOrderId());
-        // startActivity(intent);
+        OrderDetailsDialog dialog = new OrderDetailsDialog(order);
+        dialog.show(getSupportFragmentManager(), "OrderDetailsDialog");
+
     }
 
     @Override

@@ -22,5 +22,7 @@
     <color name="colorSuccess">#4CAF50</color>
     <color name="colorError">#F44336</color>
     <color name="prime_member_background">#FFF8E1</color>
+    <color name="gray_600">#BDBDBD</color>
+
 
 </resources>
