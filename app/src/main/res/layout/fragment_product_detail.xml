@@ -23,7 +23,6 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:layout_below="@id/recyclerProductImages"
         android:fillViewport="true"
         android:background="@drawable/rounded_shadow_recycler">
@@ -43,7 +42,6 @@
                 android:padding="16dp"
                 android:elevation="2dp"
                 android:outlineProvider="background"
-
                 android:clipToOutline="true">
 
                 <TextView
@@ -151,48 +149,70 @@
                 android:background="@drawable/round_backgound"
                 android:layout_marginTop="24dp"
                 android:layout_marginHorizontal="16dp"
-            android:padding="16dp">
+                android:padding="16dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAddToCart"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="Añadir al carrito"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                style="@style/Widget.MaterialComponents.Button"
-                android:backgroundTint="#7AC6D2"
-                android:textColor="@color/white"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                app:cornerRadius="8dp"
-            app:icon="@drawable/ic_carrito"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAddToCart"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="Añadir al carrito"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:backgroundTint="#7AC6D2"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_carrito"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"/>
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="12dp" />
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="12dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnViewAR"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="Ver en Realidad Aumentada"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:backgroundTint="@color/white"
-                android:textColor="#7AC6D2"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                app:strokeColor="#7AC6D2"
-            app:strokeWidth="1dp"
-            app:cornerRadius="8dp"
-            app:icon="@drawable/ic_ar"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconTint="#7AC6D2"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnViewAR"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="Ver en Realidad Aumentada"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:backgroundTint="@color/white"
+                    android:textColor="#7AC6D2"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    app:strokeColor="#7AC6D2"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_ar"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:iconTint="#7AC6D2"/>
 
-        </LinearLayout>
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="12dp" />
+
+                <!-- Nuevo botón para wishlist -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnWishlist"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="Añadir a favoritos"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:backgroundTint="@color/white"
+                    android:textColor="#FF4081"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    app:strokeColor="#FF4081"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_heart"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:iconTint="#FF4081"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

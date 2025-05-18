@@ -208,6 +208,11 @@ public class InventarioFragment extends Fragment implements ProductosAdapter.OnP
                 .show();
     }
 
+    @Override
+    public void onWishlistUpdated(Product product, boolean isInWishlist) {
+
+    }
+
     private void deleteProduct(String productId) {
         productsRef.child(productId).removeValue()
                 .addOnSuccessListener(aVoid -> {

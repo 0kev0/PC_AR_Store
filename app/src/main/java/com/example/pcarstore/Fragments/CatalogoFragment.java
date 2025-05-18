@@ -1,4 +1,3 @@
-
 package com.example.pcarstore.Fragments;
 
 import android.app.Activity;
@@ -37,7 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CatalogoFragment extends Fragment {
+public class CatalogoFragment extends Fragment{
 
     private static final String TAG = "CatalogoFragment";
     private RecyclerView productsRecycler, categoriesRecycler;
@@ -46,8 +45,10 @@ public class CatalogoFragment extends Fragment {
     private final List<Product> productList = new ArrayList<>();
     private final List<Category> categoryList = new ArrayList<>();
     private DatabaseReference mDatabase;
+    private DatabaseReference wishlistRef;
     private Context context;
-    private InicioActivity inicioActivity; // Reference to the activity
+    private InicioActivity inicioActivity;
+    private FirebaseAuth mAuth;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -63,6 +64,10 @@ public class CatalogoFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_catalogo, container, false);
+
+        // Inicializar Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
         initViews(view);
         setupRecyclerViews(view);
         initializeAdapters();
@@ -74,6 +79,12 @@ public class CatalogoFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         productsRecycler = view.findViewById(R.id.recyclerViewCatalogo);
         categoriesRecycler = view.findViewById(R.id.categoriesRecycler);
+
+        // Inicializar referencia a la wishlist
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            wishlistRef = FirebaseDatabase.getInstance().getReference("wishlist").child(currentUser.getUid());
+        }
     }
 
     private void setupRecyclerViews(View view) {
@@ -87,7 +98,7 @@ public class CatalogoFragment extends Fragment {
     }
 
     private void initializeAdapters() {
-        // Adapter de productos
+        // Adapter de productos con la nueva funcionalidad de wishlist
         productAdapter = new ProductAdapter(productList, new ProductAdapter.OnProductClickListener() {
             @Override
             public void onProductClick(Product product) {
@@ -98,6 +109,11 @@ public class CatalogoFragment extends Fragment {
             public void onAddToCart(Product product) {
                 addToCart(product, 1);
             }
+
+            @Override
+            public void onWishlistClick(Product product, boolean isInWishlist) {
+                handleWishlistClick(product, isInWishlist);
+            }
         }, context);
 
         // Adapter de categorías
@@ -107,6 +123,56 @@ public class CatalogoFragment extends Fragment {
 
         productsRecycler.setAdapter(productAdapter);
         categoriesRecycler.setAdapter(categoryAdapter);
+    }
+
+    private void handleWishlistClick(Product product, boolean isInWishlist) {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            showLoginRequiredDialog("Para guardar productos en tu lista de deseos, necesitas iniciar sesión.");
+            return;
+        }
+
+        if (wishlistRef == null) {
+            wishlistRef = FirebaseDatabase.getInstance().getReference("wishlist").child(currentUser.getUid());
+        }
+
+        if (isInWishlist) {
+            removeFromWishlist(product);
+        } else {
+            addToWishlist(product);
+        }
+    }
+
+    private void addToWishlist(Product product) {
+        wishlistRef.child(product.getProductId()).setValue(true)
+                .addOnSuccessListener(aVoid -> {
+                    showToast("Añadido a tu lista de deseos");
+                    productAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> showToast("Error al añadir a la lista de deseos"));
+    }
+
+    private void removeFromWishlist(Product product) {
+        wishlistRef.child(product.getProductId()).removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    showToast("Eliminado de tu lista de deseos");
+                    productAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> showToast("Error al eliminar de la lista de deseos"));
+    }
+
+    private void showLoginRequiredDialog(String message) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Inicio de sesión requerido")
+                .setMessage(message)
+                .setPositiveButton("Iniciar sesión", (dialog, which) -> {
+                    Intent loginIntent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(loginIntent);
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
+                .setIcon(R.drawable.ic_heart)
+                .setCancelable(false)
+                .show();
     }
 
     private void loadData() {
@@ -123,25 +189,9 @@ public class CatalogoFragment extends Fragment {
     }
 
     private void addToCart(Product product, int quantity) {
-        // Verificar primero si hay usuario autenticado
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
-            // Crear AlertDialog
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Inicio de sesión requerido")
-                    .setMessage("Debes iniciar sesión para agregar productos al carrito. ¿Deseas iniciar sesión ahora?")
-                    .setPositiveButton("Sí", (dialog, which) -> {
-                        // Redirigir al login
-                        Intent loginIntent = new Intent(getContext(), LoginActivity.class);
-                        loginIntent.putExtra("redirect_to", "cart");
-                        startActivity(loginIntent);
-                    })
-                    .setNegativeButton("Cancelar", (dialog, which) -> {
-                        dialog.dismiss();
-                    })
-                    .setIcon(R.drawable.ic_home)
-                    .setCancelable(false)
-                    .show();
+            showLoginRequiredDialog("Debes iniciar sesión para agregar productos al carrito.");
             return;
         }
 
@@ -171,6 +221,10 @@ public class CatalogoFragment extends Fragment {
             }
         });
     }
+
+    // Los demás métodos permanecen igual (updateExistingProduct, addNewProduct, loadCategories,
+    // loadProducts, filterProductsByCategoryName, updateCartTotal, showToast, showError)
+    // ...
 
     private void updateExistingProduct(DataSnapshot snapshot, DatabaseReference cartRef, Product product, int quantity) {
         Integer currentQuantity = snapshot.child("quantity").getValue(Integer.class);
@@ -256,6 +310,9 @@ public class CatalogoFragment extends Fragment {
                     productList.clear();
                     productList.addAll(newProducts);
                     productAdapter.notifyDataSetChanged();
+
+                    // Verificar wishlist para cada producto
+                    checkWishlistStatus();
                 }
             }
 
@@ -263,6 +320,27 @@ public class CatalogoFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 showError("Error al cargar productos: " + databaseError.getMessage());
                 Log.e(TAG, "Error loading products", databaseError.toException());
+            }
+        });
+    }
+
+    private void checkWishlistStatus() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null || wishlistRef == null) return;
+
+        wishlistRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (Product product : productList) {
+                    boolean isInWishlist = snapshot.hasChild(product.getProductId());
+                    product.setInWishlist(isInWishlist);
+                }
+                productAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error checking wishlist status: " + error.getMessage());
             }
         });
     }
@@ -288,6 +366,7 @@ public class CatalogoFragment extends Fragment {
                             productList.clear();
                             productList.addAll(filteredProducts);
                             productAdapter.notifyDataSetChanged();
+                            checkWishlistStatus();
                         }
                     }
 
@@ -327,4 +406,5 @@ public class CatalogoFragment extends Fragment {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         Log.e(TAG, message);
     }
+
 }

@@ -17,6 +17,7 @@ public class Product {
     private String model3dUrl;
     private String textureUrl;
     private Map<String, String> specifications;
+    private boolean inWishlist;
 
     public Product() {
         this.specifications = new HashMap<>();
@@ -37,7 +38,14 @@ public class Product {
         this.textureUrl = textureUrl;
         this.specifications = specifications;
     }
-// Getters y Setters
+
+    public boolean isInWishlist() {
+        return inWishlist;
+    }
+
+    public void setInWishlist(boolean inWishlist) {
+        this.inWishlist = inWishlist;
+    }
 
     public String getProductId() {
         return productId;
@@ -154,5 +162,6 @@ public class Product {
     public double getProfitMargin() {
         return price - cost;
     }
+
 
 }
