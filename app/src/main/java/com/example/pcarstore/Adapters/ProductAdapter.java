@@ -39,6 +39,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public interface OnProductClickListener {
         void onProductClick(Product product);
         void onAddToCart(Product product); // Make sure this method is included
+
+        void onWishlistClick(Product product, boolean isInWishlist);
     }
 
     // Interface for handling cart updates

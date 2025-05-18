@@ -53,6 +53,8 @@ import static android.app.Activity.RESULT_OK;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import android.content.SharedPreferences;
+
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 import java.util.Collections;
@@ -284,12 +286,14 @@ public class PerfilFragment extends Fragment {
 
     private void showWishlist() {
         if (mAuth.getCurrentUser() != null) {
-            Toast.makeText(getContext(),
-                    "Mostrando lista de deseos",
-                    Toast.LENGTH_SHORT).show();
+            Fragment wishlistFragment = new WishlistFragment();
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragmentContainerView2, wishlistFragment); // Asegúrate de que `fragment_container` sea el ID correcto de tu contenedor de fragmentos
+            transaction.addToBackStack(null);
+            transaction.commit();
         } else {
             Toast.makeText(getContext(),
-                    "Debes iniciar sesión para ver tus pedidos",
+                    "Debes iniciar sesión para ver tu Wishlist",
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -574,15 +578,6 @@ public class PerfilFragment extends Fragment {
         startActivityForResult(Intent.createChooser(intent, "Selecciona una imagen"), PICK_IMAGE_REQUEST);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            Toast.makeText(getContext(), "Imagen seleccionada", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private void uploadImageAndUpdateProfile(String newName, ProgressDialog progressDialog, AlertDialog dialog) {
         if (currentUser == null || imageUri == null) return;
