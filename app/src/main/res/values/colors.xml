@@ -23,6 +23,7 @@
     <color name="colorError">#F44336</color>
     <color name="prime_member_background">#FFF8E1</color>
     <color name="gray_600">#BDBDBD</color>
+    <color name="heart">#FF4081</color>
 
 
 </resources>

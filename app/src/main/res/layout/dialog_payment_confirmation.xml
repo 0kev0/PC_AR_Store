@@ -36,7 +36,7 @@
 
             <EditText
                 android:id="@+id/et_discount_code"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:hint="Código de descuento"
@@ -44,15 +44,26 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_apply_discount"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/white"
                 android:text="Aplicar"
-                android:layout_marginStart="8dp"
-                android:textColor="@android:color/white"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
+                android:textAllCaps="false"
+                android:textColor="#2196F3"
+                android:textSize="14sp"
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_check_circle"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                app:iconTint="#2196F3"
+                app:strokeColor="#2196F3"
+                app:strokeWidth="1dp" />
+
         </LinearLayout>
 
         <!-- Título resumen -->

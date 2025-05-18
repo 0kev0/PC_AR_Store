@@ -98,7 +98,7 @@ public class CatalogoFragment extends Fragment{
     }
 
     private void initializeAdapters() {
-        // Adapter de productos con la nueva funcionalidad de wishlist
+        // Adapter de productos con la funcionalidad de wishlist corregida
         productAdapter = new ProductAdapter(productList, new ProductAdapter.OnProductClickListener() {
             @Override
             public void onProductClick(Product product) {
@@ -136,29 +136,51 @@ public class CatalogoFragment extends Fragment{
             wishlistRef = FirebaseDatabase.getInstance().getReference("wishlist").child(currentUser.getUid());
         }
 
+        // Aquí está la corrección - cambiamos la lógica para asegurarnos de que
+        // no estamos duplicando la acción
         if (isInWishlist) {
+            // Si ya está en wishlist, lo quitamos
             removeFromWishlist(product);
         } else {
+            // Si no está en wishlist, lo añadimos
             addToWishlist(product);
         }
     }
 
     private void addToWishlist(Product product) {
+        // Actualizamos el modelo inmediatamente para evitar múltiples clicks
+        product.setInWishlist(true);
+        // Notificamos al adapter del cambio
+        productAdapter.notifyDataSetChanged();
+
         wishlistRef.child(product.getProductId()).setValue(true)
                 .addOnSuccessListener(aVoid -> {
                     showToast("Añadido a tu lista de deseos");
-                    productAdapter.notifyDataSetChanged();
                 })
-                .addOnFailureListener(e -> showToast("Error al añadir a la lista de deseos"));
+                .addOnFailureListener(e -> {
+                    // En caso de error, revertimos el cambio
+                    product.setInWishlist(false);
+                    productAdapter.notifyDataSetChanged();
+                    showToast("Error al añadir a la lista de deseos");
+                });
     }
 
     private void removeFromWishlist(Product product) {
+        // Actualizamos el modelo inmediatamente para evitar múltiples clicks
+        product.setInWishlist(false);
+        // Notificamos al adapter del cambio
+        productAdapter.notifyDataSetChanged();
+
         wishlistRef.child(product.getProductId()).removeValue()
                 .addOnSuccessListener(aVoid -> {
                     showToast("Eliminado de tu lista de deseos");
-                    productAdapter.notifyDataSetChanged();
                 })
-                .addOnFailureListener(e -> showToast("Error al eliminar de la lista de deseos"));
+                .addOnFailureListener(e -> {
+                    // En caso de error, revertimos el cambio
+                    product.setInWishlist(true);
+                    productAdapter.notifyDataSetChanged();
+                    showToast("Error al eliminar de la lista de deseos");
+                });
     }
 
     private void showLoginRequiredDialog(String message) {
@@ -221,10 +243,6 @@ public class CatalogoFragment extends Fragment{
             }
         });
     }
-
-    // Los demás métodos permanecen igual (updateExistingProduct, addNewProduct, loadCategories,
-    // loadProducts, filterProductsByCategoryName, updateCartTotal, showToast, showError)
-    // ...
 
     private void updateExistingProduct(DataSnapshot snapshot, DatabaseReference cartRef, Product product, int quantity) {
         Integer currentQuantity = snapshot.child("quantity").getValue(Integer.class);
@@ -309,7 +327,6 @@ public class CatalogoFragment extends Fragment{
                 if (productAdapter != null) {
                     productList.clear();
                     productList.addAll(newProducts);
-                    productAdapter.notifyDataSetChanged();
 
                     // Verificar wishlist para cada producto
                     checkWishlistStatus();
@@ -326,7 +343,14 @@ public class CatalogoFragment extends Fragment{
 
     private void checkWishlistStatus() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null || wishlistRef == null) return;
+        if (currentUser == null || wishlistRef == null) {
+            // Si no hay usuario logueado, no hay productos en wishlist
+            for (Product product : productList) {
+                product.setInWishlist(false);
+            }
+            productAdapter.notifyDataSetChanged();
+            return;
+        }
 
         wishlistRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -365,7 +389,7 @@ public class CatalogoFragment extends Fragment{
                         if (productAdapter != null) {
                             productList.clear();
                             productList.addAll(filteredProducts);
-                            productAdapter.notifyDataSetChanged();
+
                             checkWishlistStatus();
                         }
                     }
@@ -406,5 +430,4 @@ public class CatalogoFragment extends Fragment{
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         Log.e(TAG, message);
     }
-
 }

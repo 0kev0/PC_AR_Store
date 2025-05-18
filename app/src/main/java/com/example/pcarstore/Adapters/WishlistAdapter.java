@@ -1,6 +1,7 @@
 package com.example.pcarstore.Adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +10,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.ModelsDB.WishlistItem;
 import com.example.pcarstore.R;
@@ -43,7 +50,9 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
         Product product = wishlistProducts.get(position);
         holder.productName.setText(product.getName());
         holder.productPrice.setText("$" + product.getPrice());
-
+        Glide.with(holder.itemView.getContext())
+                .load(product.getMainImageUrl())
+                .into(holder.productImage);
     }
 
 
@@ -55,8 +64,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView productName, productPrice;
-        ImageView productImage;
-        Button btnRemove;
+        ImageView productImage,btnRemove;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
