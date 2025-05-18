@@ -59,7 +59,7 @@ public class FirstFragment extends Fragment {
         });
 
         rootView.findViewById(R.id.card_inventory).setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Control de Inventario seleccionado", Toast.LENGTH_SHORT).show();
+            replaceFragment(new InventarioFragment());
         });
 
         rootView.findViewById(R.id.card_reports).setOnClickListener(v -> {

@@ -21,59 +21,41 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClickListener {
 
     private DatabaseReference usersRef;
-
     private Button btnNewUser;
     private UserAdapter userAdapter;
+    private List<User> allUsers = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_usuarios, container, false);
 
-        // 1. Inicializar Firebase
         usersRef = FirebaseDatabase.getInstance().getReference("users");
+
         btnNewUser = view.findViewById(R.id.btnAddUser);
         btnNewUser.setOnClickListener(v -> showAddUserDialog());
-        // 2. Configurar RecyclerView
+
         RecyclerView recyclerView = view.findViewById(R.id.rvUsers);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         userAdapter = new UserAdapter(usersRef, this);
         recyclerView.setAdapter(userAdapter);
-
-        // 3. Configurar búsqueda y filtros
-        setupSearchAndFilters(view);
-
         return view;
     }
 
-    private void setupSearchAndFilters(View view) {
-        // Configurar ChipGroup para filtrar por roles
-        ChipGroup chipGroup = view.findViewById(R.id.chipGroup);
-        chipGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            Chip chip = view.findViewById(checkedId);
-            if (chip != null) {
-                String filterText = chip.getText().toString();
-                if (filterText.equals("Todos")) {
-                    userAdapter.loadUsers();
-                } else {
-                    userAdapter.filterByRole(filterText);
-                }
-            }
-        });
-    }
 
     @Override
     public void onEditClick(User user) {
@@ -90,7 +72,6 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
         etName.setText(user.getName());
         etEmail.setText(user.getEmail());
         etRole.setText(user.getRole());
-
 
         builder.setPositiveButton("Guardar", (dialog, which) -> {
             String newName = etName.getText().toString().trim();
@@ -112,12 +93,13 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
     }
 
     private void updateUserInFirebase(String userId, String newName, String newEmail, String newRole) {
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
 
         Map<String, Object> updates = new HashMap<>();
         updates.put("name", newName);
         updates.put("email", newEmail);
         updates.put("role", newRole);
+
         userRef.updateChildren(updates)
                 .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Usuario actualizado", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al actualizar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
@@ -129,7 +111,6 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
                 .setTitle("Confirmar Eliminación")
                 .setMessage("¿Eliminar permanentemente a " + user.getName() + "?")
                 .setPositiveButton("Eliminar", (dialog, which) -> {
-                    // Mostrar progreso
                     ProgressDialog progress = new ProgressDialog(getContext());
                     progress.setMessage("Eliminando usuario...");
                     progress.setCancelable(false);
@@ -144,7 +125,7 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
 
     @Override
     public void onViewDetailsClick(User user) {
-
+        // Implementar según necesidades
     }
 
     private void deleteUserFromDatabase(User user, ProgressDialog progress) {
@@ -155,10 +136,9 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
         }
 
         DatabaseReference userRef = FirebaseDatabase.getInstance()
-                .getReference("Users")
+                .getReference("users")
                 .child(user.getUserId());
 
-        // Primero verifica que el nodo existe
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -168,13 +148,10 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
                     return;
                 }
 
-                // Eliminar de Firebase
                 userRef.removeValue()
                         .addOnSuccessListener(aVoid -> {
                             progress.dismiss();
                             Toast.makeText(getContext(), "Usuario eliminado", Toast.LENGTH_SHORT).show();
-
-                            // Opcional: Actualizar la lista manualmente
                             if (userAdapter != null) {
                                 userAdapter.removeUserFromList(user.getUserId());
                             }
@@ -194,30 +171,26 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
         });
     }
 
-
     private void showAddUserDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Agregar Nuevo Usuario");
 
-        // Inflar el layout del diálogo
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_user, null);
         builder.setView(dialogView);
 
-        // Obtener referencias a los campos
-        TextInputEditText etName = dialogView.findViewById(R.id.etName );
+        TextInputEditText etName = dialogView.findViewById(R.id.etName);
         TextInputEditText etEmail = dialogView.findViewById(R.id.etEmail);
         TextInputEditText etPassword = dialogView.findViewById(R.id.etPassword);
         TextInputEditText etRole = dialogView.findViewById(R.id.etRole);
 
         builder.setPositiveButton("Guardar", (dialog, which) -> {
-            // Validar y obtener datos
             String name = etName.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
             String role = etRole.getText().toString().trim();
 
             if (validateUserInput(name, email, password, role)) {
-                //saveNewUserToFirebase(name, email, password, role);
+                saveNewUserToFirebase(name, email, role);
             }
         });
 
@@ -250,20 +223,19 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
 
         return true;
     }
+
     private void saveNewUserToFirebase(String name, String email, String role) {
         ProgressDialog progress = new ProgressDialog(getContext());
         progress.setMessage("Guardando usuario...");
         progress.show();
 
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
-        String userId = usersRef.push().getKey(); // Genera ID único
+        String userId = usersRef.push().getKey();
 
         User newUser = new User();
         newUser.setUserId(userId);
         newUser.setName(name);
         newUser.setEmail(email);
         newUser.setRole(role);
-        //newUser.setCreatedAt(System.currentTimeMillis());
 
         usersRef.child(userId).setValue(newUser)
                 .addOnCompleteListener(task -> {
@@ -277,6 +249,4 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
                     }
                 });
     }
-
-
 }

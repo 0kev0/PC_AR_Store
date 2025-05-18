@@ -167,13 +167,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             tvUserEmail.setText(user.getEmail());
             tvUserRole.setText(user.getRole() != null ? user.getRole() : "Sin rol");
 
-            // Mostrar ubicación
             String location = (user.getDepartamento() != null ? user.getDepartamento() : "") +
                     (user.getCiudad() != null ? ", " + user.getCiudad() : "");
             tvUserLocation.setText(location.isEmpty() ? "Ubicación no especificada" : location);
 
-
-            // Cargar imagen de perfil
             if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
                 Glide.with(itemView.getContext())
                         .load(user.getProfileImageUrl())
@@ -183,14 +180,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 ivUserAvatar.setImageResource(R.drawable.ic_account_circle);
             }
 
-            // Mostrar estado de membresía
             if (user.isMembresiaPrime()) {
                 itemView.setBackgroundColor(itemView.getContext().getResources().getColor(R.color.prime_member_background));
             } else {
                 itemView.setBackgroundColor(itemView.getContext().getResources().getColor(android.R.color.transparent));
             }
 
-            // Configurar listeners
             btnEdit.setOnClickListener(v -> listener.onEditClick(user));
             btnDelete.setOnClickListener(v -> listener.onDeleteClick(user));
             btnDetails.setOnClickListener(v -> listener.onViewDetailsClick(user));
@@ -198,7 +193,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         }
     }
     public void removeUserFromList(String userId) {
-        // Buscar y eliminar el usuario de ambas listas
         for (int i = 0; i < userList.size(); i++) {
             if (userList.get(i).getUserId().equals(userId)) {
                 userList.remove(i);
@@ -207,7 +201,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             }
         }
 
-        // Hacer lo mismo para cachedUserList si es necesario
         for (int i = 0; i < userList.size(); i++) {
             if (userList.get(i).getUserId().equals(userId)) {
                 userList.remove(i);
@@ -218,10 +211,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     private void checkEmptyState() {
-        if (userList.isEmpty()) {
-
-        } else {
-            // Ocultar mensaje de lista vacía
-        }
+        if (userList.isEmpty()) {} else {}
     }
 }
