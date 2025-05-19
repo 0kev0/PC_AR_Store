@@ -49,12 +49,4 @@ public class AdminActivity extends AppCompatActivity {
                 .commit();
     }
 
-    // Método seguro para encontrar vistas
-    private <T extends View> T findView(@IdRes int id) {
-        T view = findViewById(id);
-        if (view == null) {
-            throw new IllegalArgumentException("ID "+getResources().getResourceName(id)+" no encontrado");
-        }
-        return view;
-    }
 }
