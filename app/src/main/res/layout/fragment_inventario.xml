@@ -55,7 +55,7 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:paddingBottom="16dp"
-        tools:listitem="@layout/item_product"/>
+        tools:listitem="@layout/item_admin_product"/>
 
     <LinearLayout
         android:id="@+id/emptyState"
