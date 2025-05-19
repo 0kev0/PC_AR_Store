@@ -1,9 +1,7 @@
-
 package com.example.pcarstore.Adapters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +22,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
@@ -39,6 +38,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public interface OnProductClickListener {
         void onProductClick(Product product);
         void onAddToCart(Product product); // Make sure this method is included
+        void onWishlistClick(Product product, boolean isInWishlist);
     }
 
     // Interface for handling cart updates
@@ -50,6 +50,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         this.productList = productList;
         this.listener = listener;
         this.context = context;
+        mAuth = FirebaseAuth.getInstance();
     }
 
     public void setOnCartUpdateListener(OnCartUpdateListener listener) {
@@ -80,6 +81,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         private final TextView productName;
         private final TextView productPrice;
         private final Button viewDetailsButton, addToCartButton;
+        private final MaterialButton btnWishlist;
         private final LottieAnimationView lottieLoading;
 
         public ProductViewHolder(@NonNull View itemView) {
@@ -89,6 +91,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productPrice = itemView.findViewById(R.id.productPrice);
             viewDetailsButton = itemView.findViewById(R.id.viewDetailsButton);
             addToCartButton = itemView.findViewById(R.id.addToCartButton);
+            btnWishlist = itemView.findViewById(R.id.btnWishlist);
             lottieLoading = itemView.findViewById(R.id.lottieLoading);
             mAuth = FirebaseAuth.getInstance();
 
@@ -124,6 +127,24 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     })
                     .into(productImage);
 
+            // Update wishlist icon based on current status
+            updateWishlistIcon(product.isInWishlist());
+
+            // Set up wishlist button click listener
+            btnWishlist.setOnClickListener(v -> {
+                if (mAuth.getCurrentUser() != null) {
+                    // Important: Just call the listener - don't modify Firebase here!
+                    // This prevents double handling of wishlist actions
+                    if (listener != null) {
+                        listener.onWishlistClick(product, product.isInWishlist());
+                    }
+                } else {
+                    Toast.makeText(itemView.getContext(),
+                            "Inicia sesión para añadir a favoritos",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+
             viewDetailsButton.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onProductClick(product);
@@ -143,7 +164,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 if (cartUpdateListener != null) {
                     cartUpdateListener.onCartUpdated(product, 1);
                 }
-
             });
 
             itemView.setOnClickListener(v -> {
@@ -153,8 +173,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             });
         }
 
-        private void showToast(Context context, String message) {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        private void updateWishlistIcon(boolean isInWishlist) {
+            if (isInWishlist) {
+                // Product is in wishlist - show filled heart in gray
+                btnWishlist.setIconTint(itemView.getContext().getResources().getColorStateList(R.color.heart, null));
+                btnWishlist.setStrokeColor(itemView.getContext().getResources().getColorStateList(R.color.heart, null));
+            } else {
+                // Product is not in wishlist - show outlined heart in pink
+                btnWishlist.setIconTint(itemView.getContext().getResources().getColorStateList(R.color.gray, null));
+                btnWishlist.setStrokeColor(itemView.getContext().getResources().getColorStateList(R.color.gray, null));
+            }
         }
     }
 

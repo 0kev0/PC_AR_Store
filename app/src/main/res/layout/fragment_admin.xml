@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5"
+    android:id="@+id/fragmentContaineradmin"
     android:fillViewport="true">
 
     <LinearLayout
@@ -13,7 +14,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header con bienvenida -->
+        <!-- Header Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +39,7 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- Tarjetas de métricas rápidas -->
+        <!-- Metrics Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,13 +53,17 @@
                 android:orientation="horizontal"
                 android:padding="16dp">
 
-                <!-- Métrica 1: Usuarios -->
+                <!-- Users Metric -->
                 <LinearLayout
+                    android:id="@+id/metric_users"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="48dp"
@@ -84,13 +89,17 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- Métrica 2: Productos -->
+                <!-- Products Metric -->
                 <LinearLayout
+                    android:id="@+id/metric_products"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="48dp"
@@ -116,13 +125,17 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- Métrica 3: Pedidos -->
+                <!-- Orders Metric -->
                 <LinearLayout
+                    android:id="@+id/metric_orders"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="48dp"
@@ -150,7 +163,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Sección de Acciones Rápidas -->
+        <!-- Quick Actions Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -170,8 +183,9 @@
             android:columnOrderPreserved="false"
             android:padding="8dp">
 
-            <!-- Tarjeta Gestión de Usuarios -->
+            <!-- Manage Users Card -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_manage_users"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_columnWeight="1"
@@ -180,7 +194,10 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="2dp"
                 app:strokeColor="#E0E0E0"
-                app:strokeWidth="1dp">
+                app:strokeWidth="1dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -206,8 +223,9 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Tarjeta Inventario -->
+            <!-- Inventory Card -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_inventory"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_columnWeight="1"
@@ -216,7 +234,10 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="2dp"
                 app:strokeColor="#E0E0E0"
-                app:strokeWidth="1dp">
+                app:strokeWidth="1dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -242,8 +263,9 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Tarjeta Reportes -->
+            <!-- Reports Card -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_reports"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_columnWeight="1"
@@ -252,7 +274,10 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="2dp"
                 app:strokeColor="#E0E0E0"
-                app:strokeWidth="1dp">
+                app:strokeWidth="1dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -278,8 +303,9 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Tarjeta Configuración -->
+            <!-- Settings Card -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_settings"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_columnWeight="1"
@@ -288,7 +314,10 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="2dp"
                 app:strokeColor="#E0E0E0"
-                app:strokeWidth="1dp">
+                app:strokeWidth="1dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -315,7 +344,7 @@
             </com.google.android.material.card.MaterialCardView>
         </GridLayout>
 
-        <!-- Sección de Actividad Reciente -->
+        <!-- Recent Activity Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -338,12 +367,16 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Item de actividad 1 -->
+                <!-- Activity Item 1 -->
                 <LinearLayout
+                    android:id="@+id/activity_user"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingVertical="8dp">
+                    android:paddingVertical="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="24dp"
@@ -359,6 +392,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tvActivityTitle1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Nuevo usuario registrado"
@@ -366,6 +400,7 @@
                             android:textSize="14sp" />
 
                         <TextView
+                            android:id="@+id/tvActivitySubtitle1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
@@ -382,12 +417,16 @@
                     android:layout_marginVertical="4dp"
                     android:background="#EEEEEE" />
 
-                <!-- Item de actividad 2 -->
+                <!-- Activity Item 2 -->
                 <LinearLayout
+                    android:id="@+id/activity_order"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingVertical="8dp">
+                    android:paddingVertical="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="24dp"
@@ -403,6 +442,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tvActivityTitle2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Nuevo pedido completado"
@@ -410,6 +450,7 @@
                             android:textSize="14sp" />
 
                         <TextView
+                            android:id="@+id/tvActivitySubtitle2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
@@ -421,4 +462,4 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

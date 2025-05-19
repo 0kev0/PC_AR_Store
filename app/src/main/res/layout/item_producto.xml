@@ -16,19 +16,21 @@
         android:background="@color/white"
         android:padding="16dp">
 
+        <!-- Imagen del producto -->
         <ImageView
             android:id="@+id/productImage"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
+            android:layout_width="205dp"
+            android:layout_height="170dp"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
             android:background="@drawable/image_rounded_corners"
+            android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/placer_holder" />
 
+        <!-- Animación de carga -->
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottieLoading"
             android:layout_width="100dp"
@@ -41,6 +43,7 @@
             app:lottie_autoPlay="true"
             app:lottie_loop="true" />
 
+        <!-- Categoría del producto -->
         <TextView
             android:id="@+id/productCategory"
             android:layout_width="0dp"
@@ -56,6 +59,7 @@
             app:layout_constraintTop_toBottomOf="@id/productImage"
             tools:text="RUEDAS" />
 
+        <!-- Nombre del producto -->
         <TextView
             android:id="@+id/productName"
             android:layout_width="0dp"
@@ -71,6 +75,7 @@
             app:layout_constraintTop_toBottomOf="@id/productCategory"
             tools:text="Llantas DeportivasX 18'' Aleación Ligera" />
 
+        <!-- Contenedor de rating y stock -->
         <LinearLayout
             android:id="@+id/ratingStockContainer"
             android:layout_width="0dp"
@@ -96,6 +101,7 @@
                 tools:text="Últimas 5 unidades" />
         </LinearLayout>
 
+        <!-- Precio del producto -->
         <TextView
             android:id="@+id/productPrice"
             android:layout_width="wrap_content"
@@ -108,6 +114,7 @@
             app:layout_constraintTop_toBottomOf="@id/ratingStockContainer"
             tools:text="$299.99" />
 
+        <!-- Precio original (tachado) -->
         <TextView
             android:id="@+id/originalPrice"
             android:layout_width="wrap_content"
@@ -120,47 +127,71 @@
             app:layout_constraintStart_toEndOf="@id/productPrice"
             tools:text="$399.99" />
 
+        <!-- Contenedor de botones - Versión mejorada -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:orientation="horizontal"
-            android:weightSum="2"
+            android:gravity="center"
+            android:paddingVertical="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/productPrice">
 
-            <Button
+            <!-- Botón Detalles -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/viewDetailsButton"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/white"
                 android:text="Detalles"
-                android:textColor="#2196F3"
                 android:textAllCaps="false"
+                android:textColor="#2196F3"
                 android:textSize="14sp"
-                android:background="?attr/selectableItemBackgroundBorderless" />
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_info"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                app:iconTint="#2196F3"
+                app:strokeColor="#2196F3"
+                app:strokeWidth="1dp" />
 
-            <Button
+            <!-- Botón Wishlist -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnWishlist"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="4dp"
+                android:backgroundTint="@color/white"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_heart"
+                app:strokeWidth="1dp" />
+
+            <!-- Botón Añadir al carrito -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/addToCartButton"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
+                android:layout_marginStart="4dp"
                 android:backgroundTint="#3A59D1"
                 android:text="Añadir"
-                android:textColor="@color/white"
                 android:textAllCaps="false"
+                android:textColor="@color/white"
                 android:textSize="14sp"
-                android:drawableStart="@drawable/ic_carrito"
-                android:drawableTint="@color/white"
-                android:drawablePadding="6dp"
-                android:elevation="2dp"
-                android:stateListAnimator="@null"
-                style="@style/Widget.AppCompat.Button.Colored" />
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_carrito"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                app:iconTint="@color/white" />
         </LinearLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

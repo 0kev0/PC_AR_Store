@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,7 +24,8 @@ import java.util.Locale;
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
 
     private List<Order> orders;
-    private OnOrderClickListener listener;
+    private final OnOrderClickListener listener;
+    private final SimpleDateFormat dateFormat;
 
     public interface OnOrderClickListener {
         void onOrderClick(Order order);
@@ -32,10 +34,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public OrdersAdapter(OnOrderClickListener listener) {
         this.orders = new ArrayList<>();
         this.listener = listener;
+        this.dateFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault());
     }
 
     public void setOrders(List<Order> orders) {
-        this.orders = orders;
+        this.orders = orders != null ? orders : new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -51,12 +54,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = orders.get(position);
         holder.bind(order);
-
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onOrderClick(order);
-            }
-        });
     }
 
     @Override
@@ -64,49 +61,86 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         return orders.size();
     }
 
-    static class OrderViewHolder extends RecyclerView.ViewHolder {
-        private TextView orderIdText, dateText, totalText, statusText;
-        private ImageView statusIcon;
-
+    public class OrderViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvOrderId;
+        private final TextView tvStatus;
+        private final TextView tvOrderDate;
+        private final TextView tvDeliveryDate;
+        private final TextView tvItemsCount;
+        private final TextView tvTotalAmount;
+        private final Button btnViewDetails;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
-            orderIdText = itemView.findViewById(R.id.orderIdText);
-            dateText = itemView.findViewById(R.id.dateText);
-            totalText = itemView.findViewById(R.id.totalText);
-            statusText = itemView.findViewById(R.id.statusText);
-            statusIcon = itemView.findViewById(R.id.statusIcon);
+            tvOrderId = itemView.findViewById(R.id.tvOrderId);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
+            tvOrderDate = itemView.findViewById(R.id.tvOrderDate);
+            tvDeliveryDate = itemView.findViewById(R.id.tvDeliveryDate);
+            tvItemsCount = itemView.findViewById(R.id.tvItemsCount);
+            tvTotalAmount = itemView.findViewById(R.id.tvTotalAmount);
+            btnViewDetails = itemView.findViewById(R.id.btnViewDetails);
+
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onOrderClick(orders.get(position));
+                }
+            });
+
+            btnViewDetails.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onOrderClick(orders.get(position));
+                }
+            });
         }
 
         public void bind(Order order) {
-            orderIdText.setText("Pedido #" + order.getOrderId().substring(0, 8).toUpperCase());
+            Context context = itemView.getContext();
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault());
-            dateText.setText(sdf.format(order.getDate()));
+            // Configurar ID de orden
+            tvOrderId.setText(context.getString(R.string.order_id_format,
+                    order.getOrderId().substring(0, 8).toUpperCase()));
 
-            totalText.setText(String.format(Locale.getDefault(), "Total: $%.2f", order.getTotal()));
+            // Formatear fecha de orden
+            if (order.getDate() != null) {
+                tvOrderDate.setText(dateFormat.format(order.getDate()));
+            } else {
+                tvOrderDate.setText(context.getString(R.string.not_available));
+            }
 
-            // Configurar estado con colores diferentes
+            // Formatear fecha de entrega
+            if (order.getDeliveryDate() != null) {
+                tvDeliveryDate.setText(dateFormat.format(order.getDeliveryDate()));
+            } else {
+                tvDeliveryDate.setText(context.getString(R.string.not_available));
+            }
+
+            // Configurar total
+            tvTotalAmount.setText(context.getString(R.string.price_format, order.getTotal()));
+
+            // Configurar conteo de artículos
+            int itemCount = order.getItems() != null ? order.getItems().size() : 0;
+            tvItemsCount.setText(context.getResources().getQuantityString(
+                    R.plurals.items_count, itemCount, itemCount));
+
+            // Configurar estado
             switch (order.getStatus().toLowerCase()) {
                 case "completed":
-                    statusText.setText("Completado");
-                    statusText.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.green));
-                    statusIcon.setImageResource(R.drawable.ic_check_circle);
+                    tvStatus.setText(context.getString(R.string.status_completed));
+                    tvStatus.setTextColor(ContextCompat.getColor(context, R.color.green));
                     break;
                 case "cancelled":
-                    statusText.setText("Cancelado");
-                    statusText.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
-                    statusIcon.setImageResource(R.drawable.ic_cancel);
+                    tvStatus.setText(context.getString(R.string.status_cancelled));
+                    tvStatus.setTextColor(ContextCompat.getColor(context, R.color.red));
                     break;
                 case "processing":
-                    statusText.setText("En proceso");
-                    statusText.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.orange));
-                    statusIcon.setImageResource(R.drawable.ic_pending);
+                    tvStatus.setText(context.getString(R.string.status_processing));
+                    tvStatus.setTextColor(ContextCompat.getColor(context, R.color.orange));
                     break;
                 default:
-                    statusText.setText("Pendiente");
-                    statusText.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.blue));
-                    statusIcon.setImageResource(R.drawable.ic_processing);
+                    tvStatus.setText(context.getString(R.string.status_pending));
+                    tvStatus.setTextColor(ContextCompat.getColor(context, R.color.blue));
             }
         }
     }

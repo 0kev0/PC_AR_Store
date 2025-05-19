@@ -5,12 +5,15 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +32,7 @@ import com.example.pcarstore.Adapters.ProductImagesAdapter;
 import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,6 +40,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -48,17 +53,20 @@ public class ProductDetailFragment extends Fragment {
     private String productId;
     private DatabaseReference productRef;
     private ValueEventListener productListener;
+    private DatabaseReference wishlistRef;
+
     private Product currentProduct;
     private FirebaseStorage storage;
     private TextView productName, productPrice, productSpecs, productDescription;
+
     private RatingBar productRating;
     private RecyclerView imagesRecycler;
     private Button btnAddToCart, btnViewAR;
     private ProductImagesAdapter imagesAdapter;
     private InicioActivity inicioActivity;
     private Context context;
-
-
+    private FirebaseAuth mAuth;
+    private MaterialButton btnWishlist;
 
     // Modelo 3D y textura
     private File modelFile;
@@ -84,6 +92,17 @@ public class ProductDetailFragment extends Fragment {
         }
 
         storage = FirebaseStorage.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            wishlistRef = FirebaseDatabase.getInstance().getReference("wishlist").child(currentUser.getUid());
+        }
+        if (currentUser != null) {
+            wishlistRef = FirebaseDatabase.getInstance().getReference()
+                    .child("wishlist")
+                    .child(currentUser.getUid()); // Referencia específica del usuario
+        }
     }
 
     @Override
@@ -106,6 +125,7 @@ public class ProductDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         initializeViews(view);
+        setupWishlistButton();
 
         productRef = FirebaseDatabase.getInstance().getReference("products").child(productId);
         setupRealtimeListener();
@@ -127,12 +147,117 @@ public class ProductDetailFragment extends Fragment {
         imagesRecycler = view.findViewById(R.id.recyclerProductImages);
         btnAddToCart = view.findViewById(R.id.btnAddToCart);
         btnViewAR = view.findViewById(R.id.btnViewAR);
+        btnWishlist = view.findViewById(R.id.btnWishlist);
 
-        // Configure RecyclerView
+        productRating.setNumStars(5);
+        productRating.setStepSize(0.5f);
+
         imagesRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
     }
 
-    private void openARModel() {
+    private void setupWishlistButton() {
+        btnWishlist.setOnClickListener(v -> handleWishlistClick());
+        checkWishlistStatus();
+    }
+
+    private void handleWishlistClick() {
+        if (currentProduct == null) return;
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            showLoginRequiredDialog("Para guardar productos en tu lista de deseos, necesitas iniciar sesión.");
+            return;
+        }
+
+        if (wishlistRef == null) {
+            wishlistRef = FirebaseDatabase.getInstance().getReference()
+                    .child("wishlist")
+                    .child(currentUser.getUid());
+        }
+
+        if (currentProduct.isInWishlist()) {
+            removeFromWishlist();
+        } else {
+            addToWishlist();
+        }
+    }
+    private void addToWishlist() {
+        wishlistRef.child(productId)
+                .setValue(true) // Guarda como true para indicar que existe
+                .addOnSuccessListener(aVoid -> {
+                    currentProduct.setInWishlist(true);
+                    updateWishlistButton(true);
+                    showToast("Añadido a tu lista de deseos");
+                })
+                .addOnFailureListener(e -> showToast("Error al añadir a la lista de deseos"));
+    }
+
+    private void removeFromWishlist() {
+        wishlistRef.child(productId)
+                .removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    currentProduct.setInWishlist(false);
+                    updateWishlistButton(false);
+                    showToast("Eliminado de tu lista de deseos");
+                })
+                .addOnFailureListener(e -> showToast("Error al eliminar de la lista de deseos"));
+    }
+
+    private void updateWishlistButton(boolean isInWishlist) {
+        if (isInWishlist) {
+            btnWishlist.setText("Quitar de favoritos");
+            btnWishlist.setIconResource(R.drawable.ic_heart);
+            btnWishlist.setIconTint(ColorStateList.valueOf(Color.RED));
+            btnWishlist.setStrokeColor(ColorStateList.valueOf(Color.RED));
+            btnWishlist.setTextColor(Color.RED);
+        } else {
+            btnWishlist.setText("Añadir a favoritos");
+            btnWishlist.setIconResource(R.drawable.ic_heart);
+            btnWishlist.setIconTint(ColorStateList.valueOf(Color.parseColor("#FF4081")));
+            btnWishlist.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#FF4081")));
+            btnWishlist.setTextColor(Color.parseColor("#FF4081"));
+        }
+    }
+
+    private void checkWishlistStatus() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null || wishlistRef == null) {
+            updateWishlistButton(false);
+            return;
+        }
+
+        wishlistRef.child(productId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        boolean isInWishlist = snapshot.exists();
+                        if (currentProduct != null) {
+                            currentProduct.setInWishlist(isInWishlist);
+                        }
+                        updateWishlistButton(isInWishlist);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error checking wishlist status", error.toException());
+                    }
+                });
+    }
+
+    private void showLoginRequiredDialog(String message) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Inicio de sesión requerido")
+                .setMessage(message)
+                .setPositiveButton("Iniciar sesión", (dialog, which) -> {
+                    Intent loginIntent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(loginIntent);
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
+                .setIcon(R.drawable.ic_heart)
+                .setCancelable(false)
+                .show();
+    }
+        private void openARModel() {
         // Verificar si tenemos un producto cargado
         if (currentProduct != null && currentProduct.getModel3dUrl() != null && currentProduct.getTextureUrl() != null) {
             progressDialog.show();
@@ -219,7 +344,6 @@ public class ProductDetailFragment extends Fragment {
             progressDialog.dismiss();
         }
     }
-
     private void setupRealtimeListener() {
         productListener = productRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -237,14 +361,30 @@ public class ProductDetailFragment extends Fragment {
             }
         });
     }
-
     private void updateUI(Product product) {
         productName.setText(product.getName());
         productPrice.setText(String.format("$%.2f", product.getPrice()));
         productDescription.setText(product.getDescription());
 
         if (product.getRating() != null) {
-            productRating.setRating(product.getRating().floatValue());
+            // Configurar el RatingBar basado en la calificación
+            float rating = product.getRating().floatValue();
+
+            if (rating > 5.0f) {
+                productRating.setNumStars((int) Math.ceil(rating));
+            } else {
+                productRating.setNumStars(5);
+            }
+
+            // Establecer la calificación
+            productRating.setRating(rating);
+
+            // Configurar el paso (para permitir medias estrellas)
+            productRating.setStepSize(0.5f);
+        } else {
+            //sin rating
+            productRating.setNumStars(5);
+            productRating.setRating(0);
         }
 
         if (product.getSpecifications() != null) {
@@ -273,7 +413,6 @@ public class ProductDetailFragment extends Fragment {
         btnViewAR.setOnClickListener(v -> openARModel());
     }
 
-    // Fixed method - No arguments version that uses currentProduct
     private void addToCart() {
         if (currentProduct == null) {
             showToast("Error: No se puede agregar al carrito, producto no disponible");
@@ -285,14 +424,12 @@ public class ProductDetailFragment extends Fragment {
     }
 
     private void addToCart(Product product, int quantity) {
-        // Verificar primero si el fragment/activity está disponible
         if (getContext() == null || (this instanceof Fragment && !((Fragment) this).isAdded())) {
             return;
         }
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        // Si el usuario no está autenticado, mostrar diálogo de confirmación
         if (currentUser == null) {
             showLoginRequiredDialog(product, quantity);
             return;

@@ -5,15 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pcarstore.Adapters.OrdersAdapter;
+import com.example.pcarstore.Dialogs.OrderDetailsDialog;
 import com.example.pcarstore.ModelsDB.Order;
+import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.R;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,11 +25,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OrdersActivity extends AppCompatActivity {
 
@@ -51,21 +59,19 @@ public class OrdersActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        // Inicializar Firebase
+        mAuth = FirebaseAuth.getInstance();
+        ordersRef = FirebaseDatabase.getInstance().getReference("orders");
+
         // Inicializar vistas
         ordersRecyclerView = findViewById(R.id.ordersRecyclerView);
         progressBar = findViewById(R.id.progressBar);
         emptyView = findViewById(R.id.emptyView);
 
-        // Configurar RecyclerView
         ordersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new OrdersAdapter(this::onOrderClicked);
         ordersRecyclerView.setAdapter(adapter);
 
-        // Inicializar Firebase
-        mAuth = FirebaseAuth.getInstance();
-        ordersRef = FirebaseDatabase.getInstance().getReference("orders");
-
-        // Cargar órdenes
         loadUserOrders();
     }
 
@@ -82,22 +88,14 @@ public class OrdersActivity extends AppCompatActivity {
                         List<Order> orders = new ArrayList<>();
 
                         for (DataSnapshot orderSnapshot : snapshot.getChildren()) {
-                            Order order = orderSnapshot.getValue(Order.class);
+                            Order order = parseOrderSnapshot(orderSnapshot);
                             if (order != null) {
-                                order.setOrderId(orderSnapshot.getKey());
-
-                                // Convertir timestamp de Firebase a Date si es necesario
-                                if (order.getDate() == null && orderSnapshot.child("date").getValue() != null) {
-                                    long timestamp = (long) orderSnapshot.child("date").getValue();
-                                    order.setDate(new Date(timestamp));
-                                }
-
                                 orders.add(order);
                             }
                         }
 
                         // Ordenar por fecha (más reciente primero)
-                        Collections.sort(orders, (o1, o2) -> o2.getDate().compareTo(o1.getDate()));
+                        Collections.sort(orders, (o1, o2) -> Long.compare(o2.getDate().getTime(), o1.getDate().getTime()));
 
                         adapter.setOrders(orders);
                         progressBar.setVisibility(View.GONE);
@@ -115,12 +113,61 @@ public class OrdersActivity extends AppCompatActivity {
                         Toast.makeText(OrdersActivity.this,
                                 "Error al cargar pedidos: " + error.getMessage(),
                                 Toast.LENGTH_SHORT).show();
+                        emptyView.setVisibility(View.VISIBLE);
                     }
                 });
     }
 
+    private Order parseOrderSnapshot(DataSnapshot orderSnapshot) {
+        try {
+            Order order = new Order();
+            order.setOrderId(orderSnapshot.getKey());
+            order.setUserId(orderSnapshot.child("userId").getValue(String.class));
+            order.setStatus(orderSnapshot.child("status").getValue(String.class));
+            order.setTotal(orderSnapshot.child("total").getValue(Double.class));
+
+            // Parsear fecha de orden
+            Long timestamp = orderSnapshot.child("date").getValue(Long.class);
+            if (timestamp != null) {
+                order.setDate(new Date(timestamp));
+            }
+
+            // Parsear fecha de entrega
+            Long deliveryTimestamp = orderSnapshot.child("deliveryDate").getValue(Long.class);
+            if (deliveryTimestamp != null) {
+                order.setDeliveryDate(new Date(deliveryTimestamp));
+            } else if (timestamp != null) {
+                // Si no hay fecha de entrega pero sí hay fecha de orden, calcular automáticamente
+                order.setDate(new Date(timestamp)); // Esto activará el cálculo automático de la fecha de entrega
+            }
+
+            // Parsear items
+            Map<String, OrderItem> items = new HashMap<>();
+            DataSnapshot itemsSnapshot = orderSnapshot.child("items");
+            for (DataSnapshot itemSnapshot : itemsSnapshot.getChildren()) {
+                OrderItem item = new OrderItem();
+                item.setProductId(itemSnapshot.child("productId").getValue(String.class));
+                item.setProductName(itemSnapshot.child("productName").getValue(String.class));
+                item.setPrice(itemSnapshot.child("price").getValue(Double.class));
+                item.setQuantity(itemSnapshot.child("quantity").getValue(Integer.class));
+                items.put(itemSnapshot.getKey(), item);
+            }
+            order.setItems(items);
+
+            return order;
+        } catch (Exception e) {
+            Log.e("OrdersActivity", "Error parsing order", e);
+            return null;
+        }
+    }
+
     private void onOrderClicked(Order order) {
+        // Aquí puedes implementar la navegación al detalle de la orden
         Toast.makeText(this, "Pedido seleccionado: " + order.getOrderId(), Toast.LENGTH_SHORT).show();
+
+        OrderDetailsDialog dialog = new OrderDetailsDialog(order);
+        dialog.show(getSupportFragmentManager(), "OrderDetailsDialog");
+
     }
 
     @Override
