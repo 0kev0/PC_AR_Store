@@ -547,13 +547,6 @@ public class ProductDetailFragment extends Fragment {
         }
     }
 
-    private void showError(String message) {
-        if (getContext() != null) {
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, message);
-        }
-    }
-
 
     @Override
     public void onDestroyView() {

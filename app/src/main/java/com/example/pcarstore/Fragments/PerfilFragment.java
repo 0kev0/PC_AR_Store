@@ -23,7 +23,10 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Activities.OrdersActivity;
+import com.example.pcarstore.Dialogs.EditProfileDialog;
+import com.example.pcarstore.Dialogs.GiftCardDialog;
 import com.example.pcarstore.ModelsDB.GiftCard;
+import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -49,7 +52,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import static android.app.Activity.RESULT_OK;
-//import static android.os.Build.VERSION_CODES.R;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import android.content.SharedPreferences;
@@ -68,14 +70,17 @@ public class PerfilFragment extends Fragment {
     private FirebaseUser currentUser;
     private SharedPreferences sharedPreferences;
     private ImageView ivProfilePicture;
-    private TextView tvUserName, tvUserEmail,tvUserBalance;
+    private TextView tvUserName, tvUserEmail, tvUserBalance;
     private Button btnEditProfile, btnLogout;
     private Button btnOrders, btnWishlist, btnGifCard, btnSettings;
-    private Spinner spinnerDepartamento, spinnerCiudad;
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     private StorageReference storageRef;
+    private EditProfileDialog editProfileDialog;
+    private User userData;
+    private Uri tempImageUri;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,6 +89,39 @@ public class PerfilFragment extends Fragment {
         currentUser = mAuth.getCurrentUser();
         storageRef = FirebaseStorage.getInstance().getReference("profile_images");
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+
+        // Initialize userData as null, will be loaded from database
+        userData = null;
+
+        // Initialize the profile dialog with the updated constructor
+        editProfileDialog = new EditProfileDialog(
+                requireContext(),
+                mAuth,
+                FirebaseDatabase.getInstance(),
+                FirebaseStorage.getInstance()
+        );
+
+        // Configure listener for the dialog
+        editProfileDialog.setOnProfileUpdateListener(new EditProfileDialog.OnProfileUpdateListener() {
+            @Override
+            public void onImageSelectionRequested(Intent intent, int requestCode) {
+                startActivityForResult(intent, requestCode);
+            }
+
+            @Override
+            public void onProfileUpdatedSuccessfully(FirebaseUser updatedUser, User updatedUserData) {
+                currentUser = updatedUser;
+                userData = updatedUserData;
+                loadUserData();
+            }
+
+            @Override
+            public void onProfileUpdateFailed(Exception exception) {
+                Toast.makeText(requireContext(),
+                        "Error al actualizar perfil: " + exception.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -91,7 +129,7 @@ public class PerfilFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_perfil, container, false);
 
-        // Inicializar vistas
+        // Initialize views
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
         tvUserName = view.findViewById(R.id.tvUserName);
         tvUserEmail = view.findViewById(R.id.tvUserEmail);
@@ -101,12 +139,11 @@ public class PerfilFragment extends Fragment {
         btnWishlist = view.findViewById(R.id.btnWishlist);
         btnGifCard = view.findViewById(R.id.btnGifCard);
         btnSettings = view.findViewById(R.id.btnSettings);
-        tvUserBalance =  view.findViewById(R.id.tvUserBalance);
-
+        tvUserBalance = view.findViewById(R.id.tvUserBalance);
 
         loadUserData();
 
-        // Configurar listeners
+        // Configure listeners
         btnEditProfile.setOnClickListener(v -> editProfile());
         btnLogout.setOnClickListener(v -> logout());
         btnOrders.setOnClickListener(v -> showOrders());
@@ -117,35 +154,55 @@ public class PerfilFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            imageUri = data.getData();
+            Log.d("PerfilFragment", "Imagen seleccionada URI: " + (imageUri != null ? imageUri.toString() : "null"));
+
+            if (imageUri != null) {
+                // Actualizar la vista previa inmediatamente
+                Glide.with(requireContext())
+                        .load(imageUri)
+                        .circleCrop()
+                        .placeholder(R.drawable.ic_account_circle)
+                        .error(R.drawable.ic_account_circle)
+                        .into(ivProfilePicture);
+
+                // Pasar la URI al diálogo de edición
+                if (editProfileDialog != null) {
+                    editProfileDialog.setImageUri(imageUri);
+                    Log.d("PerfilFragment", "URI de imagen pasada al diálogo de edición");
+                } else {
+                    Log.e("PerfilFragment", "El diálogo de edición es nulo");
+                }
+            } else {
+                Log.e("PerfilFragment", "URI de imagen nulo en onActivityResult");
+            }
+        } else if (resultCode != RESULT_OK) {
+            Log.d("PerfilFragment", "Selección de imagen cancelada o fallida");
+        }
+    }
+
     private void loadUserData() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (currentUser != null) {
-            // Mostrar información básica del usuario de Firebase
             tvUserName.setText(currentUser.getDisplayName() != null ?
                     currentUser.getDisplayName() : "Usuario");
             tvUserEmail.setText(currentUser.getEmail() != null ?
                     currentUser.getEmail() : "No especificado");
 
-            // Cargar imagen de perfil desde Firebase Auth
-            if (currentUser.getPhotoUrl() != null) {
-                Glide.with(requireContext())
-                        .load(currentUser.getPhotoUrl())
-                        .circleCrop()
-                        .placeholder(R.drawable.ic_account_circle)
-                        .into(ivProfilePicture);
-            } else {
-                ivProfilePicture.setImageResource(R.drawable.ic_account_circle);
-            }
+            // Mostrar imagen temporal mientras carga
+            ivProfilePicture.setImageResource(R.drawable.ic_account_circle);
 
-            // Cargar detalles adicionales desde Firestore
+            // Cargar datos desde Realtime Database (que incluirá la URL de la imagen si existe)
             loadUserDetailsFromDatabase(currentUser.getUid());
 
-            // Mostrar saldo inicial como "Cargando..."
+            // Mostrar "Cargando saldo..."
             tvUserBalance.setText("Cargando saldo...");
-
-            // Cargar saldo desde Firestore
-            loadUserBalance(currentUser.getUid());
         } else {
             // Modo invitado
             tvUserName.setText("Invitado");
@@ -154,55 +211,6 @@ public class PerfilFragment extends Fragment {
             tvUserBalance.setText("S/ ----");
             tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
         }
-    }
-
-    private void loadUserBalance(String userId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference userRef = db.collection("users").document(userId);
-
-        userRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                if (document.exists()) {
-                    // Obtener el saldo (0.0 si no existe el campo)
-                    double balance = document.contains("saldo") ?
-                            document.getDouble("saldo") : 0.0;
-
-                    // Formatear y mostrar el saldo
-                    String formattedBalance = String.format(Locale.getDefault(), "S/ %.2f", balance);
-                    tvUserBalance.setText(formattedBalance);
-
-                    // Cambiar color según el saldo (opcional)
-                    if (balance < 0) {
-                        tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorError));
-                    } else {
-                        tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorSuccess));
-                    }
-                } else {
-                    tvUserBalance.setText("S/ 0.00");
-                    // Crear documento si no existe
-                    userRef.set(Collections.singletonMap("saldo", 0.0));
-                }
-            } else {
-                tvUserBalance.setText("Error al cargar");
-                Log.e("ProfileFragment", "Error al obtener saldo", task.getException());
-            }
-        });
-
-        // Escuchar cambios en tiempo real (opcional)
-        userRef.addSnapshotListener((snapshot, error) -> {
-            if (error != null) {
-                Log.w("ProfileFragment", "Listen failed.", error);
-                return;
-            }
-
-            if (snapshot != null && snapshot.exists()) {
-                double balance = snapshot.contains("saldo") ?
-                        snapshot.getDouble("saldo") : 0.0;
-                String formattedBalance = String.format(Locale.getDefault(), "S/ %.2f", balance);
-                tvUserBalance.setText(formattedBalance);
-            }
-        });
     }
 
     private void loadUserDetailsFromDatabase(String userId) {
@@ -214,58 +222,111 @@ public class PerfilFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    // Cargar datos básicos que pueden estar en diferentes nodos
-                    String name = snapshot.child("name").getValue(String.class);
-                    String email = snapshot.child("email").getValue(String.class);
-                    String role = snapshot.child("role").getValue(String.class);
+                    try {
+                        userData = snapshot.getValue(User.class);
 
-                    // Actualizar UI con datos básicos si es necesario
-                    if (name != null && !name.isEmpty()) {
-                        tvUserName.setText(name);
-                    }
+                        if (userData != null) {
+                            // Set user ID if null
+                            if (userData.getUserId() == null) {
+                                userData.setUserId(userId);
+                            }
 
-                    // Cargar y mostrar saldo
-                    Double saldo = snapshot.child("saldo").getValue(Double.class);
-                    if (saldo != null) {
-                        tvUserBalance.setText(String.format("S/ %.2f", saldo));
-                        int colorId = saldo < 20.0 ? R.color.red : R.color.green;
-                        tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), colorId));
-                    }
+                            // Update UI
+                            if (userData.getName() != null && !userData.getName().isEmpty()) {
+                                tvUserName.setText(userData.getName());
+                            }
 
-                    // Cargar y mostrar membresía Prime
-                    Boolean membresiaPrime = snapshot.child("membresiaPrime").getValue(Boolean.class);
-                    if (membresiaPrime != null) {
-                        // Puedes mostrar un icono o texto indicando el estado
-                        if (membresiaPrime) {
-                            // Mostrar que tiene membresía Prime
+                            // Intenta cargar la imagen desde la URL guardada en la base de datos primero
+                            if (userData.getProfileImageUrl() != null && !userData.getProfileImageUrl().isEmpty()) {
+                                loadImageWithGlide(userData.getProfileImageUrl());
+                            } else {
+                                // Si no hay URL en la base de datos, intenta cargar desde Storage
+                                loadProfileImageFromStorage(userId);
+                            }
+
+                            // Handle balance
+                            if (snapshot.hasChild("saldo")) {
+                                Double saldo = snapshot.child("saldo").getValue(Double.class);
+                                updateBalanceUI(saldo != null ? saldo : 0.0);
+                            } else {
+                                userRef.child("saldo").setValue(0.0);
+                                updateBalanceUI(0.0);
+                            }
                         }
+                    } catch (Exception e) {
+                        Log.e("PerfilFragment", "Error parsing user data", e);
+                        // Si hay error, intenta cargar imagen desde Storage directamente
+                        loadProfileImageFromStorage(userId);
                     }
-
-                    // Cargar datos de ubicación si existen
-                    String departamento = snapshot.child("departamento").getValue(String.class);
-                    String ciudad = snapshot.child("ciudad").getValue(String.class);
-
-                    // Cargar imagen de perfil personalizada si existe
-                    String profileImageUrl = snapshot.child("profileImageUrl").getValue(String.class);
-                    if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-                        Glide.with(requireContext())
-                                .load(profileImageUrl)
-                                .circleCrop()
-                                .into(ivProfilePicture);
-                    }
-                } else {
-                    Log.d("PerfilFragment", "No se encontraron datos adicionales del usuario");
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("PerfilFragment", "Error al cargar detalles del usuario", error.toException());
-                tvUserBalance.setText("S/ --");
+                Log.e("PerfilFragment", "Error loading user details", error.toException());
+                updateBalanceUI(-1); // Mostrar error
+                // Intenta cargar imagen desde Storage directamente
+                loadProfileImageFromStorage(userId);
             }
         });
     }
 
+    private void loadProfileImageFromStorage(String userId) {
+        // Referencia al archivo en Storage con la estructura USERS/CLIENTS/userId.jpeg
+        StorageReference profileImageRef = FirebaseStorage.getInstance()
+                .getReference("USERS/CLIENTS")
+                .child(userId + ".jpeg");
+
+        // Obtener URL de descarga
+        profileImageRef.getDownloadUrl()
+                .addOnSuccessListener(uri -> {
+                    // Cargar imagen con Glide
+                    loadImageWithGlide(uri.toString());
+
+                    // Guardar esta URL en Realtime Database para futuras cargas rápidas
+                    saveImageUrlToDatabase(userId, uri.toString());
+                })
+                .addOnFailureListener(e -> {
+                    Log.d("PerfilFragment", "No se encontró imagen en Storage, usando imagen por defecto");
+                    // Mantener la imagen por defecto que ya estaba establecida
+                });
+    }
+
+    private void loadImageWithGlide(String imageUrl) {
+        Glide.with(requireContext())
+                .load(imageUrl)
+                .circleCrop()
+                .placeholder(R.drawable.ic_account_circle)
+                .error(R.drawable.ic_account_circle)
+                .into(ivProfilePicture);
+    }
+
+    private void saveImageUrlToDatabase(String userId, String imageUrl) {
+        FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(userId)
+                .child("profileImageUrl")
+                .setValue(imageUrl)
+                .addOnFailureListener(e -> {
+                    Log.e("PerfilFragment", "Error al guardar URL de imagen en la base de datos", e);
+                });
+    }
+
+    private void updateBalanceUI(double balance) {
+        String formattedBalance;
+        int colorId;
+
+        if (balance < 0) { // Error case
+            formattedBalance = "Error al cargar";
+            colorId = R.color.colorError;
+        } else {
+            formattedBalance = String.format(Locale.getDefault(), "S/ %.2f", balance);
+            colorId = balance < 20.0 ? R.color.red : R.color.colorSuccess;
+        }
+
+        tvUserBalance.setText(formattedBalance);
+        tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), colorId));
+    }
     private void logout() {
         mAuth.signOut();
         startActivity(new Intent(getActivity(), LoginActivity.class));
@@ -288,7 +349,7 @@ public class PerfilFragment extends Fragment {
         if (mAuth.getCurrentUser() != null) {
             Fragment wishlistFragment = new WishlistFragment();
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragmentContainerView2, wishlistFragment); // Asegúrate de que `fragment_container` sea el ID correcto de tu contenedor de fragmentos
+            transaction.replace(R.id.fragmentContainerView2, wishlistFragment);
             transaction.addToBackStack(null);
             transaction.commit();
         } else {
@@ -299,185 +360,69 @@ public class PerfilFragment extends Fragment {
     }
 
     private void showGifCard() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-
-        View dialogView = inflater.inflate(R.layout.dialog_discount, null);
-        EditText etCode = dialogView.findViewById(R.id.etDiscountCode);
-        Button btnRedeem = dialogView.findViewById(R.id.btnRedeem);
-        ProgressBar progressBar = dialogView.findViewById(R.id.progressBar);
-
-        builder.setView(dialogView)
-                .setTitle("Canjear Gift Card")
-                .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
-
-        AlertDialog dialog = builder.create();
-
-        btnRedeem.setOnClickListener(v -> {
-            String code = etCode.getText().toString().trim();
-            if(code.isEmpty()) {
-                etCode.setError("Ingrese un código");
-                return;
-            }
-
-            // Mostrar progreso
-            progressBar.setVisibility(View.VISIBLE);
-            btnRedeem.setEnabled(false);
-
-            validateAndRedeemGiftCard(code, new GiftCardCallback() {
-                @Override
-                public void onSuccess(double amount) {
-                    progressBar.setVisibility(View.GONE);
-                    btnRedeem.setEnabled(true);
-                    applyGiftCard(amount);
-                    dialog.dismiss();
-                }
-
-                @Override
-                public void onFailure(String error) {
-                    progressBar.setVisibility(View.GONE);
-                    btnRedeem.setEnabled(true);
-                    Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
-
-        dialog.show();
-    }
-
-    interface GiftCardCallback {
-        void onSuccess(double amount);
-        void onFailure(String error);
-    }
-
-    private void validateAndRedeemGiftCard(String code, GiftCardCallback callback) {
-        if(!code.startsWith("PDM-") || code.length() != 10) { // PDM- + 6 caracteres
-            callback.onFailure("Formato de código inválido");
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(getContext(),
+                    "Debes iniciar sesión para canjear Gift Cards",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
-        DatabaseReference giftCardsRef = FirebaseDatabase.getInstance().getReference("giftCards");
-        Query query = giftCardsRef.orderByChild("code").equalTo(code);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        GiftCardDialog giftCardDialog = new GiftCardDialog(requireContext());
+        giftCardDialog.setGiftCardCallback(new GiftCardDialog.GiftCardCallback() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!snapshot.exists()) {
-                    callback.onFailure("Gift Card no encontrada");
-                    return;
-                }
+            public void onSuccess(double amount) {
+                // Actualizar saldo en la UI directamente
+                DatabaseReference userRef = FirebaseDatabase.getInstance()
+                        .getReference("users")
+                        .child(currentUser.getUid())
+                        .child("saldo");
 
-                for(DataSnapshot cardSnapshot : snapshot.getChildren()) {
-                    GiftCard giftCard = cardSnapshot.getValue(GiftCard.class);
-                    if(giftCard == null) {
-                        callback.onFailure("Error al leer Gift Card");
-                        return;
+                userRef.runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData currentData) {
+                        Double currentSaldo = currentData.getValue(Double.class);
+                        if (currentSaldo == null) {
+                            currentData.setValue(amount);
+                        } else {
+                            currentData.setValue(currentSaldo + amount);
+                        }
+                        return Transaction.success(currentData);
                     }
 
-                    // Validaciones
-                    if("redeemed".equals(giftCard.getStatus())) {
-                        callback.onFailure("Esta Gift Card ya fue canjeada");
-                        return;
+                    @Override
+                    public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
+                        if (error != null) {
+                            Toast.makeText(requireContext(),
+                                    "Error al actualizar saldo",
+                                    Toast.LENGTH_SHORT).show();
+                        } else if (committed) {
+                            Toast.makeText(requireContext(),
+                                    String.format("¡Saldo actualizado! +$%.2f", amount),
+                                    Toast.LENGTH_LONG).show();
+                        }
                     }
-
-                    if(giftCard.getExpirationDate() != null &&
-                            giftCard.getExpirationDate().before(new Date())) {
-                        callback.onFailure("Gift Card expirada");
-                        return;
-                    }
-
-                    if(!"active".equals(giftCard.getStatus())) {
-                        callback.onFailure("Gift Card no está activa");
-                        return;
-                    }
-
-                    // Actualizar estado a canjeada
-                    String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                    Map<String, Object> updates = new HashMap<>();
-                    updates.put("status", "redeemed");
-                    updates.put("redeemedBy", currentUserId);
-                    updates.put("redeemedDate", ServerValue.TIMESTAMP);
-
-                    cardSnapshot.getRef().updateChildren(updates)
-                            .addOnSuccessListener(aVoid -> {
-                                callback.onSuccess(giftCard.getAmount());
-                            })
-                            .addOnFailureListener(e -> {
-                                callback.onFailure("Error al canjear Gift Card");
-                            });
-                }
+                });
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                callback.onFailure("Error de conexión");
+            public void onFailure(String error) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
+        giftCardDialog.show();
     }
-
-    private void applyGiftCard(double amount) {
-        Toast.makeText(requireContext(),
-                String.format("Gift Card canjeada! Crédito agregado: $%.2f", amount),
-                Toast.LENGTH_LONG).show();
-
-        saveCreditToUser(amount);
-    }
-
-    private void saveCreditToUser(double amount) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if(userId == null) return;
-
-        DatabaseReference userRef = FirebaseDatabase.getInstance()
-                .getReference("users")
-                .child(userId)
-                .child("saldo"); // Cambiado a "saldo" para coincidir con tu modelo
-
-        userRef.runTransaction(new Transaction.Handler() {
-            @NonNull
-            @Override
-            public Transaction.Result doTransaction(@NonNull MutableData currentData) {
-                Double currentSaldo = currentData.getValue(Double.class);
-                if(currentSaldo == null) {
-                    currentData.setValue(amount);
-                } else {
-                    currentData.setValue(currentSaldo + amount);
-                }
-                return Transaction.success(currentData);
-            }
-
-            @Override
-            public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
-                if(error != null) {
-                    Log.e("GiftCard", "Error al actualizar saldo", error.toException());
-                    Toast.makeText(requireContext(), "Error al actualizar saldo", Toast.LENGTH_SHORT).show();
-                } else if(committed) {
-                    Toast.makeText(requireContext(),
-                            String.format("¡Saldo actualizado! +$%.2f", amount),
-                            Toast.LENGTH_LONG).show();
-
-                    updateUISaldo(currentData.getValue(Double.class));
-                }
-            }
-        });
-    }
-    private void updateUISaldo(Double newSaldo) {
-        if(newSaldo != null) {
-                tvUserBalance.setText(String.format("Saldo: $%.2f", newSaldo));
-        }
-    }
-
     private void showSettings() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
         builder.setTitle("Configuración de cuenta");
 
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_profile_settings, null);
 
-        // Configurar elementos
+        // Configure elements
         view.findViewById(R.id.btn_edit_profile).setOnClickListener(v -> editProfile());
         view.findViewById(R.id.btn_payment_methods).setOnClickListener(v -> showPaymentMethods());
 
-        // Configurar switch de notificaciones
+        // Configure notifications switch
         SwitchMaterial switchNotifications = view.findViewById(R.id.switch_notifications);
         boolean notificationsEnabled = sharedPreferences.getBoolean("notifications_enabled", true);
         switchNotifications.setChecked(notificationsEnabled);
@@ -490,7 +435,7 @@ public class PerfilFragment extends Fragment {
             }
         });
 
-        // Configurar switch de tema oscuro
+        // Configure dark mode switch
         SwitchMaterial switchDarkMode = view.findViewById(R.id.switch_dark_mode);
         boolean isDarkMode = sharedPreferences.getBoolean("dark_mode_enabled", false);
         switchDarkMode.setChecked(isDarkMode);
@@ -510,7 +455,7 @@ public class PerfilFragment extends Fragment {
     }
 
     private void showPaymentMethods() {
-        // Implementar lógica para mostrar métodos de pago
+        // Implement logic to show payment methods
         Toast.makeText(getContext(), "Mostrar métodos de pago", Toast.LENGTH_SHORT).show();
     }
 
@@ -523,105 +468,7 @@ public class PerfilFragment extends Fragment {
     }
 
     private void editProfile() {
-        if (mAuth.getCurrentUser() != null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            LayoutInflater inflater = requireActivity().getLayoutInflater();
-            View dialogView = inflater.inflate(R.layout.dialog_edit_profile, null);
-            builder.setView(dialogView);
-
-            AlertDialog dialog = builder.create();
-            dialog.show();
-
-            TextInputEditText etName = dialogView.findViewById(R.id.etName);
-            Button btnSelectImage = dialogView.findViewById(R.id.btnSelectImage);
-            Button btnCancel = dialogView.findViewById(R.id.btnCancel);
-            Button btnSave = dialogView.findViewById(R.id.btnSave);
-            Spinner spinnerDepartamento = dialogView.findViewById(R.id.spinnerDepartamento);
-            Spinner spinnerCiudad = dialogView.findViewById(R.id.spinnerCiudad);
-
-            if (currentUser != null) {
-                etName.setText(currentUser.getDisplayName());
-            }
-
-            btnSelectImage.setOnClickListener(v -> openImageChooser());
-            btnCancel.setOnClickListener(v -> dialog.dismiss());
-
-            btnSave.setOnClickListener(v -> {
-                String newName = etName.getText().toString().trim();
-                if (newName.isEmpty()) {
-                    etName.setError("El nombre no puede estar vacío");
-                    return;
-                }
-
-                ProgressDialog progressDialog = new ProgressDialog(getContext());
-                progressDialog.setMessage("Actualizando perfil...");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-
-                if (imageUri != null) {
-                    uploadImageAndUpdateProfile(newName, progressDialog, dialog);
-                } else {
-                    updateProfileWithoutImage(newName, progressDialog, dialog);
-                }
-            });
-        } else {
-            Toast.makeText(getContext(),
-                    "Debes iniciar sesión para ver tus pedidos",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void openImageChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Selecciona una imagen"), PICK_IMAGE_REQUEST);
-    }
-
-
-    private void uploadImageAndUpdateProfile(String newName, ProgressDialog progressDialog, AlertDialog dialog) {
-        if (currentUser == null || imageUri == null) return;
-
-        StorageReference fileReference = storageRef.child(currentUser.getUid() + ".jpg");
-        fileReference.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                        updateFirebaseProfile(newName, uri.toString(), progressDialog, dialog);
-                    });
-                })
-                .addOnFailureListener(e -> {
-                    progressDialog.dismiss();
-                    Toast.makeText(getContext(), "Error al subir imagen: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    private void updateProfileWithoutImage(String newName, ProgressDialog progressDialog, AlertDialog dialog) {
-        String currentPhotoUrl = currentUser.getPhotoUrl() != null ?
-                currentUser.getPhotoUrl().toString() : null;
-        updateFirebaseProfile(newName, currentPhotoUrl, progressDialog, dialog);
-    }
-
-    private void updateFirebaseProfile(String newName, String imageUrl,
-                                       ProgressDialog progressDialog, AlertDialog dialog) {
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(newName)
-                .setPhotoUri(imageUrl != null ? Uri.parse(imageUrl) : null)
-                .build();
-
-        currentUser.updateProfile(profileUpdates)
-                .addOnCompleteListener(task -> {
-                    progressDialog.dismiss();
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show();
-                        currentUser = mAuth.getCurrentUser();
-                        loadUserData();
-                        dialog.dismiss();
-                    } else {
-                        Toast.makeText(getContext(),
-                                "Error al actualizar: " + task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+        editProfileDialog.show();
     }
 
     @Override

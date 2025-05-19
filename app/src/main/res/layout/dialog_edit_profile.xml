@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -53,20 +54,29 @@
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Foto de perfil (URL)">
+        android:text="Foto de perfil"
+        android:layout_marginBottom="8dp"/>
 
-        <Button
-            android:id="@+id/btnSelectImage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Seleccionar imagen"
-            android:drawableLeft="@android:drawable/ic_menu_gallery"
-            android:layout_marginBottom="16dp"/>
-    </com.google.android.material.textfield.TextInputLayout>
+    <Button
+        android:id="@+id/btnSelectImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar imagen"
+        android:drawableStart="@android:drawable/ic_menu_gallery"
+        android:layout_marginBottom="8dp"/>
+
+    <ImageView
+        android:id="@+id/ivProfilePreview"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:background="@color/material_grey_300"
+        android:contentDescription="Vista previa de la imagen de perfil"
+        android:layout_marginBottom="16dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

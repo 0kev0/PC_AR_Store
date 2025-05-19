@@ -37,7 +37,6 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
     private DatabaseReference usersRef;
     private Button btnNewUser;
     private UserAdapter userAdapter;
-    private List<User> allUsers = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

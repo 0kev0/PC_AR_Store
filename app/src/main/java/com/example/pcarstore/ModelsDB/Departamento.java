@@ -6,10 +6,10 @@ import java.util.List;
 public class Departamento {
     private String id;
     private String nombre;
-    private String ciudadSede; // Única ciudad sede de envíos
+    private String ciudadSede;
     private List<String> ciudades;
-    private double costoBaseEnvio; // Costo base desde la sede a otras ciudades
-    private double costoEnvioSede; // Costo para envíos dentro de la ciudad sede
+    private double costoBaseEnvio;
+    private double costoEnvioSede;
 
     public String getId() {
         return id;
