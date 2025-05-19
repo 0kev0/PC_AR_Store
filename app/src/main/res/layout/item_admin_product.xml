@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="Código: PRD-001"
-                android:textColor="@color/gray_600"
+                android:textColor="@color/gray_650"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:ellipsize="end"/>
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text=""
-                android:textColor="@color/gray_600"
+                android:textColor="@color/gray_650"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:ellipsize="end"/>

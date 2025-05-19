@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pcarstore.Adapters.AdminProductAdapter;
 import com.example.pcarstore.Adapters.ImagesAdapter;
 import com.example.pcarstore.Adapters.ProductosAdapter;
 import com.example.pcarstore.ModelsDB.Product;
@@ -36,12 +37,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class InventarioFragment extends Fragment implements ProductosAdapter.OnProductActionsListener {
+public class InventarioFragment extends Fragment implements AdminProductAdapter.OnProductActionsListener {
 
     private static final int PICK_IMAGES_REQUEST = 1;
     private static final int RESULT_OK = Activity.RESULT_OK;
     private RecyclerView recyclerView;
-    private ProductosAdapter adapter;
+    private AdminProductAdapter adapter;
     private DatabaseReference productsRef;
     private MaterialButton btnAddProduct;
     private List<Product> productList = new ArrayList<>();
@@ -67,7 +68,7 @@ public class InventarioFragment extends Fragment implements ProductosAdapter.OnP
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Inicializar adapter
-        adapter = new ProductosAdapter(this);
+        adapter = new AdminProductAdapter(this);
         recyclerView.setAdapter(adapter);
 
         //btn para agregra nuevo producto
@@ -208,10 +209,6 @@ public class InventarioFragment extends Fragment implements ProductosAdapter.OnP
                 .show();
     }
 
-    @Override
-    public void onWishlistUpdated(Product product, boolean isInWishlist) {
-
-    }
 
     private void deleteProduct(String productId) {
         productsRef.child(productId).removeValue()
