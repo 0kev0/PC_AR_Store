@@ -136,13 +136,9 @@ public class CatalogoFragment extends Fragment{
             wishlistRef = FirebaseDatabase.getInstance().getReference("wishlist").child(currentUser.getUid());
         }
 
-        // Aquí está la corrección - cambiamos la lógica para asegurarnos de que
-        // no estamos duplicando la acción
         if (isInWishlist) {
-            // Si ya está en wishlist, lo quitamos
             removeFromWishlist(product);
         } else {
-            // Si no está en wishlist, lo añadimos
             addToWishlist(product);
         }
     }

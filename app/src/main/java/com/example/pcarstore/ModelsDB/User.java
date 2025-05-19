@@ -15,7 +15,6 @@ public class User {
     private boolean membresiaPrime;
     private Map<String, Integer> cart;
 
-    // Constructor privado para usar con el Builder
     private User(Builder builder) {
         this.email = builder.email;
         this.name = builder.name;
@@ -33,10 +32,7 @@ public class User {
 
     // Builder class
     public static class Builder {
-        // Campos requeridos
         private final String email;
-
-        // Campos opcionales - inicializados con valores por defecto
         private String name = "";
         private String role = "client";
         private String profileImageUrl = "";
