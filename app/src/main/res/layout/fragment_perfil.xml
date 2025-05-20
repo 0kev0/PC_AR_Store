@@ -258,12 +258,18 @@
                 android:text="Cerrar sesión"
                 android:textAllCaps="false"
                 android:textColor="@color/red"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:shadowColor="#80000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
                 app:icon="@drawable/ic_logout"
                 app:iconGravity="textStart"
                 app:iconPadding="8dp"
                 app:iconTint="@color/red"
-                app:iconSize="24dp"
-                android:paddingStart="16dp"
+                app:iconSize="30dp"
+                app:paddingStart="16dp"
                 android:gravity="start|center_vertical"/>
         </LinearLayout>
 

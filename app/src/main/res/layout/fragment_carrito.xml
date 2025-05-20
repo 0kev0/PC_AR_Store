@@ -9,14 +9,15 @@
     android:padding="8dp"
     tools:context=".Fragments.CarritoFragment">
 
+    <!-- Header superior -->
     <LinearLayout
         android:id="@+id/tvtop"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:orientation="vertical"
-        android:paddingHorizontal="8dp"
-        android:paddingTop="10dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/round_backgound"
+        android:orientation="vertical"
+        android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -40,19 +41,20 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-
-    <!-- Lista de productos -->
+    <!-- RecyclerView para los items del carrito -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCartItems"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@android:color/white"
-        android:padding="8dp"
-        app:layout_constraintBottom_toTopOf="@id/btnProceedToCheckout"
+        app:layout_constraintBottom_toTopOf="@id/llOrderSummary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvtop"/>
+        app:layout_constraintTop_toBottomOf="@id/tvtop" />
 
+    <!-- Resumen del pedido -->
     <LinearLayout
         android:id="@+id/llOrderSummary"
         android:layout_width="0dp"
@@ -100,12 +102,12 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Botón de pago -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnProceedToCheckout"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_margin="16dp"
-        android:layout_weight="1"
+        android:layout_margin="8dp"
         android:backgroundTint="#3A59D1"
         android:text="Proceder al pago"
         android:textAllCaps="false"
@@ -119,7 +121,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
