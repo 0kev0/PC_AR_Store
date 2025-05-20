@@ -1,245 +1,271 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="#F2F2F2"
-    android:padding="16dp"
-    tools:context=".Fragments.PerfilFragment">
-
-    <!-- Título principal -->
-    <TextView
-        android:id="@+id/tvProfileTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tu Cuenta"
-        android:textSize="22sp"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <!-- Sección de información del usuario -->
-    <LinearLayout
-        android:id="@+id/userInfoSection"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:orientation="vertical"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
         android:padding="16dp"
-        android:elevation="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvProfileTitle"
-        android:layout_marginTop="16dp">
+        tools:context=".Fragments.PerfilFragment">
+
+        <!-- Título principal -->
+
+        <!-- Sección de información del usuario -->
+        <TextView
+            android:id="@+id/tvProfileTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tu Cuenta"
+            android:textColor="@color/text_light_color"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/userInfoSection"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-
-            <ImageView
-                android:id="@+id/ivProfilePicture"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:scaleType="centerCrop"
-                android:background="@drawable/circle_image_view"
-                android:contentDescription="Foto de perfil"
-                android:src="@drawable/limo"
-                android:layout_marginEnd="16dp"/>
+            android:layout_marginTop="16dp"
+            android:background="@drawable/round_backgound"
+            android:elevation="2dp"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvProfileTitle">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvUserName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Juan Pérez"
-                    android:textSize="18sp"
-                    android:textStyle="bold"/>
+                <ImageView
+                    android:id="@+id/ivProfilePicture"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/circle_image_view"
+                    android:contentDescription="Foto de perfil"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/limo" />
 
-                <TextView
-                    android:id="@+id/tvUserEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="juan.perez@example.com"
-                    android:textColor="#565959"
-                    android:layout_marginTop="4dp"/>
-
-                <!-- Nuevo TextView para mostrar el saldo -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_credit_card"
-                        app:tint="#4CAF50"/>
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvUserBalance"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tvUserName"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Saldo actual: $ ##.##"
-                        android:textSize="16sp"
-                        android:textColor="#4CAF50"
-                        android:textStyle="bold"
-                        android:layout_marginStart="8dp"/>
+                        android:textColor="@color/text_bold_color"
+                        android:text="Juan Pérez"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvUserEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="juan.perez@example.com"
+                        android:textColor="#565959" />
+
+                    <!-- Nuevo TextView para mostrar el saldo -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_cash"
+                            app:tint="@color/green" />
+
+                        <TextView
+                            android:id="@+id/tvUserBalance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Saldo actual: $ ##.##"
+                            android:textColor="#4CAF50"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditProfile"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Administrar tu perfil"
+                android:textAllCaps="false"
+                android:textColor="@color/text_light_color"
+                app:icon="@drawable/ic_edit_profile"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/text_light_color"
+                app:iconSize="24dp"/>
+
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnEditProfile"
-            android:layout_width="match_parent"
+        <!-- Resto del layout se mantiene igual -->
+        <LinearLayout
+            android:id="@+id/optionsSection"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/transparent"
-            android:text="Administrar tu perfil"
-            android:textColor="#0066C0"
-            android:textAllCaps="false"
-            android:drawableLeft="@android:drawable/ic_menu_edit"/>
-    </LinearLayout>
+            android:layout_marginTop="16dp"
+            android:background="@drawable/round_backgound"
+            android:elevation="2dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userInfoSection">
 
-    <!-- Resto del layout se mantiene igual -->
-    <LinearLayout
-        android:id="@+id/optionsSection"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:orientation="vertical"
-        android:elevation="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userInfoSection"
-        android:layout_marginTop="16dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:paddingBottom="8dp"
+                android:text="Tus opciones"
+                android:textColor="@color/text_bold_color"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/text_bold_color" />
 
-        <TextView
-            android:layout_width="match_parent"
+            <!-- Opción Pedidos -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOrders"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Tus pedidos"
+                android:textAllCaps="false"
+                android:textColor="@color/text_light_color"
+                app:icon="@drawable/ic_bag"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/text_light_color"
+                app:iconSize="24dp"
+                android:paddingStart="16dp"
+                android:gravity="start|center_vertical"/>
+
+
+
+            <!-- Opción Lista de deseos -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnWishlist"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Lista de deseos"
+                android:textAllCaps="false"
+                android:textColor="@color/text_light_color"
+                app:icon="@drawable/ic_heart"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/text_light_color"
+                app:iconSize="24dp"
+                android:paddingStart="16dp"
+                android:gravity="start|center_vertical"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGifCard"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Canjear Gif Card"
+                android:textAllCaps="false"
+                android:textColor="@color/text_light_color"
+                app:icon="@drawable/ic_gift_card"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/text_light_color"
+                app:iconSize="24dp"
+                android:paddingStart="16dp"
+                android:gravity="start|center_vertical"/>
+        </LinearLayout>
+
+        <!-- Sección de configuración -->
+        <LinearLayout
+            android:id="@+id/settingsSection"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Tus opciones"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:padding="16dp"
-            android:paddingBottom="8dp"/>
+            android:layout_marginTop="16dp"
+            android:background="@drawable/round_backgound"
+            android:elevation="2dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/optionsSection">
 
-        <!-- Opción Pedidos -->
-        <Button
-            android:id="@+id/btnOrders"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="start|center_vertical"
-            android:padding="16dp"
-            android:text="Tus pedidos"
-            android:textAllCaps="false"
-            android:textColor="#000000"
-            android:drawableLeft="@android:drawable/ic_menu_agenda"
-            android:drawablePadding="16dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_bold_color"
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#F2F2F2"/>
+                android:padding="16dp"
+                android:paddingBottom="8dp"
+                android:text="Configuración"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <!-- Opción Lista de deseos -->
-        <Button
-            android:id="@+id/btnWishlist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="start|center_vertical"
-            android:padding="16dp"
-            android:text="Lista de deseos"
-            android:textAllCaps="false"
-            android:textColor="#000000"
-            android:drawableLeft="@android:drawable/ic_menu_upload"
-            android:drawablePadding="16dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/text_bold_color"  />
 
-        <Button
-            android:id="@+id/btnGifCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:drawablePadding="16dp"
-            android:gravity="start|center_vertical"
-            android:padding="16dp"
-            android:text="Gif Card"
-            android:textAllCaps="false"
-            android:textColor="#000000"
-            app:icon="@drawable/ic_credit_card" />
-    </LinearLayout>
+            <!-- Opción Configuración -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSettings"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Configuración de cuenta"
+                android:textAllCaps="false"
+                android:textColor="@color/text_light_color"
+                app:icon="@drawable/ic_settings"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/text_light_color"
+                app:iconSize="24dp"
+                android:paddingStart="16dp"
+                android:gravity="start|center_vertical"/>
 
-    <!-- Sección de configuración -->
-    <LinearLayout
-        android:id="@+id/settingsSection"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:orientation="vertical"
-        android:elevation="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/optionsSection"
-        android:layout_marginTop="16dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Configuración"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:padding="16dp"
-            android:paddingBottom="8dp"/>
+            <!-- Opción Cerrar sesión -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Cerrar sesión"
+                android:textAllCaps="false"
+                android:textColor="@color/red"
+                app:icon="@drawable/ic_logout"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/red"
+                app:iconSize="24dp"
+                android:paddingStart="16dp"
+                android:gravity="start|center_vertical"/>
+        </LinearLayout>
 
-        <!-- Opción Configuración -->
-        <Button
-            android:id="@+id/btnSettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="start|center_vertical"
-            android:padding="16dp"
-            android:text="Configuración de cuenta"
-            android:textAllCaps="false"
-            android:textColor="#000000"
-            android:drawableLeft="@android:drawable/ic_menu_preferences"
-            android:drawablePadding="16dp"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#F2F2F2"/>
-
-        <!-- Opción Cerrar sesión -->
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="start|center_vertical"
-            android:padding="16dp"
-            android:text="Cerrar sesión"
-            android:textAllCaps="false"
-            android:textColor="#CC0000"
-            android:drawableLeft="@android:drawable/ic_lock_power_off"
-            android:drawablePadding="16dp"
-            android:drawableTint="#CC0000"/>
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -30,8 +30,7 @@ import java.util.List;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
     private List<Product> productList;
-    private OnProductClickListener listener;
-    private Context context;
+    private final OnProductClickListener listener;
     private static FirebaseAuth mAuth;
     private OnCartUpdateListener cartUpdateListener; // Interface for cart updates
 
@@ -49,7 +48,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public ProductAdapter(List<Product> productList, OnProductClickListener listener, Context context) {
         this.productList = productList;
         this.listener = listener;
-        this.context = context;
         mAuth = FirebaseAuth.getInstance();
     }
 
@@ -176,10 +174,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         private void updateWishlistIcon(boolean isInWishlist) {
             if (isInWishlist) {
                 // Product is in wishlist - show filled heart in gray
+                btnWishlist.setIconResource(R.drawable.ic_heart);
                 btnWishlist.setIconTint(itemView.getContext().getResources().getColorStateList(R.color.heart, null));
                 btnWishlist.setStrokeColor(itemView.getContext().getResources().getColorStateList(R.color.heart, null));
             } else {
                 // Product is not in wishlist - show outlined heart in pink
+                btnWishlist.setIconResource(R.drawable.ic_unfill_heart);
                 btnWishlist.setIconTint(itemView.getContext().getResources().getColorStateList(R.color.gray, null));
                 btnWishlist.setStrokeColor(itemView.getContext().getResources().getColorStateList(R.color.gray, null));
             }
