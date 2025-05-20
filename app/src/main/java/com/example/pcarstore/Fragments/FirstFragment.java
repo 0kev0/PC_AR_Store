@@ -172,7 +172,7 @@ public class FirstFragment extends Fragment {
         });
 
         rootView.findViewById(R.id.card_gift_cards).setOnClickListener(v -> {
-
+            replaceFragment(new GiftFragment());
         });
 
         rootView.findViewById(R.id.card_settings).setOnClickListener(v -> {
@@ -186,16 +186,9 @@ public class FirstFragment extends Fragment {
             FragmentTransaction transaction = requireActivity()
                     .getSupportFragmentManager()
                     .beginTransaction();
-
-            // Reemplazar el fragmento actual
             transaction.replace(R.id.fragmentContaineradmin, fragment2);
-
-            // Opcional: Agregar a la pila de retroceso
             transaction.addToBackStack(null);
-
-            // Confirmar la transacción
             transaction.commit();
-
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error al cargar el fragmento", Toast.LENGTH_SHORT).show();
             e.printStackTrace();

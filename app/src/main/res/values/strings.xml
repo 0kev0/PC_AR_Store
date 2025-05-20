@@ -80,4 +80,15 @@
     </plurals>
     <string name="channel_name">Notificaciones Admin</string>
     <string name="channel_description">Notificaciones importantes para administradores</string>
+    <string name="recipient_label">Destinatario:</string>
+    <string name="expires_label">Vence:</string>
+    <string name="view_action">Ver</string>
+    <string name="edit_action">Editar</string>
+    <string name="deactivate_action">Desactivar</string>
+    <string name="my_coupons_title">Mis Cupones</string>
+    <string name="codes_available_template">%d códigos disponibles</string>
+    <string name="add_new_code">Nuevo código</string>
+    <string name="empty_coupons_desc">Icono de cupones vacíos</string>
+    <string name="no_coupons_message">No tienes códigos de descuento</string>
+    <string name="add_code">Agregar código</string>
 </resources>
