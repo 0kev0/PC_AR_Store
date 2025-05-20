@@ -5,46 +5,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2F2F2"
+    android:background="@color/white"
     android:padding="8dp"
     tools:context=".Fragments.CarritoFragment">
 
-    <TextView
-        android:id="@+id/tvCartTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tu Carrito de Compras"
-        android:textSize="20sp"
-        android:textColor="#000000"
-        android:textStyle="bold"
+    <LinearLayout
+        android:id="@+id/tvtop"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="10dp"
+        android:background="@drawable/round_backgound"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tvItemCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="3 artículos"
-        android:textSize="14sp"
-        android:textColor="#565959"
-        app:layout_constraintStart_toStartOf="@id/tvCartTitle"
-        app:layout_constraintTop_toBottomOf="@id/tvCartTitle"
-        android:layout_marginTop="4dp"/>
+        <TextView
+            android:id="@+id/tvCartTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tu Carrito de Compras"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvItemCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="3 artículos"
+            android:textColor="#565959"
+            android:textSize="14sp" />
+    </LinearLayout>
+
 
     <!-- Lista de productos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCartItems"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         android:background="@android:color/white"
         android:padding="8dp"
         app:layout_constraintBottom_toTopOf="@id/btnProceedToCheckout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvItemCount"/>
+        app:layout_constraintTop_toBottomOf="@id/tvtop"/>
 
     <LinearLayout
         android:id="@+id/llOrderSummary"
@@ -93,19 +100,26 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnProceedToCheckout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_margin="16dp"
-        android:background="#FFA41C"
+        android:layout_weight="1"
+        android:backgroundTint="#3A59D1"
         android:text="Proceder al pago"
-        android:textColor="#000000"
-        android:textSize="14sp"
         android:textAllCaps="false"
+        android:textColor="@color/fondo"
+        android:textSize="14sp"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/ic_carrito"
+        app:iconGravity="textStart"
+        app:iconPadding="4dp"
+        app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

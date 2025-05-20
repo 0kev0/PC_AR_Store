@@ -109,7 +109,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
 
         return view;
     }
-
     private void loadUserDataForShipping() {
         String userId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
         if (userId.isEmpty()) return;
@@ -139,7 +138,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
             }
         });
     }
-
     private void calculateShippingCost(String departamento, String ciudad) {
         ShippingCostCalculator.calculateShippingCost(
                 departamento,
@@ -156,7 +154,7 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     @Override
     public void updateCartSummary(double subtotal) {
         // Aplicar descuento por compra mayor a $50
-        double finalShippingCost = subtotal > 50 ? shippingCost * 0.5 : shippingCost;
+        double finalShippingCost = subtotal > 500 ? shippingCost * 0.5 : shippingCost;
         double total = subtotal + finalShippingCost;
 
         tvTotal.setText(String.format("$%.2f", total));
@@ -165,7 +163,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
             currentCart.setTotal(subtotal);
         }
     }
-
     private void loadCart() {
         cartRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -185,7 +182,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
 
                 int itemCount = currentCart.getItems() != null ? currentCart.getItems().size() : 0;
                 tvItemCount.setText(itemCount + (itemCount == 1 ? " artículo" : " artículos"));
-                btnProceedToCheckout.setText("Proceder al pago (" + itemCount + " artículos)");
             }
 
             @Override
@@ -194,7 +190,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
             }
         });
     }
-
     private void proceedToCheckout() {
         if (currentCart == null || currentCart.getItems() == null || currentCart.getItems().isEmpty()) {
             Toast.makeText(getContext(), "Tu carrito está vacío", Toast.LENGTH_SHORT).show();
@@ -209,7 +204,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         List<OrderItem> orderItems = new ArrayList<>(currentCart.getItems().values());
         showPaymentDialog(orderItems);
     }
-
     private void showPaymentDialog(List<OrderItem> orderItems) {
         double cartTotal = currentCart.getTotal();
 
@@ -235,7 +229,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
 
         dialog.show(getChildFragmentManager(), "PaymentConfirmationDialog");
     }
-
     private void processOrderPayment(double amountToPay) {
         ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Procesando pago...");
@@ -316,7 +309,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
             }
         });
     }
-
     private void showAddBalanceDialog(double missingAmount) {
         if (getContext() == null || mAuth.getCurrentUser() == null) return;
 
@@ -363,7 +355,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
             }
         });
     }
-
     private void showCreditCardPaymentDialog(double amountToAdd) {
         CreditCardPaymentDialog dialog = CreditCardPaymentDialog.newInstance(amountToAdd);
         dialog.show(getChildFragmentManager(), "CreditCardPaymentDialog");
@@ -430,7 +421,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     public void onIncreaseQuantity(String productId, int newQuantity) {
         updateItemQuantity(productId, newQuantity);
     }
-
     @Override
     public void onDecreaseQuantity(String productId, int newQuantity) {
         updateItemQuantity(productId, newQuantity);
@@ -459,7 +449,7 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     }
 
     @Override
-    public void onPaymentConfirmed(double amount) {
+    public void onPaymentConfirmed(String cardName, String cardNumber, String expiry, String cvv, double amount) {
         processCardPayment(amount);
     }
 

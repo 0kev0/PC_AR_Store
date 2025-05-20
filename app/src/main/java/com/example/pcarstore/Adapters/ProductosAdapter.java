@@ -223,7 +223,7 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
                 icHeart.setImageResource(R.drawable.ic_heart);
                 icHeart.setColorFilter(Color.RED);
             } else {
-                icHeart.setImageResource(R.drawable.ic_heart);
+                icHeart.setImageResource(R.drawable.ic_unfill_heart);
                 icHeart.setColorFilter(Color.GRAY);
             }
         }
