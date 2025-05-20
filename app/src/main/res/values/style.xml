@@ -17,4 +17,20 @@
         <item name="boxStrokeWidth">1dp</item>
     </style>
 
+    <style name="OptionCardStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">8dp</item>
+        <item name="strokeColor">@color/surface_stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <!-- Colores semánticos -->
+    <color name="on_surface_high">#DE000000</color> <!-- 87% opacity black -->
+    <color name="on_surface_medium">#99000000</color> <!-- 60% opacity black -->
+    <color name="surface_stroke">#1F000000</color> <!-- 12% opacity black -->
+
 </resources>

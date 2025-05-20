@@ -4,20 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:paddingTop="16dp"
     android:id="@+id/GiftCardsFragment"
     android:background="@color/white">
 
     <!-- Encabezado -->
-    <TextView
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Gestión de Regalos"
-        android:textSize="24sp"
-        android:textColor="@color/primary_color"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="24dp"/>
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Gestión Cupones"
+        app:titleTextColor="@android:color/white">
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <!-- Tarjetas de opciones -->
     <com.google.android.material.card.MaterialCardView
@@ -131,14 +134,5 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Botón de acción alternativa -->
-    <Button
-        android:id="@+id/btn_view_existing"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ver regalos existentes"
-        android:layout_marginTop="8dp"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        app:strokeColor="@color/primary_color"/>
 
 </LinearLayout>

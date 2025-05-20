@@ -20,7 +20,6 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
     private Context context;
     private SimpleDateFormat dateFormat;
     private OnGiftCardActionsListener listener;
-    private TextView Ncupones;
 
     public interface OnGiftCardActionsListener {
         void onEditGiftCard(GiftCard giftCard);
@@ -66,10 +65,10 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
         int statusColor;
         switch (giftCard.getStatus()) {
             case "REDEEMED":
-                statusColor = R.color.green_active;
+                statusColor = R.color.green;
                 break;
             case "VENCIDA":
-                statusColor = R.color.red_error;
+                statusColor = R.color.red;
                 break;
             default: // ACTIVE
                 statusColor = R.color.blue;
@@ -90,8 +89,6 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
             }
         });
 
-        Ncupones = holder.itemView.findViewById(R.id.tv_active_count);
-        Ncupones.setText(String.valueOf(giftCards.size()));
     }
 
     @Override

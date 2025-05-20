@@ -2,17 +2,12 @@ package com.example.pcarstore.Activities;
 
 import android.os.Bundle;
 
-import com.example.pcarstore.Fragments.CarritoFragment;
-import com.example.pcarstore.Fragments.CatalogoFragment;
-import com.example.pcarstore.Fragments.FirstFragment;
-import com.example.pcarstore.Fragments.PerfilFragment;
+import com.example.pcarstore.Fragments.AdminFragment;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +15,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.pcarstore.Fragments.UsuariosFragment;
 import com.example.pcarstore.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -55,7 +49,7 @@ public class AdminActivity extends AppCompatActivity {
         Fragment selectedFragment = null;
 
         if (itemId == R.id.nav_dashboard) {
-            selectedFragment = new FirstFragment();
+            selectedFragment = new AdminFragment();
         } else if (itemId == R.id.nav_users) {
             Toast.makeText(this, "Usuarios", Toast.LENGTH_SHORT).show();
         } else if (itemId == R.id.nav_products) {
@@ -77,7 +71,7 @@ public class AdminActivity extends AppCompatActivity {
 
     private void loadInitialFragment() {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainerView, new FirstFragment())
+                .replace(R.id.fragmentContainerView, new AdminFragment())
                 .commit();
     }
 
