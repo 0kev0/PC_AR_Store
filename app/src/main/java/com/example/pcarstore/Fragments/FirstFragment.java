@@ -1,6 +1,7 @@
 package com.example.pcarstore.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,11 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.pcarstore.R;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class FirstFragment extends Fragment {
 
@@ -31,12 +37,115 @@ public class FirstFragment extends Fragment {
     }
 
     private void initializeViews(View rootView) {
-        tvUsersCount = rootView.findViewById(R.id.tvUsersCount);
-        tvProductsCount = rootView.findViewById(R.id.tvProductsCount);
-        tvOrdersCount = rootView.findViewById(R.id.tvOrdersCount);
+        try {
+            // Inicializar TextViews con verificación
+            tvUsersCount = rootView.findViewById(R.id.tvUsersCount);
+            tvProductsCount = rootView.findViewById(R.id.tvProductsCount);
+            tvOrdersCount = rootView.findViewById(R.id.tvOrdersCount);
 
-        TextView tvWelcome = rootView.findViewById(R.id.tvWelcome);
-        tvWelcome.setText("Bienvenido, Admin");
+            // Verificar que todas las vistas fueron encontradas
+            if (tvUsersCount == null) {
+                throw new RuntimeException("tvUsersCount no encontrado en el layout");
+            }
+            if (tvProductsCount == null) {
+                throw new RuntimeException("tvProductsCount no encontrado en el layout");
+            }
+            if (tvOrdersCount == null) {
+                throw new RuntimeException("tvOrdersCount no encontrado en el layout");
+            }
+
+            // Inicializar consultas
+            countUsers();
+            countProducts();
+            countOrders();
+
+            // TextView de bienvenida
+            TextView tvWelcome = rootView.findViewById(R.id.tvWelcome);
+            if (tvWelcome != null) {
+                tvWelcome.setText("Bienvenido, Admin");
+            } else {
+                Log.e("InitializeViews", "tvWelcome no encontrado en el layout");
+            }
+
+        } catch (Exception e) {
+            Log.e("InitializeViews", "Error inicializando vistas: " + e.getMessage(), e);
+            Toast.makeText(getContext(), "Error inicializando vista: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void countUsers() {
+        try {
+            DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+            usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (tvUsersCount != null) {
+                        long userCount = dataSnapshot.getChildrenCount();
+                        tvUsersCount.setText(String.valueOf(userCount));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    if (tvUsersCount != null) {
+                        tvUsersCount.setText("Error");
+                    }
+                    Log.e("Firebase", "Error contando usuarios", databaseError.toException());
+                }
+            });
+        } catch (Exception e) {
+            Log.e("CountUsers", "Error en countUsers", e);
+        }
+    }
+
+    private void countProducts() {
+        try {
+            DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference("products");
+            productsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (tvProductsCount != null) {
+                        long productCount = dataSnapshot.getChildrenCount();
+                        tvProductsCount.setText(String.valueOf(productCount));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    if (tvProductsCount != null) {
+                        tvProductsCount.setText("Error");
+                    }
+                    Log.e("Firebase", "Error contando productos", databaseError.toException());
+                }
+            });
+        } catch (Exception e) {
+            Log.e("CountProducts", "Error en countProducts", e);
+        }
+    }
+
+    private void countOrders() {
+        try {
+            DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference("orders");
+            ordersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (tvOrdersCount != null) {
+                        long orderCount = dataSnapshot.getChildrenCount();
+                        tvOrdersCount.setText(String.valueOf(orderCount));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    if (tvOrdersCount != null) {
+                        tvOrdersCount.setText("Error");
+                    }
+                    Log.e("Firebase", "Error contando pedidos", databaseError.toException());
+                }
+            });
+        } catch (Exception e) {
+            Log.e("CountOrders", "Error en countOrders", e);
+        }
     }
 
     private void setupClickListeners(View rootView) {
@@ -62,12 +171,12 @@ public class FirstFragment extends Fragment {
             replaceFragment(new InventarioFragment());
         });
 
-        rootView.findViewById(R.id.card_reports).setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Generar Reportes seleccionado", Toast.LENGTH_SHORT).show();
+        rootView.findViewById(R.id.card_gift_cards).setOnClickListener(v -> {
+
         });
 
         rootView.findViewById(R.id.card_settings).setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Configuración seleccionada", Toast.LENGTH_SHORT).show();
+            replaceFragment(new ConfiguracionAdminFragment());
         });
     }
 

@@ -76,7 +76,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="125"
+                        android:text="0"
                         android:textColor="@color/black"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -112,7 +112,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="89"
+                        android:text="0"
                         android:textColor="@color/black"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -148,7 +148,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="42"
+                        android:text="0"
                         android:textColor="@color/black"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -265,7 +265,7 @@
 
             <!-- Reports Card -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_reports"
+                android:id="@+id/card_gift_cards"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_columnWeight="1"
@@ -289,14 +289,14 @@
                     <ImageView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:src="@drawable/ic_products"
+                        android:src="@drawable/ic_gif"
                         android:tint="#FF9800" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Generar Reportes"
+                        android:text="Enviar Regalos"
                         android:textAlignment="center"
                         android:textColor="@color/black"
                         android:textSize="14sp" />

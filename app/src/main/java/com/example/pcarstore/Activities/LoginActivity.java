@@ -4,7 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CancellationSignal;
+import android.text.InputType;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -34,6 +37,7 @@ import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.example.pcarstore.Services.DatabaseSeederService;
 import com.example.pcarstore.Services.OrderManager;
+import com.example.pcarstore.helpers.SessionManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -42,6 +46,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -69,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private CredentialManager credentialManager;
     private GoogleSignInClient mGoogleSignInClient;
+    private SessionManager sessionManager;
     private DatabaseReference mDatabase;
     private static final int RC_SIGN_IN = 9001;
 
@@ -87,8 +93,8 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-DatabaseSeederService databaseSeederService = new DatabaseSeederService();
-databaseSeederService.initializeDatabase();
+        DatabaseSeederService databaseSeederService = new DatabaseSeederService();
+        databaseSeederService.initializeDatabase();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -99,6 +105,9 @@ databaseSeederService.initializeDatabase();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        sessionManager = new SessionManager(this);
+        checkCurrentSession();
 
         catalogo = findViewById(R.id.ContinueWithoutAcount);
         catalogo.setOnClickListener(v -> VerCatologo(v));
@@ -116,6 +125,77 @@ databaseSeederService.initializeDatabase();
         findViewById(R.id.LoginGoogle).setOnClickListener(v -> loginUser());
 
         RegisterGoogle.setOnClickListener(v -> registerGoogle());
+    }
+
+    private void verifyUserRole(FirebaseUser user) {
+        mDatabase.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User dbUser = snapshot.getValue(User.class);
+                if (dbUser != null && dbUser.getRole() != null) {
+                    // Guardar sesión y redirigir según rol
+                    sessionManager.createSession(user.getUid(), user.getEmail(), dbUser.getRole());
+                    redirectBasedOnRole(dbUser.getRole());
+                } else {
+                    Toast.makeText(LoginActivity.this, "Error: Rol no definido", Toast.LENGTH_SHORT).show();
+                    mAuth.signOut();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(LoginActivity.this, "Error al verificar datos", Toast.LENGTH_SHORT).show();
+                mAuth.signOut();
+            }
+        });
+    }
+
+    private void checkCurrentSession() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // Verificar si el rol coincide
+            mDatabase.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User user = snapshot.getValue(User.class);
+                    if (user != null && user.getRole() != null) {
+                        String storedRole = sessionManager.getUserRole();
+                        if (!user.getRole().equals(storedRole)) {
+                            sessionManager.createSession(currentUser.getUid(),
+                                    currentUser.getEmail(),
+                                    user.getRole());
+                        }
+                        redirectBasedOnRole(user.getRole());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    sessionManager.logoutUser();
+                }
+            });
+        } else {
+            sessionManager.logoutUser();
+        }
+    }
+
+    private void redirectBasedOnRole(String role) {
+        Class<?> destinationActivity;
+
+        switch (role.toLowerCase()) {
+            case "admin":
+                destinationActivity = AdminActivity.class;
+                break;
+            case "user":
+                destinationActivity = InicioActivity.class;
+                break;
+            default:
+                destinationActivity = LoginActivity.class;
+                sessionManager.logoutUser();
+        }
+
+        startActivity(new Intent(this, destinationActivity));
+        finish();
     }
 
     public void VerCatologo(View view) {
@@ -365,5 +445,59 @@ databaseSeederService.initializeDatabase();
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
+    }
+
+    public void ChangePassword(View view) {
+        // Crear diálogo para solicitar correo electrónico
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Restablecer Contraseña");
+        builder.setMessage("Ingrese su correo electrónico para recibir el enlace de restablecimiento");
+
+        // Configurar campo de entrada
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        input.setHint("correo@ejemplo.com");
+        builder.setView(input);
+
+        // Configurar botones
+        builder.setPositiveButton("Enviar", (dialog, which) -> {
+            String email = input.getText().toString().trim();
+            if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                sendPasswordResetEmail(email);
+            } else {
+                Toast.makeText(this, "Ingrese un correo electrónico válido", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+
+        // Mostrar diálogo
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void sendPasswordResetEmail(String email) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+
+        auth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this,
+                                "Correo de restablecimiento enviado a " + email,
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        try {
+                            throw task.getException();
+                        } catch (FirebaseAuthInvalidUserException e) {
+                            Toast.makeText(this,
+                                    "No existe una cuenta con este correo",
+                                    Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(this,
+                                    "Error al enviar correo: " + e.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

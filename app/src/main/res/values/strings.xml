@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">PC AR Store</string>
 
-        <!-- Nuevas cadenas para fechas de pedido -->
-        <string name="order_date">Orden:</string>
-        <string name="delivery_date">Entrega:</string>
-        <string name="not_available">No disponible</string>
+    <!-- Nuevas cadenas para fechas de pedido -->
+    <string name="order_date">Orden:</string>
+    <string name="delivery_date">Entrega:</string>
+    <string name="not_available">No disponible</string>
 
-        <!-- Asegúrate de que los demás strings estén definidos para que la app compile correctamente -->
+    <!-- Asegúrate de que los demás strings estén definidos para que la app compile correctamente -->
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -78,4 +78,6 @@
         <item quantity="one">%d artículo</item>
         <item quantity="other">%d artículos</item>
     </plurals>
+    <string name="channel_name">Notificaciones Admin</string>
+    <string name="channel_description">Notificaciones importantes para administradores</string>
 </resources>
