@@ -82,6 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:id="@+id/forgotPassword"
+                    android:onClick="ChangePassword"
                     android:text="Forgot your password?"
                     android:textColor="#3A59D1"
                     android:textSize="13sp" />

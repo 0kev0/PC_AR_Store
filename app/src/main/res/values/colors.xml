@@ -24,6 +24,6 @@
     <color name="prime_member_background">#FFF8E1</color>
     <color name="gray_650">#BDBDBD</color>
     <color name="heart">#FF4081</color>
-
+    <color name="light_gray_background">#F5F5F5</color>
 
 </resources>
