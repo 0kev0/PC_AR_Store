@@ -18,7 +18,7 @@ import java.util.Locale;
 
 public class SummaryProductAdapter extends RecyclerView.Adapter<SummaryProductAdapter.SummaryProductViewHolder> {
 
-    private List<OrderItem> orderItems;
+    private final List<OrderItem> orderItems;
 
     public SummaryProductAdapter(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
@@ -37,9 +37,9 @@ public class SummaryProductAdapter extends RecyclerView.Adapter<SummaryProductAd
         OrderItem item = orderItems.get(position);
 
         holder.tvProductName.setText(item.getProductName());
-        holder.tvProductPrice.setText(String.format(Locale.getDefault(), "Precio: %.2f €", item.getPrice()));
+        holder.tvProductPrice.setText(String.format(Locale.getDefault(), "Precio: %.2f $", item.getPrice()));
         holder.tvProductQuantity.setText(String.format(Locale.getDefault(), "Cantidad: %d", item.getQuantity()));
-        holder.tvProductSubtotal.setText(String.format(Locale.getDefault(), "%.2f €", item.getTotalPrice()));
+        holder.tvProductSubtotal.setText(String.format(Locale.getDefault(), "%.2f $", item.getTotalPrice()));
 
         if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
             Glide.with(holder.itemView.getContext())

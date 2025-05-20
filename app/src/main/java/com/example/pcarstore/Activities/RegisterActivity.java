@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +18,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -163,25 +167,31 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void saveUserToDatabase(String email, String fullName, String userId) {
+        // URL de imagen por defecto (puede ser una URL genérica o null)
+        String defaultImageUrl = "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/R.jpeg?alt=media&token=7c62b33a-f487-4257-8dd8-c6955ed6248e"; // O usar una URL genérica si prefieres
+
         User user = new User.Builder(email)
                 .setName(fullName)
                 .setRole("client")
                 .setSaldo(0.0)
                 .setMembresiaPrime(false)
+                .setProfileImageUrl(defaultImageUrl)
                 .build();
 
         mDatabase.child("users").child(userId)
                 .setValue(user)
                 .addOnSuccessListener(aVoid -> {
+                    // Solo crear la estructura de directorios
                     Toast.makeText(this, "¡Registro exitoso!", Toast.LENGTH_LONG).show();
                     finish();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this,
-                            "Error al guardar datos adicionales",
+                            "Error al guardar datos de usuario: " + e.getMessage(),
                             Toast.LENGTH_SHORT).show();
                 });
     }
+
 
     public void goToLogin(View view) {
         finish();

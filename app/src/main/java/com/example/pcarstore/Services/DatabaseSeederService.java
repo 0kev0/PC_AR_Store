@@ -15,6 +15,7 @@ import java.util.HashMap;
 /**
  * Service class for initializing database data
  * Handles all insert operations for products, categories, gift cards, and discount codes
+ *
  */
 public class DatabaseSeederService {
 

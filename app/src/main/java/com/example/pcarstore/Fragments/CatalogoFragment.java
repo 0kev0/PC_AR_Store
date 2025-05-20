@@ -9,10 +9,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +28,7 @@ import com.example.pcarstore.ModelsDB.Category;
 import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.R;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,6 +53,9 @@ public class CatalogoFragment extends Fragment{
     private Context context;
     private InicioActivity inicioActivity;
     private FirebaseAuth mAuth;
+    private ImageView toggleSearchButton;
+    private TextInputLayout searchLayout;
+    private boolean isSearchVisible = true;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -71,6 +78,7 @@ public class CatalogoFragment extends Fragment{
         initViews(view);
         setupRecyclerViews(view);
         initializeAdapters();
+        setupToggleButton();
         loadData();
         return view;
     }
@@ -79,12 +87,97 @@ public class CatalogoFragment extends Fragment{
         mDatabase = FirebaseDatabase.getInstance().getReference();
         productsRecycler = view.findViewById(R.id.recyclerViewCatalogo);
         categoriesRecycler = view.findViewById(R.id.categoriesRecycler);
+        searchLayout = view.findViewById(R.id.searchLayout);
+        toggleSearchButton = view.findViewById(R.id.toggleSearchButton);
 
         // Inicializar referencia a la wishlist
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             wishlistRef = FirebaseDatabase.getInstance().getReference("wishlist").child(currentUser.getUid());
         }
+    }
+
+    private void setupToggleButton() {
+        toggleSearchButton.setOnClickListener(v -> {
+            if (isSearchVisible) {
+                // Animación para ocultar
+                animateViewsOut();
+            } else {
+                // Animación para mostrar
+                animateViewsIn();
+            }
+            isSearchVisible = !isSearchVisible;
+        });
+    }
+
+    private void animateViewsOut() {
+        // Animación para la barra de búsqueda
+        searchLayout.animate()
+                .alpha(0f)
+                .setDuration(300)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .withEndAction(() -> {
+                    searchLayout.setVisibility(View.GONE);
+                    toggleSearchButton.setImageResource(R.drawable.ic_eye);
+                })
+                .start();
+
+        // Animación para las categorías
+        categoriesRecycler.animate()
+                .alpha(0f)
+                .setDuration(300)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .withEndAction(() -> {
+                    categoriesRecycler.setVisibility(View.GONE);
+
+                    // Ajustar constraints después de que termine la animación
+                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) productsRecycler.getLayoutParams();
+                    params.topToBottom = R.id.toggleSearchButton;
+                    productsRecycler.setLayoutParams(params);
+
+                    // Pequeña animación para el RecyclerView de productos
+                    productsRecycler.animate()
+                            .translationYBy(-20f)
+                            .setDuration(100)
+                            .start();
+                })
+                .start();
+    }
+    private void animateViewsIn() {
+        // Preparar vistas antes de animar (transparencia inicial)
+        searchLayout.setAlpha(0f);
+        searchLayout.setVisibility(View.VISIBLE);
+        categoriesRecycler.setAlpha(0f);
+        categoriesRecycler.setVisibility(View.VISIBLE);
+
+        // Animación para la barra de búsqueda
+        searchLayout.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .withStartAction(() -> {
+                    toggleSearchButton.setImageResource(R.drawable.ic_close_eye);
+                })
+                .start();
+
+        // Animación para las categorías
+        categoriesRecycler.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .withEndAction(() -> {
+                    // Restaurar constraints después de la animación
+                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) productsRecycler.getLayoutParams();
+                    params.topToBottom = R.id.categoriesRecycler;
+                    productsRecycler.setLayoutParams(params);
+
+                    // Pequeño "rebote" para el RecyclerView de productos
+                    productsRecycler.animate()
+                            .translationYBy(10f)
+                            .setDuration(50)
+                            .start();
+                })
+                .start();
     }
 
     private void setupRecyclerViews(View view) {
@@ -136,13 +229,9 @@ public class CatalogoFragment extends Fragment{
             wishlistRef = FirebaseDatabase.getInstance().getReference("wishlist").child(currentUser.getUid());
         }
 
-        // Aquí está la corrección - cambiamos la lógica para asegurarnos de que
-        // no estamos duplicando la acción
         if (isInWishlist) {
-            // Si ya está en wishlist, lo quitamos
             removeFromWishlist(product);
         } else {
-            // Si no está en wishlist, lo añadimos
             addToWishlist(product);
         }
     }

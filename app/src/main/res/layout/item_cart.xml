@@ -6,89 +6,104 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    app:cardElevation="6dp"
+    android:background="@color/light_gray">
 
-    <RelativeLayout
+<RelativeLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:padding="12dp"
+android:elevation="4dp">
+
+<ImageView
+    android:id="@+id/ivProductImage"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:scaleType="centerCrop"
+    android:src="@drawable/limo"
+    android:elevation="4dp"/>
+
+<TextView
+    android:id="@+id/tvProductName"
+    android:text="test"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_toEndOf="@id/ivProductImage"
+    android:layout_marginStart="12dp"
+    android:textSize="16sp"
+    android:textStyle="bold"
+    android:maxLines="2"
+    android:ellipsize="end"
+    android:elevation="4dp"/> <!-- Sombra para texto -->
+
+<TextView
+    android:id="@+id/tvPrice"
+    android:text="300$"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toEndOf="@id/ivProductImage"
+    android:layout_below="@id/tvProductName"
+    android:layout_marginStart="12dp"
+    android:layout_marginTop="4dp"
+    android:textColor="#C45500"
+    android:textSize="16sp"
+    android:textStyle="bold"
+    android:elevation="4dp"/>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:layout_toEndOf="@id/ivProductImage"
+        android:layout_below="@id/tvPrice"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:gravity="end|center_vertical"
+        android:elevation="4dp">
 
+        <!-- Espacio flexible para empujar los elementos a la derecha -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <!-- Botón de disminuir cantidad -->
         <ImageView
-            android:id="@+id/ivProductImage"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/limo"/>
+            android:id="@+id/btnDecrease"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_remove"
+            android:elevation="4dp"
+            app:tint="@android:color/holo_red_dark"/>
 
         <TextView
-            android:id="@+id/tvProductName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/ivProductImage"
-            android:layout_marginStart="12dp"
+            android:id="@+id/tvQuantity"
+            android:text="3"
+            android:layout_width="40dp"
+            android:layout_height="32dp"
+            android:gravity="center"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:maxLines="2"
-            android:ellipsize="end"/>
+            android:elevation="4dp"/>
 
-        <TextView
-            android:id="@+id/tvPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/ivProductImage"
-            android:layout_below="@id/tvProductName"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="4dp"
-            android:textColor="#C45500"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
+        <!-- Botón de aumentar cantidad -->
+        <ImageView
+            android:id="@+id/btnIncrease"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_add"
+            android:backgroundTint="#4CAF50"
+            android:elevation="4dp"
+            app:tint="@color/green"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/ivProductImage"
-            android:layout_below="@id/tvPrice"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+        <!-- Botón de eliminar -->
+        <ImageView
+            android:id="@+id/btnRemove"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_trash"
+            android:backgroundTint="#FF9800"
+            android:elevation="4dp"
+            app:tint="@color/red"/>
+    </LinearLayout>
 
-            <!-- Botón de disminuir cantidad -->
-            <ImageView
-                android:id="@+id/btnDecrease"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_cancel"
-                android:elevation="4dp"
-                app:tint="@android:color/holo_red_dark"/>
-
-            <TextView
-                android:id="@+id/tvQuantity"
-                android:layout_width="40dp"
-                android:layout_height="32dp"
-                android:gravity="center"
-                android:textSize="16sp"/>
-
-            <!-- Botón de aumentar cantidad -->
-            <ImageView
-                android:id="@+id/btnIncrease"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_add"
-                android:backgroundTint="#4CAF50"
-                android:elevation="4dp"
-                app:tint="@color/green"/>
-
-            <!-- Botón de eliminar -->
-            <ImageView
-                android:id="@+id/btnRemove"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@android:drawable/ic_menu_delete"
-                android:backgroundTint="#FF9800"
-                android:elevation="4dp"
-                app:tint="@color/red"/>
-        </LinearLayout>
-
-    </RelativeLayout>
-</androidx.cardview.widget.CardView>
+</RelativeLayout>
+    </androidx.cardview.widget.CardView>

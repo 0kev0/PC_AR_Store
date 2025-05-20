@@ -4,10 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
+    android:layout_margin="14dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
-    android:background="@drawable/dialog_background"
+    android:background="@null"
+    app:cardPreventCornerOverlap="false"
     >
 
     <LinearLayout
@@ -32,26 +33,36 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="16dp">
+            android:paddingBottom="8dp"
+            android:gravity="center_vertical">
 
-            <EditText
-                android:id="@+id/et_discount_code"
+            <!-- Input con TextInputLayout -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_discount_code"
+                style="@style/RoundedInput"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
+                android:layout_height="52dp"
                 android:layout_weight="1"
-                android:hint="Código de descuento"
-                android:inputType="textCapCharacters"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
+            app:boxBackgroundMode="outline">
 
+                <EditText
+                    android:id="@+id/et_discount_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Código descuento"
+                    android:inputType="textCapCharacters"
+                    android:paddingEnd="16dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Botón Aplicar -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_apply_discount"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginEnd="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/white"
+                android:layout_height="53dp"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="@android:color/white"
+                android:minWidth="100dp"
                 android:text="Aplicar"
                 android:textAllCaps="false"
                 android:textColor="#2196F3"
@@ -59,11 +70,9 @@
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_check_circle"
                 app:iconGravity="textStart"
-                app:iconPadding="4dp"
                 app:iconTint="#2196F3"
                 app:strokeColor="#2196F3"
-                app:strokeWidth="1dp" />
-
+                app:strokeWidth="2dp" />
         </LinearLayout>
 
         <!-- Título resumen -->
@@ -80,7 +89,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_summary_products"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="300dp"
             android:layout_marginBottom="16dp"
             android:clipToPadding="false"
             android:overScrollMode="never"/>
@@ -144,7 +153,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#FF0000"
-                android:text="0,00 €"/>
+                android:text="0,00 $"/>
         </LinearLayout>
 
         <!-- Divisor -->
@@ -172,6 +181,7 @@
 
             <TextView
                 android:id="@+id/tv_total"
+                android:text="0,00 $"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
@@ -179,33 +189,63 @@
                 android:textColor="#212121"/>
         </LinearLayout>
 
-        <!-- Botones -->
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2"
             android:paddingTop="8dp">
 
-            <Button
-                android:id="@+id/btn_cancel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Cancelar"
-                android:layout_marginEnd="4dp"
-                android:backgroundTint="#F44336"
-                android:textColor="@android:color/white"/>
+                <!-- Botón Cancelar -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_cancel"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_confirm_payment"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="@color/white"
+                    android:text="Cancelar"
+                    android:textAllCaps="false"
+                    android:textColor="#F44336"
+                    android:textSize="14sp"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_cancel"
+                    app:iconGravity="textStart"
+                    app:iconPadding="4dp"
+                    app:iconTint="#F44336"
+                    app:strokeColor="#F44336"
+                    app:strokeWidth="1dp"/>
 
-            <Button
-                android:id="@+id/btn_confirm_payment"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="#4CAF50"
-                android:text="Confirmar"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_confirm_payment"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    app:layout_constraintStart_toEndOf="@+id/btn_cancel"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.5"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="@color/green_dark"
+                    android:text="Confirmar"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_check"
+                    app:iconGravity="textStart"
+                    app:iconPadding="4dp"
+                    app:iconTint="@android:color/white"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

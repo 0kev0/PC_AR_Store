@@ -8,7 +8,23 @@
     android:background="@color/white"
     android:padding="8dp">
 
+    <!-- ImageView para mostrar/ocultar búsqueda y categorías -->
+
     <!-- Barra de búsqueda -->
+
+    <ImageView
+        android:id="@+id/toggleSearchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Toggle búsqueda"
+        android:padding="8dp"
+        app:tint="@color/gray_650"
+        android:src="@drawable/ic_close_eye"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -16,13 +32,13 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="8dp"
+        android:visibility="visible"
         app:errorTextColor="@color/black"
         android:textColorHint="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/toggleSearchButton">
 
-        <!-- TextInputEditText inside TextInputLayout -->
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/searchEditText"
             android:layout_width="match_parent"
@@ -32,7 +48,6 @@
             android:inputType="text"
             android:maxLines="1"
             android:textColor="@color/black" />
-
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- RecyclerView horizontal para categorías -->
@@ -42,8 +57,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:clipToPadding="false"
-        android:paddingVertical="8dp"
+        android:paddingVertical="6dp"
         android:orientation="horizontal"
+        android:visibility="visible"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

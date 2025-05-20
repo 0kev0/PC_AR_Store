@@ -174,6 +174,5 @@ public class WishlistFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // Limpiar listeners si es necesario
     }
 }

@@ -22,8 +22,11 @@
     <color name="colorSuccess">#4CAF50</color>
     <color name="colorError">#F44336</color>
     <color name="prime_member_background">#FFF8E1</color>
-    <color name="gray_600">#BDBDBD</color>
+    <color name="gray_650">#BDBDBD</color>
     <color name="heart">#FF4081</color>
-
+    <color name="light_gray_background">#F5F5F5</color>
+    <color name="text_bold_color">#0D47A1</color>
+    <color name="text_light_color">#1262DB</color>
+    <color name="text_lighter_color">#1266E3</color>
 
 </resources>

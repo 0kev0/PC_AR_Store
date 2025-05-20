@@ -198,7 +198,6 @@ public class Texture implements Closeable {
     return result;
   }
 
-  // Añade este método en la clase Texture
   public static Texture createFromFile(
           SampleRender render,
           String filePath,

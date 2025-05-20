@@ -212,7 +212,7 @@ public class ProductDetailFragment extends Fragment {
             btnWishlist.setTextColor(Color.RED);
         } else {
             btnWishlist.setText("Añadir a favoritos");
-            btnWishlist.setIconResource(R.drawable.ic_heart);
+            btnWishlist.setIconResource(R.drawable.ic_unfill_heart);
             btnWishlist.setIconTint(ColorStateList.valueOf(Color.parseColor("#FF4081")));
             btnWishlist.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#FF4081")));
             btnWishlist.setTextColor(Color.parseColor("#FF4081"));
@@ -544,13 +544,6 @@ public class ProductDetailFragment extends Fragment {
     private void showToast(String message) {
         if (getContext() != null) {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void showError(String message) {
-        if (getContext() != null) {
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, message);
         }
     }
 

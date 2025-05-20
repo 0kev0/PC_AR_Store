@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">PC AR Store</string>
 
-        <!-- Nuevas cadenas para fechas de pedido -->
-        <string name="order_date">Orden:</string>
-        <string name="delivery_date">Entrega:</string>
-        <string name="not_available">No disponible</string>
+    <!-- Nuevas cadenas para fechas de pedido -->
+    <string name="order_date">Orden:</string>
+    <string name="delivery_date">Entrega:</string>
+    <string name="not_available">No disponible</string>
 
-        <!-- Asegúrate de que los demás strings estén definidos para que la app compile correctamente -->
+    <!-- Asegúrate de que los demás strings estén definidos para que la app compile correctamente -->
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -78,4 +78,17 @@
         <item quantity="one">%d artículo</item>
         <item quantity="other">%d artículos</item>
     </plurals>
+    <string name="channel_name">Notificaciones Admin</string>
+    <string name="channel_description">Notificaciones importantes para administradores</string>
+    <string name="recipient_label">Destinatario:</string>
+    <string name="expires_label">Vence:</string>
+    <string name="view_action">Ver</string>
+    <string name="edit_action">Editar</string>
+    <string name="deactivate_action">Desactivar</string>
+    <string name="my_coupons_title">Mis Cupones</string>
+    <string name="codes_available_template">%d códigos disponibles</string>
+    <string name="add_new_code">Nuevo código</string>
+    <string name="empty_coupons_desc">Icono de cupones vacíos</string>
+    <string name="no_coupons_message">No tienes códigos de descuento</string>
+    <string name="add_code">Agregar código</string>
 </resources>

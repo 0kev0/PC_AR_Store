@@ -112,7 +112,7 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_admin_product, parent, false);
+                .inflate(R.layout.item_producto, parent, false);
         return new ProductViewHolder(view);
     }
 
@@ -223,7 +223,7 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
                 icHeart.setImageResource(R.drawable.ic_heart);
                 icHeart.setColorFilter(Color.RED);
             } else {
-                icHeart.setImageResource(R.drawable.ic_heart);
+                icHeart.setImageResource(R.drawable.ic_unfill_heart);
                 icHeart.setColorFilter(Color.GRAY);
             }
         }
