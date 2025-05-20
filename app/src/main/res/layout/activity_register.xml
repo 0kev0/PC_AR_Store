@@ -10,11 +10,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="217dp"
-        android:layout_height="76dp"
+        android:layout_width="258dp"
+        android:layout_height="104dp"
         android:layout_marginTop="12dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/amazon_logo2"
+        android:src="@drawable/azamoz_logo2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -126,16 +126,24 @@
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRegister"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="24dp"
-                android:backgroundTint="@color/amazon_orange"
                 android:text="Crear cuenta"
-                android:textAllCaps="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                style="@style/Widget.MaterialComponents.Button"
+                android:backgroundTint="#4285F4"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_guest"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/black"/>
 
             <TextView
                 android:layout_width="match_parent"
