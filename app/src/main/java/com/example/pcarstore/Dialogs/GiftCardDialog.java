@@ -2,8 +2,12 @@ package com.example.pcarstore.Dialogs;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -11,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 
 import com.example.pcarstore.ModelsDB.GiftCard;
 import com.example.pcarstore.R;
@@ -29,7 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GiftCardDialog {
+public class GiftCardDialog extends DialogFragment {
     private final Context context;
     private final FirebaseAuth mAuth;
     private final DatabaseReference databaseRef;

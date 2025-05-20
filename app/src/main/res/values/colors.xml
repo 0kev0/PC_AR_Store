@@ -24,10 +24,9 @@
     <color name="prime_member_background">#FFF8E1</color>
     <color name="gray_650">#BDBDBD</color>
     <color name="heart">#FF4081</color>
-    <color name="green_active">#388E3C</color>
-    <color name="red_error">#D32F2F</color>
-    <color name="card_stroke">#E0E0E0</color>
-    <color name="chip_background_selector">@color/selector_chip_background</color>
-    <color name="card_background">#FFFFFF</color>
-    <color name="green_active_light">#1A4CAF50</color>
+    <color name="light_gray_background">#F5F5F5</color>
+    <color name="text_bold_color">#0D47A1</color>
+    <color name="text_light_color">#1262DB</color>
+    <color name="text_lighter_color">#1266E3</color>
+
 </resources>

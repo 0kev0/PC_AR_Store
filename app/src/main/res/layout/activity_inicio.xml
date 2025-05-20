@@ -19,7 +19,7 @@
             android:id="@+id/logo"
             android:layout_width="212dp"
             android:layout_height="74dp"
-            android:src="@drawable/amazon_logo2"
+            android:src="@drawable/azamoz_logo2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>

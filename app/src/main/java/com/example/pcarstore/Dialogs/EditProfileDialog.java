@@ -4,10 +4,14 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.Glide;
 import com.example.pcarstore.ModelsDB.Departamento;
@@ -38,7 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EditProfileDialog {
+public class EditProfileDialog extends DialogFragment {
     private static final int PICK_IMAGE_REQUEST = 71;
 
     private final Context context;
@@ -62,6 +67,15 @@ public class EditProfileDialog {
         void onImageSelectionRequested(Intent intent, int requestCode);
         void onProfileUpdatedSuccessfully(FirebaseUser updatedUser, User updatedUserData);
         void onProfileUpdateFailed(Exception exception);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dialog_edit_profile, container, false);
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+        return view;
     }
 
     public EditProfileDialog(Context context, FirebaseAuth mAuth, FirebaseDatabase database, FirebaseStorage storage) {

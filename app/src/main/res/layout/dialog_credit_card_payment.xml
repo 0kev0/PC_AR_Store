@@ -4,78 +4,108 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="24dp"
+    android:background="@drawable/dialog_background"
+    android:clipToPadding="false">
 
+    <!-- Header -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Información de pago"
-        android:textSize="20sp"
+        android:textSize="22sp"
         android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_marginBottom="16dp"/>
+        android:textColor="?attr/colorOnSurface"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
 
+    <!-- Card Name -->
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:hintEnabled="true"
-        app:hintAnimationEnabled="true">
+        android:layout_marginBottom="16dp"
+        app:boxStrokeColor="?attr/colorPrimary"
+        app:hintTextColor="?attr/colorPrimary"
+        app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etCardName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nombre completo"
+            android:hint="Nombre del titular"
             android:inputType="textCapWords"
-            android:text="Armando Estaban Quito"/>
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurface"
+            android:textSize="16sp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Card Number -->
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:hintEnabled="true"
-        app:hintAnimationEnabled="true">
+        android:layout_marginBottom="16dp"
+        app:boxStrokeColor="?attr/colorPrimary"
+        app:hintTextColor="?attr/colorPrimary"
+        app:errorEnabled="true"
+        app:prefixTextColor="?attr/colorOnSurface">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etCardNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Número de Tarjeta de Crédito"
+            android:hint="Número de tarjeta"
             android:inputType="number"
-            android:text="0000 0000 0000 0000"/>
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurface"
+            android:textSize="16sp"
+            android:maxLength="19"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Expiry and CVV -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="16dp"
+        android:baselineAligned="false">
 
+        <!-- Expiry Date -->
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            app:hintEnabled="true"
-            app:hintAnimationEnabled="true">
+            app:boxStrokeColor="?attr/colorPrimary"
+            app:hintTextColor="?attr/colorPrimary"
+            app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etExpiry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Vencimiento"
-                android:inputType="date"
-                android:text="12/25"/>
+                android:hint="MM/AA"
+                android:inputType="number"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="?attr/colorOnSurface"
+                android:textSize="16sp"
+                android:maxLength="5"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- CVV -->
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:hintEnabled="true"
-            app:hintAnimationEnabled="true">
+            app:boxStrokeColor="?attr/colorPrimary"
+            app:hintTextColor="?attr/colorPrimary"
+            app:errorEnabled="true"
+            app:endIconMode="password_toggle"
+            app:endIconTint="?attr/colorPrimary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etCvv"
@@ -83,16 +113,24 @@
                 android:layout_height="wrap_content"
                 android:hint="CVV"
                 android:inputType="numberPassword"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="?attr/colorOnSurface"
+                android:textSize="16sp"
                 android:maxLength="4"/>
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
+    <!-- Amount -->
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:hintEnabled="true"
-        app:hintAnimationEnabled="true">
+        android:layout_marginBottom="24dp"
+        app:boxStrokeColor="?attr/colorPrimary"
+        app:hintTextColor="?attr/colorPrimary"
+        app:errorEnabled="true"
+        app:prefixText="$"
+        app:prefixTextColor="?attr/colorPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etAmount"
@@ -100,14 +138,34 @@
             android:layout_height="wrap_content"
             android:hint="Monto"
             android:inputType="numberDecimal"
-            android:text="100.00"/>
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurface"
+            android:textSize="16sp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ImageView
+    <!-- Card Brands -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:src="@drawable/ic_credit_card"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:layout_marginBottom="16dp"/>
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_visa"
+            android:layout_marginEnd="8dp"/>
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_amex"
+            android:layout_marginEnd="8dp"/>
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_master_card"/>
+    </LinearLayout>
 </LinearLayout>

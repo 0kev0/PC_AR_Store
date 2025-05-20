@@ -143,7 +143,6 @@ public class CatalogoFragment extends Fragment{
                 })
                 .start();
     }
-
     private void animateViewsIn() {
         // Preparar vistas antes de animar (transparencia inicial)
         searchLayout.setAlpha(0f);
