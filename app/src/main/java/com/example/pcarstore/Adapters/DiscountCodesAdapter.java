@@ -89,7 +89,7 @@ public class DiscountCodesAdapter extends RecyclerView.Adapter<DiscountCodesAdap
             case "inactive":
                 holder.chipStatus.setText("INACTIVO");
                 holder.chipStatus.setChipBackgroundColorResource(R.color.red);
-                holder.chipStatus.setTextColor(context.getColor(R.color.red_error));
+                holder.chipStatus.setTextColor(context.getColor(R.color.red));
                 holder.btnDeactivate.setVisibility(View.GONE);
                 break;
         }

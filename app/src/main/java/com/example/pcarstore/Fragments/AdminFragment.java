@@ -13,14 +13,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.pcarstore.R;
-import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class FirstFragment extends Fragment {
+public class AdminFragment extends Fragment {
 
     private TextView tvUsersCount;
     private TextView tvProductsCount;
@@ -172,7 +171,7 @@ public class FirstFragment extends Fragment {
         });
 
         rootView.findViewById(R.id.card_gift_cards).setOnClickListener(v -> {
-            replaceFragment(new GiftFragment());
+            replaceFragment(new CodesFragment());
         });
 
         rootView.findViewById(R.id.card_settings).setOnClickListener(v -> {

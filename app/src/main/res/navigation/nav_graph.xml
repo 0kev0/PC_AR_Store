@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.pcarstore.Fragments.FirstFragment"
+        android:name="com.example.pcarstore.Fragments.AdminFragment"
         android:label="Main">
 
         <action

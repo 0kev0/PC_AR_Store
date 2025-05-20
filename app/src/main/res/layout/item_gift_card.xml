@@ -9,8 +9,8 @@
     android:layout_marginBottom="16dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="@color/card_background"
-    app:strokeColor="@color/card_stroke"
+    android:background="@color/fondo"
+    app:strokeColor="@color/text_light_color"
     app:strokeWidth="0.5dp"
     app:contentPadding="0dp">
 
@@ -35,11 +35,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ACTIVA"
-                app:chipBackgroundColor="@color/green_active_light"
-                app:chipStrokeColor="@color/green_active"
+                app:chipBackgroundColor="@color/green_dark"
+                app:chipStrokeColor="@color/green"
                 app:chipStrokeWidth="1dp"
                 app:chipCornerRadius="8dp"
-                android:textColor="@color/green_active"
+                android:textColor="@color/white"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 android:textStyle="bold"/>
 
@@ -187,9 +187,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/deactivate_action"
-                android:textColor="@color/red_error"
+                android:textColor="@color/red"
                 app:iconGravity="textStart"
-                app:iconTint="@color/red_error"
+                app:iconTint="@color/red"
                 app:iconPadding="4dp"/>
         </LinearLayout>
     </LinearLayout>

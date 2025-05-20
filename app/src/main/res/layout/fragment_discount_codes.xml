@@ -6,22 +6,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:paddingTop="16dp"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <!-- Header con título - Mejorado con accesibilidad -->
+    <!-- Toolbar principal -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Gestion Codigos de descuento"
+        app:titleTextColor="@android:color/white"/>
+
+    <!-- Tarjeta de encabezado con información -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/header_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="8dp"
-        app:cardBackgroundColor="?attr/colorPrimary"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardBackgroundColor="@color/colorPrimary"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,8 +51,7 @@
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:importantForAccessibility="no"
-                tools:text="Mis Cupones" />
+                tools:text="Mis Codigos"/>
 
             <TextView
                 android:id="@+id/tv_active_count"
@@ -47,7 +61,7 @@
                 android:text="@string/codes_available_template"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
-                tools:text="5 códigos disponibles" />
+                tools:text="5 códigos disponibles"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_add_code"
@@ -55,58 +69,50 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
                 android:text="@string/add_new_code"
                 android:textColor="@android:color/white"
                 app:strokeColor="@android:color/white"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Lista de códigos - Mejorado con padding bottom para FAB -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_gift_cards"
+    <!-- Contenedor principal para la lista o estado vacío -->
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:clipToPadding="false"
-        android:paddingTop="8dp"
-        android:paddingBottom="72dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_card"
-        tools:itemCount="3"
-        tools:listitem="@layout/item_gift_card" />
-
-    <!-- Empty State - Mejorado con constraints adecuados -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/empty_state"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_card">
 
+        <!-- Lista de códigos -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_gift_cards"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            android:paddingBottom="72dp"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_gift_card"/>
+
+        <!-- Estado vacío -->
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
             android:orientation="vertical"
             android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:padding="32dp">
 
             <ImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:contentDescription="@string/empty_coupons_desc"
                 android:src="@drawable/ic_credit_card"
-                android:tint="?attr/colorPrimary" />
+                app:tint="?attr/colorPrimary"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -115,18 +121,18 @@
                 android:text="@string/no_coupons_message"
                 android:textColor="?attr/colorOnBackground"
                 android:textSize="16sp"
-                tools:text="No tienes códigos de descuento" />
+                tools:text="No tienes códigos de descuento"/>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_add_code"
+                android:id="@+id/btn_add_code_empty"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/add_code"
                 app:strokeColor="?attr/colorPrimary"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp"/>
         </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
