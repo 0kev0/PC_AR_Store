@@ -11,11 +11,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="217dp"
-        android:layout_height="76dp"
+        android:layout_width="258dp"
+        android:layout_height="104dp"
         android:layout_marginTop="12dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/logo_amazon"
+        android:src="@drawable/amazon_logo2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -100,16 +100,22 @@
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/LoginGoogle"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="20dp"
-                android:backgroundTint="#7AC6D2"
-                android:text="Sign-In"
+                android:text="Log-in"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                style="@style/Widget.MaterialComponents.Button"
+                android:backgroundTint="#4285F4"
+                android:textColor="@color/white"
                 android:textAllCaps="false"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                app:cornerRadius="8dp"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -133,28 +139,45 @@
             android:clickable="true"
             android:focusable="true"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/RegisterGoogle"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="#B5FCCD"
-                android:text="Continuar con Google"
+                android:layout_marginTop="8dp"
+                android:text="Registrarse con Google"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:backgroundTint="@color/white"
+                android:textColor="#4285F4"
                 android:textAllCaps="false"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                app:strokeColor="#4285F4"
+                app:strokeWidth="1dp"
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_google"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="#4285F4"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ContinueWithoutAcount"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="#B5FCCD"
-                android:onClick="VerCatologo"
+                android:layout_marginTop="8dp"
                 android:text="Continuar sin cuenta"
+                android:onClick="VerCatologo"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:backgroundTint="@color/white"
+                android:textColor="#757575"
                 android:textAllCaps="false"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                app:strokeColor="#BDBDBD"
+                app:strokeWidth="1dp"
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_guest"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="#757575"/>
+
             <Button
                 android:id="@+id/test"
                 android:layout_width="match_parent"
