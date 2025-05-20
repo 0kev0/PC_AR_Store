@@ -8,7 +8,7 @@ public class SessionManager {
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_USER_ID = "userId";
     private static final String KEY_USER_EMAIL = "userEmail";
-    private static final String KEY_USER_ROLE = "userRole"; // Nuevo campo para el rol
+    private static final String KEY_USER_ROLE = "userRole";
 
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
