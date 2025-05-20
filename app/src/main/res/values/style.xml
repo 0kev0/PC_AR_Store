@@ -5,4 +5,16 @@
         <item name="colorControlActivated">@color/yellow</item> <!-- estrellas seleccionadas -->
     </style>
 
+    <style name="RoundedInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+        <item name="boxStrokeColor">#BDBDBD</item>
+        <item name="android:textColorHint">#757575</item>
+        <item name="android:textColor">#616161</item>
+        <item name="hintTextColor">#757575</item>
+        <item name="boxStrokeWidth">1dp</item>
+    </style>
+
 </resources>

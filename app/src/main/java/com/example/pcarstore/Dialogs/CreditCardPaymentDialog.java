@@ -3,11 +3,14 @@ package com.example.pcarstore.Dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,6 +40,16 @@ public class CreditCardPaymentDialog extends DialogFragment {
         args.putDouble("amount", amount);
         dialog.setArguments(args);
         return dialog;
+    }
+
+    //quitar cuadro del dialogo por defecto
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dialog_credit_card_payment, container, false);
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+        return view;
     }
 
     @Override
