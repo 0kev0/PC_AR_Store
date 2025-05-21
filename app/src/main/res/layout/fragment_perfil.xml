@@ -200,6 +200,22 @@
                 app:iconSize="24dp"
                 android:paddingStart="16dp"
                 android:gravity="start|center_vertical"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnShowGiftCardShop"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Comprar Gif Card"
+                android:textAllCaps="false"
+                android:textColor="@color/text_light_color"
+                app:icon="@drawable/ic_gift_card_shop"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/text_light_color"
+                app:iconSize="24dp"
+                android:paddingStart="16dp"
+                android:gravity="start|center_vertical"/>
         </LinearLayout>
 
         <!-- Sección de configuración -->

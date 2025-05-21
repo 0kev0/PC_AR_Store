@@ -37,7 +37,6 @@ public class ShopGiftCardAdapter extends RecyclerView.Adapter<ShopGiftCardAdapte
     @Override
     public void onBindViewHolder(@NonNull GiftCardViewHolder holder, int position) {
         GiftCard giftCard = giftCards.get(position);
-        holder.tvCode.setText(giftCard.getCode());
         holder.tvPrice.setText(String.format("$%.2f", giftCard.getAmount()));
 
         holder.btnBuy.setOnClickListener(v -> listener.onBuyClick(giftCard));
@@ -55,13 +54,12 @@ public class ShopGiftCardAdapter extends RecyclerView.Adapter<ShopGiftCardAdapte
     }
 
     static class GiftCardViewHolder extends RecyclerView.ViewHolder {
-        final TextView tvPrice, tvCode;
+        final TextView tvPrice;
         final Button btnBuy;
 
         public GiftCardViewHolder(View itemView) {
             super(itemView);
             tvPrice = itemView.findViewById(R.id.tvGiftCardPrice);
-            tvCode = itemView.findViewById(R.id.tvCardNumber);
             btnBuy = itemView.findViewById(R.id.btnBuy);
         }
     }

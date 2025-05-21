@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGiftCardActionsListener {
+public class  Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGiftCardActionsListener {
 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
@@ -50,7 +50,6 @@ public class Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGi
     public Gift_CardsFragment() {
         // Required empty public constructor
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +57,6 @@ public class Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGi
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,7 +74,6 @@ public class Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGi
 
         return view;
     }
-
     private void showCreateGiftCardDialog() {
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_create_giftcard, null);
 
@@ -148,7 +145,6 @@ public class Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGi
                     Log.e("GiftCards", "Error al crear gift card", e);
                 });
     }
-
     private void loadUserGiftCards() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
@@ -176,12 +172,9 @@ public class Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGi
                     }
                 });
     }
-
-
     private String generateUniqueId() {
         return "GC-" + System.currentTimeMillis();
     }
-
     private String generateRandomCode() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         StringBuilder code = new StringBuilder();
@@ -190,22 +183,18 @@ public class Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGi
         }
         return code.toString();
     }
-
     private Date calculateExpirationDate(int days) {
         long daysInMillis = days * 24L * 60 * 60 * 1000;
         return new Date(System.currentTimeMillis() + daysInMillis);
     }
-
     @Override
     public void onEditGiftCard(GiftCard giftCard) {
         showEditGiftCardDialog(giftCard);
     }
-
     @Override
     public void onDeleteGiftCard(GiftCard giftCard) {
         showExpireConfirmationDialog(giftCard);
     }
-
     private void showEditGiftCardDialog(GiftCard giftCard) {
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_edit_giftcard, null);
 
@@ -244,7 +233,6 @@ public class Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGi
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
-
     private void showDatePicker(EditText etExpiryDate) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 getContext(),
@@ -259,7 +247,6 @@ public class Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGi
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
         datePickerDialog.show();
     }
-
     private void updateGiftCard(String cardId, double newAmount, Date newExpiryDate, String newStatus) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("amount", newAmount);
@@ -277,7 +264,6 @@ public class Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGi
                     Log.e("GiftCards", "Error al actualizar", e);
                 });
     }
-
     private void showExpireConfirmationDialog(GiftCard giftCard) {
         new AlertDialog.Builder(getContext())
                 .setTitle("Marcar como vencida")
@@ -286,7 +272,6 @@ public class Gift_CardsFragment extends Fragment implements GiftCardAdapter.OnGi
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
-
     private void expireGiftCard(String cardId) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("status", "VENCIDA");

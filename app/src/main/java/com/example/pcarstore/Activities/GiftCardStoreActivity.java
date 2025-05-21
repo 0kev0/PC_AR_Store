@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public abstract class GiftCardStoreActivity extends AppCompatActivity implements CreditCardPaymentDialog.CreditCardPaymentListener{
+public class GiftCardStoreActivity extends AppCompatActivity implements CreditCardPaymentDialog.CreditCardPaymentListener{
 
     private RecyclerView rvGiftCards;
     private ShopGiftCardAdapter adapter;
@@ -56,7 +56,6 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
         setupRecyclerView();
         loadGiftCardsFromFirebase();
     }
-
     private void setupRecyclerView() {
         adapter = new ShopGiftCardAdapter(giftCardList, giftCard -> {
             showRecipientSelectionDialog(giftCard);
@@ -64,7 +63,6 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
         rvGiftCards.setLayoutManager(new LinearLayoutManager(this));
         rvGiftCards.setAdapter(adapter);
     }
-
     private void loadGiftCardsFromFirebase() {
         showProgressDialog();
         DatabaseReference giftCardsRef = FirebaseDatabase.getInstance()
@@ -98,7 +96,6 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
             }
         });
     }
-
     private void showRecipientSelectionDialog(GiftCard giftCard) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("¿Para quién es la Gift Card?");
@@ -122,7 +119,6 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
 
         builder.show();
     }
-
     private void showEmailInputDialog(GiftCard giftCard) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enviar a otra persona");
@@ -147,12 +143,10 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
 
         builder.show();
     }
-
     private boolean isValidEmail(CharSequence target) {
         return !TextUtils.isEmpty(target) &&
                 Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
-
     private void processPaymentAndAssignGiftCard(GiftCard giftCard, String recipientEmail) {
         showProgressDialog();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -191,7 +185,6 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
             }
         });
     }
-
     private void showInsufficientBalanceDialog(GiftCard giftCard, String recipientEmail, double currentBalance) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Saldo insuficiente");
@@ -210,7 +203,6 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
 
         builder.show();
     }
-
     private void showCreditCardPaymentDialog(GiftCard giftCard, String recipientEmail) {
         // 1. Calcular saldo necesario
         double currentBalance = getCurrentUserBalance();
@@ -228,7 +220,6 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
         // 4. Mostrar diálogo con manejo seguro
         showDialogSafely(dialog, "GiftCardPaymentDialog");
     }
-
     private void updateUserBalance(double amountAdded) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
@@ -239,7 +230,6 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
         userRef.child("balance").setValue(getCurrentUserBalance() + amountAdded)
                 .addOnFailureListener(e -> Log.e("Balance", "Error updating balance", e));
     }
-
     private void showDialogSafely(DialogFragment dialog, String tag) {
         try {
             if (!isFinishing() && !isDestroyed()) {
@@ -249,20 +239,16 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
             Log.e("Dialog", "Error showing dialog", e);
         }
     }
-
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
-
     private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
     private double getCurrentUserBalance() {
         // Implementa según tu estructura de datos
         return 0.0; // Valor temporal
     }
-
     private void completeGiftCardPurchase(DatabaseReference userRef, User user,
                                           GiftCard giftCard, String recipientEmail) {
         double newBalance = user.getSaldo() - giftCard.getAmount();
@@ -279,7 +265,6 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
                     Log.e("Payment", "Error updating balance", e);
                 });
     }
-
     private void createAndAssignGiftCard(GiftCard giftCard, String recipientEmail, String creatorEmail) {
         String finalRecipient = (recipientEmail == null) ? creatorEmail : recipientEmail;
         giftCard.setRecipientEmail(finalRecipient);
@@ -314,17 +299,14 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
                     revertPayment(creatorEmail, giftCard.getAmount());
                 });
     }
-
     private String generateGiftCardCode() {
         // Implementa tu lógica de generación de código
         return "GC-" + System.currentTimeMillis();
     }
-
     private void sendGiftCardNotification(GiftCard giftCard, String recipientEmail) {
         // Implementa el envío de notificación
         Log.d("GiftCard", "Notificación enviada a " + recipientEmail);
     }
-
     private void registerTransaction(String userId, double amount,
                                      String type, String description) {
         DatabaseReference transactionsRef = FirebaseDatabase.getInstance()
@@ -342,11 +324,9 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
         transactionsRef.setValue(transaction)
                 .addOnFailureListener(e -> Log.e("Payment", "Error saving transaction", e));
     }
-
     private void revertPayment(String userEmail, double amount) {
         // Implementa la reversión del pago si es necesario
     }
-
     private void showProgressDialog() {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
@@ -355,16 +335,22 @@ public abstract class GiftCardStoreActivity extends AppCompatActivity implements
         }
         progressDialog.show();
     }
-
     private void hideProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         hideProgressDialog();
+    }
+    @Override
+    public void onPaymentConfirmed(String cardName, String cardNumber, String expiry, String cvv, double amount) {
+
+    }
+    @Override
+    public void onPaymentCancelled() {
+
     }
 }
