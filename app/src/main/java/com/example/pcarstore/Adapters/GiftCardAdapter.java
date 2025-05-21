@@ -101,6 +101,10 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
         notifyDataSetChanged();
     }
 
+    public interface OnBuyClickListener {
+        void onBuyClick(GiftCard giftCard);
+    }
+
     public static class GiftCardViewHolder extends RecyclerView.ViewHolder {
         TextView tvCode, tvAmount, tvStatus, tvExpiration, tvRecipient;
         Button btnEdit, btnDelete;

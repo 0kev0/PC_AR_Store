@@ -1,6 +1,7 @@
 package com.example.pcarstore.ModelsDB;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.PropertyName;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -182,5 +183,6 @@ public class GiftCard {
 
         return giftCard;
     }
+
 
 }
