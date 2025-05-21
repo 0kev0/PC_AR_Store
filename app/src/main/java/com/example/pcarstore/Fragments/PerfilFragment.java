@@ -8,10 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,33 +18,21 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.pcarstore.Activities.GiftCardStoreActivity;
 import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Activities.OrdersActivity;
 import com.example.pcarstore.Dialogs.EditProfileDialog;
-import com.example.pcarstore.Dialogs.GiftCardDialog;
-import com.example.pcarstore.ModelsDB.GiftCard;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -59,11 +44,7 @@ import android.content.SharedPreferences;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class PerfilFragment extends Fragment {
     private FirebaseAuth mAuth;
@@ -360,7 +341,7 @@ public class PerfilFragment extends Fragment {
     }
 
     private void showGifCard() {
-        if (mAuth.getCurrentUser() == null) {
+       /* if (mAuth.getCurrentUser() == null) {
             Toast.makeText(getContext(),
                     "Debes iniciar sesión para canjear Gift Cards",
                     Toast.LENGTH_SHORT).show();
@@ -410,7 +391,9 @@ public class PerfilFragment extends Fragment {
                 Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
-        giftCardDialog.show();
+        giftCardDialog.show();*/
+        Intent intent = new Intent(getContext(), GiftCardStoreActivity.class);
+        startActivity(intent);
     }
     private void showSettings() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());

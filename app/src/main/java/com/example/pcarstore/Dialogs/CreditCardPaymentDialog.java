@@ -24,7 +24,9 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Locale;
 
-public class CreditCardPaymentDialog extends DialogFragment {
+public class CreditCardPaymentDialog extends DialogFragment  {
+
+
 
     public interface CreditCardPaymentListener {
         void onPaymentConfirmed(String cardName, String cardNumber, String expiry, String cvv, double amount);
