@@ -74,7 +74,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     private DatabaseReference ordersRef;
     private double shippingCost = 0.0;
     private boolean isPrimeMember = false;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -150,7 +149,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
                 }
         );
     }
-
     @Override
     public void updateCartSummary(double subtotal) {
         // Aplicar descuento por compra mayor a $50
@@ -406,16 +404,13 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
                 })
                 .addOnFailureListener(e -> showError("Error al vaciar carrito: " + e.getMessage()));
     }
-
     // Métodos auxiliares
     private void showError(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
-
     private void showSuccess(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
-
     // Implementación de interfaces del adaptador
     @Override
     public void onIncreaseQuantity(String productId, int newQuantity) {
@@ -430,7 +425,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     public void onRemoveItem(String productId) {
         removeItemFromCart(productId);
     }
-
     private void updateItemQuantity(String productId, int newQuantity) {
         if (currentCart.getItems() != null && currentCart.getItems().containsKey(productId)) {
             if (newQuantity <= 0) {
@@ -442,17 +436,14 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
             }
         }
     }
-
     private void removeItemFromCart(String productId) {
         currentCart.removeItem(productId);
         cartRef.setValue(currentCart);
     }
-
     @Override
     public void onPaymentConfirmed(String cardName, String cardNumber, String expiry, String cvv, double amount) {
         processCardPayment(amount);
     }
-
     @Override
     public void onPaymentCancelled() {
         Toast.makeText(getContext(), "Pago cancelado", Toast.LENGTH_SHORT).show();

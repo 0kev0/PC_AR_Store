@@ -25,14 +25,12 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
         void onEditGiftCard(GiftCard giftCard);
         void onDeleteGiftCard(GiftCard giftCard);
     }
-
     public GiftCardAdapter(List<GiftCard> giftCards, Context context, OnGiftCardActionsListener listener) {
         this.giftCards = giftCards;
         this.context = context;
         this.listener = listener;
         this.dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     }
-
     @NonNull
     @Override
     public GiftCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
