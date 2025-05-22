@@ -46,19 +46,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvWishlistItemCount"/>
 
-    <!-- Botón para vaciar la wishlist -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnClearWishlist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#D32F2F"
-        android:elevation="4dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/white"
         android:text="Vaciar Wishlist"
         android:textAllCaps="false"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:textColor="#F44336"
+        android:textSize="14sp"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/ic_trash"
+        app:iconGravity="textStart"
+        app:iconPadding="4dp"
+    app:iconTint="#F44336"
+    app:strokeColor="#F44336"
+    app:strokeWidth="1dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

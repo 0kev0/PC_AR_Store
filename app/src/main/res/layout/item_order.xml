@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/card_margin_horizontal"
-    android:layout_marginVertical="@dimen/card_margin_vertical"
-    android:foreground="?attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/card_corner_radius"
-    app:cardElevation="@dimen/card_elevation">
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
+    android:background="@color/white"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/card_padding">
+        android:padding="16dp">
 
         <!-- Header - Order ID and Status -->
         <LinearLayout
@@ -29,8 +29,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="@color/dark_gray"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:ellipsize="end"
                 android:maxLines="1"
                 tools:text="#ORD-12345678" />
@@ -40,12 +41,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:background="@drawable/bg_order_status"
+                android:background="@color/blue"
                 android:paddingHorizontal="8dp"
-                android:paddingVertical="2dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textAllCaps="true"
+                android:paddingVertical="4dp"
                 android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:textAllCaps="true"
                 tools:text="COMPLETADO" />
         </LinearLayout>
 
@@ -60,22 +61,17 @@
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                app:tint="?attr/colorPrimary"
+                app:tint="@color/colorPrimary"
+                android:src="@drawable/ic_calendar"
                 android:contentDescription="@string/order_date" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/order_date"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_marginStart="8dp"/>
 
             <TextView
                 android:id="@+id/tvOrderDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/gray"
+                android:textSize="14sp"
                 tools:text="15 Jun 2023 - 10:30 AM" />
         </LinearLayout>
 
@@ -83,29 +79,24 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                app:tint="?attr/colorPrimary"
+                app:tint="@color/colorPrimary"
+                android:src="@drawable/ic_delivery"
                 android:contentDescription="@string/delivery_date" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/delivery_date"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_marginStart="8dp"/>
 
             <TextView
                 android:id="@+id/tvDeliveryDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/gray"
+                android:textSize="14sp"
                 tools:text="16 Jun 2023 - 10:30 AM" />
         </LinearLayout>
 
@@ -113,22 +104,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                app:tint="?attr/colorPrimary"
- />
+                app:tint="@color/colorPrimary"
+                android:src="@drawable/ic_carrito" />
 
             <TextView
                 android:id="@+id/tvItemsCount"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="@color/gray"
+                android:textSize="14sp"
                 tools:text="3 artículos" />
         </LinearLayout>
 
@@ -136,7 +128,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -144,27 +136,33 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/total_label"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                android:text="Total:"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvTotalAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="$149.99" />
         </LinearLayout>
 
         <!-- View Details Button -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnViewDetails"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
             android:layout_gravity="end"
-            android:layout_marginTop="8dp"
-            android:text="@string/view_details"
-            android:textColor="?attr/colorPrimary" />
+            android:layout_marginTop="16dp"
+            android:text="Ver detalles"
+            android:textColor="@color/colorPrimary"
+            app:icon="@drawable/ic_arrow_right"
+            app:iconTint="@color/colorPrimary"
+            app:strokeColor="@color/colorPrimary"
+            app:strokeWidth="1dp" />
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

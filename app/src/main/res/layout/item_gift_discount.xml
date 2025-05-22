@@ -4,12 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="1dp"
-    app:strokeColor="@color/text_bold_color"
-    app:strokeWidth="0.5dp">
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
+    android:background="@color/white"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,14 +25,15 @@
             android:layout_marginBottom="12dp">
 
             <!-- Código de descuento -->
-            <com.google.android.material.textview.MaterialTextView
+            <TextView
                 android:id="@+id/tv_discount_code"
+                android:text="codigo descuento"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="?attr/colorPrimaryDark"
+                android:textColor="@color/colorPrimary"
                 android:letterSpacing="0.05"/>
 
             <!-- Estado -->
@@ -41,31 +41,43 @@
                 android:id="@+id/chip_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:chipBackgroundColor="@color/green"
-                app:chipStrokeColor="@color/green_dark"/>
+                android:background="@color/text_lighter_color"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:textAllCaps="true"/>
+
+
         </LinearLayout>
 
         <!-- Información del descuento -->
-        <com.google.android.material.textview.MaterialTextView
+        <TextView
             android:id="@+id/tv_discount"
+            android:text="PDM-******"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            android:textColor="@color/gray"/>
 
-        <com.google.android.material.textview.MaterialTextView
+        <TextView
             android:id="@+id/tv_min_purchase"
+            android:text="20.00 $"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            android:textColor="@color/gray"/>
 
-        <com.google.android.material.textview.MaterialTextView
+        <TextView
             android:id="@+id/tv_expiry"
+            android:text="2026"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            android:textColor="@color/gray"/>
 
         <!-- Botones de acción -->
         <LinearLayout
@@ -82,13 +94,13 @@
                 android:layout_height="36dp"
                 android:layout_marginEnd="8dp"
                 android:text="Editar"
-                android:textAllCaps="true"
-                android:textSize="12sp"
+                android:textColor="@color/colorPrimary"
                 app:icon="@drawable/ic_edit"
                 app:iconGravity="textStart"
                 app:iconSize="16dp"
-                app:iconPadding="2dp"
-                app:strokeColor="?attr/colorPrimary"/>
+                app:iconTint="@color/colorPrimary"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="1dp"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_deactivate"
@@ -96,14 +108,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:text="Desactivar"
-                android:textAllCaps="true"
-                android:textSize="12sp"
-                android:textColor="@color/red"
-                app:icon="@drawable/ic_restricted"
+                android:textColor="@color/colorError"
+                app:icon="@drawable/ic_remove"
                 app:iconGravity="textStart"
                 app:iconSize="16dp"
-                app:iconPadding="2dp"
-                app:strokeColor="@color/red"/>
+                app:iconTint="@color/colorError"
+                app:strokeColor="@color/colorError"
+                app:strokeWidth="1dp"/>
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
