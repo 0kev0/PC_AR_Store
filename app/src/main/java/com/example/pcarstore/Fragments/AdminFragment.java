@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class AdminFragment extends Fragment {
@@ -30,9 +32,98 @@ public class AdminFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin, container, false);
         initializeViews(view);
+        setupRecentActivities(view);
         setupClickListeners(view);
         updateMetrics();
         return view;
+    }
+    private void setupRecentActivities(View rootView) {
+        setupRecentUsers(rootView);
+        setupRecentOrders(rootView);
+    }
+
+    private void setupRecentUsers(View rootView) {
+        LinearLayout userActivity = rootView.findViewById(R.id.activity_user);
+        TextView tvUserTitle = rootView.findViewById(R.id.tvActivityTitle1);
+        TextView tvUserSubtitle = rootView.findViewById(R.id.tvActivitySubtitle1);
+
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+        Query recentUserQuery = usersRef.orderByChild("timestamp")
+                .limitToLast(1);
+
+        usersRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        String name = userSnapshot.child("name").getValue(String.class);
+                        Long timestamp = userSnapshot.child("timestamp").getValue(Long.class);
+                        String email = userSnapshot.child("email").getValue(String.class);
+
+                        //String timeAgo = getTimeAgo(timestamp);
+
+                        tvUserTitle.setText("Nuevo usuario registrado");
+                        tvUserSubtitle.setText((name != null ? name : email) + " - "+ email +  "\n - " + timestamp);
+
+                    }
+                } else {
+                    tvUserTitle.setText("No hay usuarios recientes");
+                    tvUserSubtitle.setText("");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("Firebase", "Error loading users", databaseError.toException());
+                tvUserTitle.setText("Error cargando usuarios");
+                tvUserSubtitle.setText("");
+            }
+        });
+    }
+
+    private void setupRecentOrders(View rootView) {
+        LinearLayout orderActivity = rootView.findViewById(R.id.activity_order);
+        TextView tvOrderTitle = rootView.findViewById(R.id.tvActivityTitle2);
+        TextView tvOrderSubtitle = rootView.findViewById(R.id.tvActivitySubtitle2);
+
+        DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference("orders");
+        Query recentOrderQuery = ordersRef.orderByChild("status")
+                .equalTo("completado")
+                .limitToLast(1);
+
+        ordersRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
+                        String orderId = orderSnapshot.getKey();
+                        Long timestamp = orderSnapshot.child("timestamp").getValue(Long.class);
+                        String customerName = orderSnapshot.child("customerName").getValue(String.class);
+                        Double total = orderSnapshot.child("total").getValue(Double.class);
+
+                        //String timeAgo = getTimeAgo(timestamp);
+
+                        tvOrderTitle.setText("Pedido completado");
+                        tvOrderSubtitle.setText("Orden #" + orderId + " - " +
+                                (customerName != null ? customerName : "") +
+                                (total != null ? " - $" + total : "") +
+                                " - " + timestamp);
+
+
+                    }
+                } else {
+                    tvOrderTitle.setText("No hay pedidos recientes");
+                    tvOrderSubtitle.setText("");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("Firebase", "Error loading orders", databaseError.toException());
+                tvOrderTitle.setText("Error cargando pedidos");
+                tvOrderSubtitle.setText("");
+            }
+        });
     }
 
     private void initializeViews(View rootView) {

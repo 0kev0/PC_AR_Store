@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -19,9 +18,7 @@ import android.widget.Toast;
 
 import com.example.pcarstore.Adapters.ShopGiftCardAdapter;
 import com.example.pcarstore.Dialogs.CreditCardPaymentDialog;
-import com.example.pcarstore.Dialogs.PaymentConfirmationDialog;
 import com.example.pcarstore.ModelsDB.GiftCard;
-import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.google.firebase.auth.FirebaseAuth;

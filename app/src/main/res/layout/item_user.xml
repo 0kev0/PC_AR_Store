@@ -5,8 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
+    android:layout_marginHorizontal="4dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    app:cardElevation="2dp"
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -21,7 +23,8 @@
             android:contentDescription="Avatar del usuario"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_account_circle" />
+            app:srcCompat="@drawable/ic_account_circle"
+            app:tint="@color/colorPrimary"/>
 
         <!-- Nombre y email -->
         <TextView
@@ -37,22 +40,31 @@
             app:layout_constraintStart_toEndOf="@id/ivUserAvatar"
             app:layout_constraintTop_toTopOf="@id/ivUserAvatar" />
 
-        <!-- Rol y ubicación -->
+        <TextView
+            android:id="@+id/tvUserBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Activo"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ivUserAvatar" />
 
+        <!-- Email y rol -->
         <TextView
             android:id="@+id/tvUserEmail"
-            android:layout_width="205dp"
-            android:layout_height="21dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="usuario@ejemplo.com"
-            android:textColor="#757575"
+            android:textColor="@color/gray"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@id/tvUserName"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/tvUserName"
             app:layout_constraintTop_toBottomOf="@id/tvUserName" />
 
-        <!-- Botones de acción -->
+        <!-- Rol y ubicación -->
         <TextView
             android:id="@+id/tvUserRole"
             android:layout_width="0dp"
@@ -61,64 +73,68 @@
             android:text="Rol del usuario"
             android:textColor="#616161"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@id/tvUserName"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/tvUserName"
+            app:layout_constraintEnd_toEndOf="@id/tvUserEmail"
+            app:layout_constraintStart_toStartOf="@id/tvUserEmail"
             app:layout_constraintTop_toBottomOf="@id/tvUserEmail" />
 
         <TextView
             android:id="@+id/tvUserLocation"
-            android:layout_width="202dp"
-            android:layout_height="19dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Ubicación"
             android:textColor="#616161"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@id/tvUserRole"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/tvUserRole"
             app:layout_constraintTop_toBottomOf="@id/tvUserRole" />
 
+        <!-- Botones de acción -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="14dp"
             android:gravity="end"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/tvUserLocation">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDetails"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="36dp"
                 android:text="Detalles"
+                android:textColor="@color/colorPrimary"
                 app:icon="@drawable/ic_info"
-                app:iconGravity="textStart"
-                app:iconSize="16dp" />
+                app:iconTint="@color/colorPrimary"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEdit"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="2dp"
                 android:text="Editar"
+                android:textColor="@color/colorPrimary"
                 app:icon="@drawable/ic_edit"
-                app:iconGravity="textStart"
-                app:iconSize="16dp" />
+                app:iconTint="@color/colorPrimary"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="2dp"
                 android:text="Eliminar"
+                android:textColor="@color/colorError"
                 app:icon="@drawable/ic_remove"
-                app:iconGravity="textStart"
-                app:iconSize="16dp"
-                app:iconTint="@color/colorError" />
+                app:iconTint="@color/colorError"
+                app:strokeColor="@color/colorError"
+                app:strokeWidth="1dp" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

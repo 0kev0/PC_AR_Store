@@ -5,14 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginBottom="16dp"
-    app:cardCornerRadius="12dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp"
     app:cardElevation="2dp"
-    android:background="@color/fondo"
-    app:strokeColor="@color/text_light_color"
-    app:strokeWidth="0.5dp"
-    app:contentPadding="0dp">
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,20 +25,19 @@
             android:layout_marginBottom="12dp"
             android:gravity="center_vertical">
 
-            <!-- Estado con chip -->
-            <com.google.android.material.chip.Chip
+            <!-- Estado -->
+            <TextView
                 android:id="@+id/chip_status"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ACTIVA"
-                app:chipBackgroundColor="@color/green_dark"
-                app:chipStrokeColor="@color/green"
-                app:chipStrokeWidth="1dp"
-                app:chipCornerRadius="8dp"
-                android:textColor="@color/white"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                android:textStyle="bold"/>
+                android:background="@color/text_lighter_color"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textAllCaps="true"/>
 
             <Space
                 android:layout_width="0dp"
@@ -56,9 +52,7 @@
                 android:text="$250.00"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"
-                android:drawablePadding="4dp"
-                android:drawableTint="?attr/colorPrimary"/>
+                android:textColor="@color/colorPrimary"/>
         </LinearLayout>
 
         <!-- Código/Número con icono -->
@@ -73,7 +67,8 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_credit_card"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp"
+                app:tint="@color/colorPrimary"/>
 
             <TextView
                 android:id="@+id/tv_card_number"
@@ -83,7 +78,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05"
-                android:textColor="?attr/colorOnSurface"/>
+                android:textColor="@android:color/black"/>
         </LinearLayout>
 
         <!-- Detalles en 2 columnas -->
@@ -99,9 +94,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/recipient_label"
+                android:text="Destinatario:"
                 android:textSize="12sp"
-                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textColor="@color/gray"
                 android:layout_column="0"
                 android:layout_row="0"/>
 
@@ -115,15 +110,16 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:layout_row="0"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp"
+                android:textColor="@color/gray"/>
 
             <!-- Fila 2 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/expires_label"
+                android:text="Expira:"
                 android:textSize="12sp"
-                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textColor="@color/gray"
                 android:layout_column="0"
                 android:layout_row="1"
                 android:layout_marginTop="4dp"/>
@@ -137,14 +133,15 @@
                 android:textSize="14sp"
                 android:layout_row="1"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="4dp"
+                android:textColor="@color/gray"/>
         </GridLayout>
 
         <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/colorOutline"
+            android:background="@color/gray_light"
             android:layout_marginBottom="12dp"/>
 
         <!-- Acciones con MaterialButton -->
@@ -152,44 +149,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="3"
-            android:divider="@drawable/divider_vertical"
-            android:showDividers="middle">
+            android:gravity="center">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_view"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/view_action"
-                android:textColor="?attr/colorPrimary"
+                android:text="Ver"
+                android:textColor="@color/colorPrimary"
                 app:icon="@drawable/ic_eye"
                 app:iconGravity="textStart"
-                app:iconTint="?attr/colorPrimary"
+                app:iconTint="@color/colorPrimary"
                 app:iconPadding="4dp"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_edit"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/edit_action"
+                android:text="Editar"
+                android:textColor="@color/colorPrimary"
                 app:icon="@drawable/ic_edit"
                 app:iconGravity="textStart"
+                app:iconTint="@color/colorPrimary"
                 app:iconPadding="4dp"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_deactivate"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/deactivate_action"
-                android:textColor="@color/red"
+                android:text="Desactivar"
+                android:textColor="@color/colorError"
+                app:icon="@drawable/ic_remove"
                 app:iconGravity="textStart"
-                app:iconTint="@color/red"
+                app:iconTint="@color/colorError"
                 app:iconPadding="4dp"/>
         </LinearLayout>
     </LinearLayout>
