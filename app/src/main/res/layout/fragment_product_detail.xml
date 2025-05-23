@@ -9,15 +9,18 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerProductImages"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
-        android:layout_margin="16dp"
-        android:background="@drawable/rounded_shadow_recycler"
-        android:clipChildren="true"
-        android:clipToPadding="false"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_product_image" />
+        android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="24dp"
+    android:clipToPadding="false"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingEnd="32dp"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    tools:listitem="@layout/item_product_image"
+    android:overScrollMode="never"
+    android:nestedScrollingEnabled="true"
+    android:background="@android:color/transparent"/>
 
     <!-- Scrollable content container -->
     <ScrollView

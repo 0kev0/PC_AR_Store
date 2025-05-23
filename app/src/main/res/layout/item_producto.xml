@@ -19,8 +19,8 @@
         <!-- Imagen del producto -->
         <ImageView
             android:id="@+id/productImage"
-            android:layout_width="205dp"
-            android:layout_height="170dp"
+            android:layout_width="300dp"
+            android:layout_height="211dp"
             android:adjustViewBounds="true"
             android:background="@drawable/image_rounded_corners"
             android:scaleType="centerCrop"
