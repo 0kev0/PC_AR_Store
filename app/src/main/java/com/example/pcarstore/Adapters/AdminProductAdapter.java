@@ -84,7 +84,6 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
                 productCategory.setText(product.getCategory());
             }
 
-            // Load product image
             if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
                 Glide.with(itemView.getContext())
                         .load(product.getImageUrls().get(0))

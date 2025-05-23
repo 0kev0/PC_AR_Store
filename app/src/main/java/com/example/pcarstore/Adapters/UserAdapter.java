@@ -24,9 +24,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     private static final String TAG = "UserAdapter";
     private List<User> userList = new ArrayList<>();
-    private DatabaseReference usersRef;
-    private OnUserClickListener listener;
-    private ValueEventListener valueEventListener;
+    private List<User> userListFull = new ArrayList<>();
+    private final OnUserClickListener listener;
 
     public interface OnUserClickListener {
         void onEditClick(User user);
@@ -34,36 +33,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         void onViewDetailsClick(User user);
     }
 
-    public UserAdapter(DatabaseReference usersRef, OnUserClickListener listener) {
-        this.usersRef = usersRef;
+    public UserAdapter(OnUserClickListener listener) {
         this.listener = listener;
-        loadUsers();
     }
 
-    public void loadUsers() {
-        usersRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                userList.clear();
-                Log.d(TAG, "Número de usuarios encontrados: " + snapshot.getChildrenCount());
 
-                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                    User user = userSnapshot.getValue(User.class);
-                    if (user != null) {
-                        user.setUserId(userSnapshot.getKey());
-                        userList.add(user);
-                        Log.d(TAG, "Usuario añadido: " + user.getName());
-                    }
-                }
-                notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Error al cargar usuarios: " + error.getMessage());
-            }
-        });
-    }
 
     @NonNull
     @Override
@@ -84,60 +58,42 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         return userList.size();
     }
 
-    public void filterUsers(String query) {
-        if (query.isEmpty()) {
-            loadUsers();
-        } else {
-            usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    userList.clear();
-                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                        User user = userSnapshot.getValue(User.class);
-                        if (user != null &&
-                                (user.getName().toLowerCase().contains(query.toLowerCase()) ||
-                                        user.getEmail().toLowerCase().contains(query.toLowerCase()) ||
-                                        (user.getRole() != null && user.getRole().toLowerCase().contains(query.toLowerCase())))) {
-                            user.setUserId(userSnapshot.getKey());
-                            userList.add(user);
-                        }
-                    }
-                    notifyDataSetChanged();
-                }
+    public void updateList(List<User> newList) {
+        this.userList = new ArrayList<>(newList);
+        this.userListFull = new ArrayList<>(newList);
+        notifyDataSetChanged();
+    }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e(TAG, "Error al filtrar usuarios: " + error.getMessage());
+    public void filterUsers(String query) {
+        List<User> filteredList = new ArrayList<>();
+        if (query.isEmpty()) {
+            filteredList.addAll(userListFull);
+        } else {
+            for (User user : userListFull) {
+                if (user.getName().toLowerCase().contains(query.toLowerCase()) ||
+                        user.getEmail().toLowerCase().contains(query.toLowerCase()) ||
+                        (user.getRole() != null && user.getRole().toLowerCase().contains(query.toLowerCase()))) {
+                    filteredList.add(user);
                 }
-            });
+            }
         }
+        this.userList = filteredList;
+        notifyDataSetChanged();
     }
 
     public void filterByRole(String role) {
+        List<User> filteredList = new ArrayList<>();
         if (role.equals("Todos")) {
-            loadUsers();
+            filteredList.addAll(userListFull);
         } else {
-            usersRef.orderByChild("role").equalTo(role)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            userList.clear();
-                            for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                                User user = userSnapshot.getValue(User.class);
-                                if (user != null) {
-                                    user.setUserId(userSnapshot.getKey());
-                                    userList.add(user);
-                                }
-                            }
-                            notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e(TAG, "Error al filtrar por rol: " + error.getMessage());
-                        }
-                    });
+            for (User user : userListFull) {
+                if (user.getRole() != null && user.getRole().equalsIgnoreCase(role)) {
+                    filteredList.add(user);
+                }
+            }
         }
+        this.userList = filteredList;
+        notifyDataSetChanged();
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
@@ -193,6 +149,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         }
     }
     public void removeUserFromList(String userId) {
+        // Eliminar de ambas listas
         for (int i = 0; i < userList.size(); i++) {
             if (userList.get(i).getUserId().equals(userId)) {
                 userList.remove(i);
@@ -201,16 +158,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             }
         }
 
-        for (int i = 0; i < userList.size(); i++) {
-            if (userList.get(i).getUserId().equals(userId)) {
-                userList.remove(i);
+        // También eliminar de la lista completa
+        for (int i = 0; i < userListFull.size(); i++) {
+            if (userListFull.get(i).getUserId().equals(userId)) {
+                userListFull.remove(i);
                 break;
             }
         }
-        checkEmptyState();
     }
 
-    private void checkEmptyState() {
-        if (userList.isEmpty()) {} else {}
-    }
+
 }

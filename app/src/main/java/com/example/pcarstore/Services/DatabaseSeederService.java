@@ -32,7 +32,7 @@ public class DatabaseSeederService {
         insertDepartamentos();
         insertProducts();
         insertCategories();
-        insertGiftCards();
+        //insertGiftCards();
         insertDiscountCodes();
     }
 
