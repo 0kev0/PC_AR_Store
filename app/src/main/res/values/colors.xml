@@ -28,5 +28,9 @@
     <color name="text_bold_color">#0D47A1</color>
     <color name="text_light_color">#1262DB</color>
     <color name="text_lighter_color">#1266E3</color>
-
+    <color name="card_stroke">#FFE0E0E0</color>
+    <color name="card_background">#FFFFFFFF</color>
+    <color name="green_active">#FF4CAF50</color>
+    <color name="green_active_light">#FFC8E6C9</color>
+    <color name="red_error">#FFF44336</color>
 </resources>

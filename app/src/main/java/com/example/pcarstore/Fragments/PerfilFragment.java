@@ -8,10 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,33 +18,24 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.pcarstore.Activities.GiftCardStoreActivity;
 import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Activities.OrdersActivity;
 import com.example.pcarstore.Dialogs.EditProfileDialog;
 import com.example.pcarstore.Dialogs.GiftCardDialog;
-import com.example.pcarstore.ModelsDB.GiftCard;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -59,11 +47,7 @@ import android.content.SharedPreferences;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class PerfilFragment extends Fragment {
     private FirebaseAuth mAuth;
@@ -72,7 +56,7 @@ public class PerfilFragment extends Fragment {
     private ImageView ivProfilePicture;
     private TextView tvUserName, tvUserEmail, tvUserBalance;
     private Button btnEditProfile, btnLogout;
-    private Button btnOrders, btnWishlist, btnGifCard, btnSettings;
+    private Button btnOrders, btnWishlist, btnGifCard, btnSettings,btnGifCardShop;
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
@@ -80,7 +64,6 @@ public class PerfilFragment extends Fragment {
     private EditProfileDialog editProfileDialog;
     private User userData;
     private Uri tempImageUri;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,7 +106,6 @@ public class PerfilFragment extends Fragment {
             }
         });
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -138,6 +120,7 @@ public class PerfilFragment extends Fragment {
         btnOrders = view.findViewById(R.id.btnOrders);
         btnWishlist = view.findViewById(R.id.btnWishlist);
         btnGifCard = view.findViewById(R.id.btnGifCard);
+        btnGifCardShop = view.findViewById(R.id.btnShowGiftCardShop);
         btnSettings = view.findViewById(R.id.btnSettings);
         tvUserBalance = view.findViewById(R.id.tvUserBalance);
 
@@ -150,6 +133,7 @@ public class PerfilFragment extends Fragment {
         btnWishlist.setOnClickListener(v -> showWishlist());
         btnGifCard.setOnClickListener(v -> showGifCard());
         btnSettings.setOnClickListener(v -> showSettings());
+        btnGifCardShop.setOnClickListener(v -> showGifCardShop());
 
         return view;
     }
@@ -185,7 +169,6 @@ public class PerfilFragment extends Fragment {
             Log.d("PerfilFragment", "Selección de imagen cancelada o fallida");
         }
     }
-
     private void loadUserData() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -212,7 +195,6 @@ public class PerfilFragment extends Fragment {
             tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
         }
     }
-
     private void loadUserDetailsFromDatabase(String userId) {
         DatabaseReference userRef = FirebaseDatabase.getInstance()
                 .getReference("users")
@@ -270,7 +252,6 @@ public class PerfilFragment extends Fragment {
             }
         });
     }
-
     private void loadProfileImageFromStorage(String userId) {
         // Referencia al archivo en Storage con la estructura USERS/CLIENTS/userId.jpeg
         StorageReference profileImageRef = FirebaseStorage.getInstance()
@@ -291,7 +272,6 @@ public class PerfilFragment extends Fragment {
                     // Mantener la imagen por defecto que ya estaba establecida
                 });
     }
-
     private void loadImageWithGlide(String imageUrl) {
         Glide.with(requireContext())
                 .load(imageUrl)
@@ -300,7 +280,6 @@ public class PerfilFragment extends Fragment {
                 .error(R.drawable.ic_account_circle)
                 .into(ivProfilePicture);
     }
-
     private void saveImageUrlToDatabase(String userId, String imageUrl) {
         FirebaseDatabase.getInstance()
                 .getReference("users")
@@ -311,7 +290,6 @@ public class PerfilFragment extends Fragment {
                     Log.e("PerfilFragment", "Error al guardar URL de imagen en la base de datos", e);
                 });
     }
-
     private void updateBalanceUI(double balance) {
         String formattedBalance;
         int colorId;
@@ -334,7 +312,6 @@ public class PerfilFragment extends Fragment {
             getActivity().finish();
         }
     }
-
     private void showOrders() {
         if (mAuth.getCurrentUser() != null) {
             startActivity(new Intent(getActivity(), OrdersActivity.class));
@@ -344,7 +321,6 @@ public class PerfilFragment extends Fragment {
                     Toast.LENGTH_SHORT).show();
         }
     }
-
     private void showWishlist() {
         if (mAuth.getCurrentUser() != null) {
             Fragment wishlistFragment = new WishlistFragment();
@@ -358,7 +334,6 @@ public class PerfilFragment extends Fragment {
                     Toast.LENGTH_SHORT).show();
         }
     }
-
     private void showGifCard() {
         if (mAuth.getCurrentUser() == null) {
             Toast.makeText(getContext(),
@@ -411,6 +386,9 @@ public class PerfilFragment extends Fragment {
             }
         });
         giftCardDialog.show();
+    }
+    private void showGifCardShop() {
+        startActivity(new Intent(getActivity(), GiftCardStoreActivity.class));
     }
     private void showSettings() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());

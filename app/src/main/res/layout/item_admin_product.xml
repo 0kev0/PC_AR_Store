@@ -5,20 +5,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="8dp"
     app:cardElevation="2dp"
-    app:strokeColor="@color/black"
-    app:strokeWidth="1dp">
+    android:background="@color/white">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp">
 
-        <!-- Product Image -->
-
-        <!-- Product Details -->
+        <!-- Imagen del Producto -->
         <ImageView
             android:id="@+id/productImage"
             android:layout_width="64dp"
@@ -27,63 +26,73 @@
             android:background="@color/white"
             android:contentDescription="Imagen del producto"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_products" />
+            android:src="@drawable/ic_products"
+            app:tint="@color/colorPrimary" />
 
+        <!-- Detalles del Producto -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <!-- Nombre del Producto -->
             <TextView
                 android:id="@+id/productName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Nombre del Producto"
-                android:textColor="@color/black"
+                android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="end"/>
 
+            <!-- Código del Producto -->
             <TextView
                 android:id="@+id/productCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="Código: PRD-001"
-                android:textColor="@color/gray_650"
+                android:textColor="@color/gray"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:ellipsize="end"/>
+
+            <!-- Categoría del Producto -->
             <TextView
                 android:id="@+id/productCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text=""
-                android:textColor="@color/gray_650"
+                android:text="Categoría: Electrónica"
+                android:textColor="@color/gray"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:ellipsize="end"/>
 
+            <!-- Stock y Precio -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
+                <!-- Indicador de Stock -->
                 <TextView
                     android:id="@+id/productStock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="4dp"
-                    android:background="@drawable/bg_stock_indicator"
+                    android:background="@color/text_lighter_color"
                     android:text="25 unidades"
-                    android:textColor="@color/white"
+                    android:textColor="@android:color/white"
                     android:textSize="12sp"/>
 
+                <!-- Precio del Producto -->
                 <TextView
                     android:id="@+id/productPrice"
                     android:layout_width="wrap_content"
@@ -94,38 +103,44 @@
                     android:textSize="14sp"
                     android:textStyle="bold"/>
             </LinearLayout>
+
+            <!-- Botones de Acción -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:gravity="end"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/tvUserLocation">
+                android:orientation="horizontal">
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnEdit"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_height="36dp"
                     android:text="Editar"
+                    android:textColor="@color/colorPrimary"
                     app:icon="@drawable/ic_edit"
                     app:iconGravity="textStart"
-                    app:iconSize="16dp" />
+                    app:iconSize="16dp"
+                    app:iconTint="@color/colorPrimary"
+                    app:strokeColor="@color/colorPrimary"
+                    app:strokeWidth="1dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDelete"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="36dp"
                     android:layout_marginStart="8dp"
                     android:text="Eliminar"
+                    android:textColor="@color/colorError"
                     app:icon="@drawable/ic_remove"
                     app:iconGravity="textStart"
                     app:iconSize="16dp"
-                    app:iconTint="@color/colorError" />
+                    app:iconTint="@color/colorError"
+                    app:strokeColor="@color/colorError"
+                    app:strokeWidth="1dp" />
             </LinearLayout>
         </LinearLayout>
-
-
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

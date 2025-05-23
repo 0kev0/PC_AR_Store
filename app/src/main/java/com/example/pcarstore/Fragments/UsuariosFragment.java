@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -34,27 +35,98 @@ import java.util.Map;
 
 public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClickListener {
 
+    private static final String TAG = "UsuariosFragment";
     private DatabaseReference usersRef;
     private Button btnNewUser;
     private UserAdapter userAdapter;
+    private LinearLayout emptyState;
+    private ChipGroup chipGroup;
+    private Chip chipAll, chipClientes, chipAdmins;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_usuarios, container, false);
 
+        // Inicializar Firebase
         usersRef = FirebaseDatabase.getInstance().getReference("users");
 
+        // Inicializar vistas
         btnNewUser = view.findViewById(R.id.btnAddUser);
-        btnNewUser.setOnClickListener(v -> showAddUserDialog());
-
         RecyclerView recyclerView = view.findViewById(R.id.rvUsers);
+        emptyState = view.findViewById(R.id.emptyState);
+        chipGroup = view.findViewById(R.id.chipGroup);
+        chipAll = view.findViewById(R.id.chipAll);
+        chipClientes = view.findViewById(R.id.chipClientes);
+        chipAdmins = view.findViewById(R.id.chipAdmins);
+
+        // Configurar RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        userAdapter = new UserAdapter(usersRef, this);
+        userAdapter = new UserAdapter(this);
         recyclerView.setAdapter(userAdapter);
+
+        // Configurar listeners
+        btnNewUser.setOnClickListener(v -> showAddUserDialog());
+        setupChipListeners();
+
+        // Cargar datos iniciales
+        loadUsers();
+
         return view;
     }
 
+    private void setupChipListeners() {
+        chipGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.chipAll) {
+                userAdapter.filterByRole("Todos");
+            } else if (checkedId == R.id.chipClientes) {
+                userAdapter.filterByRole("client");
+            } else if (checkedId == R.id.chipAdmins) {
+                userAdapter.filterByRole("admin");
+            }
+            updateEmptyState();
+        });
+    }
+
+
+    private void loadUsers() {
+        ProgressDialog progress = new ProgressDialog(getContext());
+        progress.setMessage("Cargando usuarios...");
+        progress.setCancelable(false);
+        progress.show();
+
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<User> users = new ArrayList<>();
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                    User user = userSnapshot.getValue(User.class);
+                    if (user != null) {
+                        user.setUserId(userSnapshot.getKey());
+                        users.add(user);
+                    }
+                }
+                userAdapter.updateList(users);
+                progress.dismiss();
+                updateEmptyState();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                progress.dismiss();
+                Toast.makeText(getContext(), "Error al cargar usuarios: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Error loading users: ", error.toException());
+            }
+        });
+    }
+
+    private void updateEmptyState() {
+        if (userAdapter.getItemCount() == 0) {
+            emptyState.setVisibility(View.VISIBLE);
+        } else {
+            emptyState.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void onEditClick(User user) {
@@ -77,7 +149,7 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
             String newEmail = etEmail.getText().toString().trim();
             String newRole = etRole.getText().toString().trim();
 
-            if(newName.isEmpty() || newEmail.isEmpty() || newRole.isEmpty()) {
+            if (newName.isEmpty() || newEmail.isEmpty() || newRole.isEmpty()) {
                 Toast.makeText(getContext(), "Todos los campos son requeridos", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -92,7 +164,7 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
     }
 
     private void updateUserInFirebase(String userId, String newName, String newEmail, String newRole) {
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+        DatabaseReference userRef = usersRef.child(userId);
 
         Map<String, Object> updates = new HashMap<>();
         updates.put("name", newName);
@@ -100,7 +172,10 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
         updates.put("role", newRole);
 
         userRef.updateChildren(updates)
-                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Usuario actualizado", Toast.LENGTH_SHORT).show())
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(), "Usuario actualizado", Toast.LENGTH_SHORT).show();
+                    loadUsers(); // Recargar datos para reflejar cambios
+                })
                 .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al actualizar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
@@ -109,65 +184,40 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Confirmar Eliminación")
                 .setMessage("¿Eliminar permanentemente a " + user.getName() + "?")
-                .setPositiveButton("Eliminar", (dialog, which) -> {
-                    ProgressDialog progress = new ProgressDialog(getContext());
-                    progress.setMessage("Eliminando usuario...");
-                    progress.setCancelable(false);
-                    progress.show();
-
-                    deleteUserFromDatabase(user, progress);
-                })
+                .setPositiveButton("Eliminar", (dialog, which) -> deleteUserFromDatabase(user))
                 .setNegativeButton("Cancelar", null)
                 .setIcon(R.drawable.ic_remove)
                 .show();
     }
 
-    @Override
-    public void onViewDetailsClick(User user) {
-        // Implementar según necesidades
-    }
+    private void deleteUserFromDatabase(User user) {
+        ProgressDialog progress = new ProgressDialog(getContext());
+        progress.setMessage("Eliminando usuario...");
+        progress.setCancelable(false);
+        progress.show();
 
-    private void deleteUserFromDatabase(User user, ProgressDialog progress) {
         if (user == null || user.getUserId() == null) {
             progress.dismiss();
             Toast.makeText(getContext(), "Error: Usuario inválido", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        DatabaseReference userRef = FirebaseDatabase.getInstance()
-                .getReference("users")
-                .child(user.getUserId());
-
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.exists()) {
+        usersRef.child(user.getUserId()).removeValue()
+                .addOnSuccessListener(aVoid -> {
                     progress.dismiss();
-                    Toast.makeText(getContext(), "Error: Usuario no encontrado", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                    Toast.makeText(getContext(), "Usuario eliminado", Toast.LENGTH_SHORT).show();
+                    loadUsers(); // Recargar datos después de eliminar
+                })
+                .addOnFailureListener(e -> {
+                    progress.dismiss();
+                    Toast.makeText(getContext(), "Error al eliminar: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Error deleting user: ", e);
+                });
+    }
 
-                userRef.removeValue()
-                        .addOnSuccessListener(aVoid -> {
-                            progress.dismiss();
-                            Toast.makeText(getContext(), "Usuario eliminado", Toast.LENGTH_SHORT).show();
-                            if (userAdapter != null) {
-                                userAdapter.removeUserFromList(user.getUserId());
-                            }
-                        })
-                        .addOnFailureListener(e -> {
-                            progress.dismiss();
-                            Toast.makeText(getContext(), "Error al eliminar: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            Log.e("FirebaseDelete", "Error: ", e);
-                        });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                progress.dismiss();
-                Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+    @Override
+    public void onViewDetailsClick(User user) {
+        // Implementar según necesidades
     }
 
     private void showAddUserDialog() {
@@ -226,10 +276,10 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
     private void saveNewUserToFirebase(String name, String email, String role) {
         ProgressDialog progress = new ProgressDialog(getContext());
         progress.setMessage("Guardando usuario...");
+        progress.setCancelable(false);
         progress.show();
 
         String userId = usersRef.push().getKey();
-
         User newUser = new User();
         newUser.setUserId(userId);
         newUser.setName(name);
@@ -241,10 +291,9 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
                     progress.dismiss();
                     if (task.isSuccessful()) {
                         Toast.makeText(getContext(), "Usuario guardado", Toast.LENGTH_SHORT).show();
-                        userAdapter.loadUsers();
+                        loadUsers(); // Recargar datos después de agregar
                     } else {
-                        Toast.makeText(getContext(), "Error: " +
-                                task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
     }

@@ -56,7 +56,7 @@
 
             <EditText
                 android:id="@+id/etEmail"
-                android:text="Ll22017@ues.edu.sv"
+                android:text="test@gmail.com"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="@drawable/amazon_edittext_bg"
@@ -92,7 +92,7 @@
 
             <EditText
                 android:id="@+id/etPassword"
-                android:text="1234.Lino"
+                android:text="A12121212a"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="4dp"

@@ -46,7 +46,6 @@ public class CodesFragment extends Fragment {
 
     private void replaceFragment(Fragment fragment) {
         try {
-            // Usar el contenedor principal de la actividad
             FragmentTransaction transaction = requireActivity()
                     .getSupportFragmentManager()
                     .beginTransaction();

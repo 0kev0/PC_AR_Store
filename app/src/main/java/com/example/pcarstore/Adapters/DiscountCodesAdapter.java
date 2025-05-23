@@ -6,6 +6,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -126,7 +127,7 @@ public class DiscountCodesAdapter extends RecyclerView.Adapter<DiscountCodesAdap
     }
 
     static class DiscountCodeViewHolder extends RecyclerView.ViewHolder {
-        MaterialTextView tvCode, tvDiscount, tvMinPurchase, tvExpiry;
+        TextView tvCode, tvDiscount, tvMinPurchase, tvExpiry; // Changed from MaterialTextView
         Chip chipStatus;
         MaterialButton btnEdit, btnDeactivate;
 

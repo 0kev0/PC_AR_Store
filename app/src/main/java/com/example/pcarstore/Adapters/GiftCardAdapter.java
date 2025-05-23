@@ -25,14 +25,12 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
         void onEditGiftCard(GiftCard giftCard);
         void onDeleteGiftCard(GiftCard giftCard);
     }
-
     public GiftCardAdapter(List<GiftCard> giftCards, Context context, OnGiftCardActionsListener listener) {
         this.giftCards = giftCards;
         this.context = context;
         this.listener = listener;
         this.dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     }
-
     @NonNull
     @Override
     public GiftCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -99,6 +97,10 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
     public void updateGiftCards(List<GiftCard> newGiftCards) {
         this.giftCards = newGiftCards;
         notifyDataSetChanged();
+    }
+
+    public interface OnBuyClickListener {
+        void onBuyClick(GiftCard giftCard);
     }
 
     public static class GiftCardViewHolder extends RecyclerView.ViewHolder {

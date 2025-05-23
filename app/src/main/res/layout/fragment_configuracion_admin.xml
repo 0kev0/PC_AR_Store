@@ -1,206 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="16dp"
-    android:fillViewport="true"
     android:background="@color/white">
 
-    <LinearLayout
-
+    <!-- Toolbar principal -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        app:title="Perfil del Administrador"
+        app:titleTextColor="@android:color/white"/>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:fillViewport="true"
+        android:padding="8dp"
+        >
 
-        <!-- Header con foto de perfil -->
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:gravity="center">
+            android:orientation="vertical">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                app:cardCornerRadius="60dp"
-                app:strokeColor="@color/colorPrimary"
-                app:strokeWidth="2dp">
-
-                <ImageView
-                    android:id="@+id/ivProfile"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_user"
-                    android:contentDescription="Foto de perfil"/>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabEditPhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/ivProfile"
-                android:layout_alignEnd="@id/ivProfile"
-                android:layout_marginEnd="-16dp"
-                android:layout_marginBottom="-16dp"
-                android:src="@drawable/ic_edit"
-                app:backgroundTint="@color/colorPrimary"
-                app:tint="@color/white"/>
-        </RelativeLayout>
-
-        <!-- Información del administrador -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
-
-            <LinearLayout
+            <!-- Header con foto de perfil -->
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Información del Administrador"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="24dp"
+                android:gravity="center">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="@color/white"
-                    app:strokeWidth="1dp">
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    app:cardCornerRadius="60dp"
+                    app:strokeColor="@color/colorPrimary"
+                    app:strokeWidth="2dp">
 
-                    <LinearLayout
+                    <ImageView
+                        android:id="@+id/ivProfile"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="20dp">
-
-                        <!-- Nombre -->
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Nombre:"
-                            android:textColor="@color/gray_dark"
-                            android:textSize="14sp"
-                            android:layout_marginBottom="4dp"/>
-
-                        <TextView
-                            android:id="@+id/tvAdminName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Cargando..."
-                            android:textSize="16sp"
-                            android:textColor="@color/black"
-                            android:layout_marginBottom="16dp"/>
-
-                        <!-- Email -->
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Correo electrónico:"
-                            android:textColor="@color/gray_dark"
-                            android:textSize="14sp"
-                            android:layout_marginBottom="4dp"/>
-
-                        <TextView
-                            android:id="@+id/tvAdminEmail"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Cargando..."
-                            android:textSize="16sp"
-                            android:textColor="@color/black"
-                            android:layout_marginBottom="16dp"/>
-
-                        <!-- Rol -->
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Rol:"
-                            android:textColor="@color/gray_dark"
-                            android:textSize="14sp"
-                            android:layout_marginBottom="4dp"/>
-
-                        <TextView
-                            android:id="@+id/tvAdminRole"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Cargando..."
-                            android:textSize="16sp"
-                            android:textColor="@color/black"/>
-                    </LinearLayout>
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_user"
+                        android:contentDescription="Foto de perfil"/>
                 </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <!-- Configuración de seguridad -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fabEditPhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@id/ivProfile"
+                    android:layout_alignBottom="@id/ivProfile"
+                    android:layout_marginEnd="-138dp"
+                    android:layout_marginBottom="4dp"
+                    android:src="@drawable/ic_edit"
+                    app:backgroundTint="@color/colorPrimary"
+                    app:tint="@color/white" />
+            </RelativeLayout>
 
-            <LinearLayout
+            <!-- Información del administrador -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Seguridad"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp"/>
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnChangePassword"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Información del Administrador"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="8dp"
+                        app:strokeColor="@color/colorPrimary"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="20dp">
+
+                            <!-- Nombre -->
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Nombre:"
+                                android:textColor="@color/gray"
+                                android:textSize="14sp"
+                                android:layout_marginBottom="4dp"/>
+
+                            <TextView
+                                android:id="@+id/tvAdminName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Cargando..."
+                                android:textSize="16sp"
+                                android:textColor="@color/black"
+                                android:layout_marginBottom="16dp"/>
+
+                            <!-- Email -->
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Correo electrónico:"
+                                android:textColor="@color/gray"
+                                android:textSize="14sp"
+                                android:layout_marginBottom="4dp"/>
+
+                            <TextView
+                                android:id="@+id/tvAdminEmail"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Cargando..."
+                                android:textSize="16sp"
+                                android:textColor="@color/black"
+                                android:layout_marginBottom="16dp"/>
+
+                            <!-- Rol -->
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Rol:"
+                                android:textColor="@color/gray"
+                                android:textSize="14sp"
+                                android:layout_marginBottom="4dp"/>
+
+                            <TextView
+                                android:id="@+id/tvAdminRole"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Cargando..."
+                                android:textSize="16sp"
+                                android:textColor="@color/black"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Configuración de seguridad -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Cambiar contraseña"
-                    android:textColor="@color/colorPrimary"
-                    app:icon="@drawable/ic_lock"
-                    app:iconGravity="textStart"
-                    app:strokeColor="@color/colorPrimary"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-        <!-- Botones de acción -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEditInfo"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Editar Informacion"
-            android:textAllCaps="false"
-            app:backgroundTint="@color/colorPrimary"/>
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLogout"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Cerrar sesión"
-            android:textAllCaps="false"
-            android:textColor="@color/colorPrimary"
-            app:strokeColor="@color/colorPrimary"/>
-    </LinearLayout>
-</ScrollView>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Seguridad"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChangePassword"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="Cambiar contraseña"
+                        android:textColor="@color/colorPrimary"
+                        app:icon="@drawable/ic_lock"
+                        app:iconGravity="textStart"
+                        app:iconTint="@color/colorPrimary"
+                        app:strokeColor="@color/colorPrimary"
+                        app:strokeWidth="1dp"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Botones de acción -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditInfo"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:text="Editar Información"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/colorPrimary"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogout"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:text="Cerrar sesión"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="1dp"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
