@@ -43,7 +43,7 @@ public class DatabaseSeederService {
         // Procesadores
         Product product1 = new Product(
                 "prod_001",
-                "pequeno Intel Core i9-13900K",
+                "Intel Core i9-13900K",
                 599.99,
                 549.99,
                 30,
@@ -54,7 +54,7 @@ public class DatabaseSeederService {
                         "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FIMG%2Fimg2.jpeg?alt=media&token=807e0ae0-53cf-43bd-9b1f-fae03aaec77f",
                         "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FIMG%2Fimg3.webp?alt=media&token=5dce4891-42b9-4f24-9b6e-bd3627dd6ac0"),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FMODELO_3D%2FintelCore9Model.obj?alt=media&token=536f91fd-085d-4e6d-ad72-0d61ff00d662",
-                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FTEXTURAS%2Flemon_diff_4k.jpg?alt=media&token=f307028a-0929-4963-8220-b16a8a821d12",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FTEXTURAS%2FtexturaGenerica.jpg?alt=media&token=91712be8-dc60-48e2-a137-9e03aa0cbeb0",
                 new HashMap<String, String>() {{
                     put("Núcleos", "24 (8P+16E)");
                     put("Hilos", "32");
@@ -69,24 +69,27 @@ public class DatabaseSeederService {
 
         Product product2 = new Product(
                 "prod_002",
-                "bien grafica",
-                449.99,
-                399.99,
-                25,
-                4.8,
-                "Procesadores",
-                "Procesador con tecnología 3D V-Cache para gaming de alto rendimiento",
-                Arrays.asList("", ""),
+                "NVIDIA RTX 4090",
+                1999.99,
+                1799.99,
+                15,
+                4.9,
+                "Tarjetas Gráficas",
+                "La GPU más potente para gaming 8K y creación de contenido con arquitectura Ada Lovelace",
+                Arrays.asList("https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2Fnvidia-rtx-4090-2835295.webp?alt=media&token=2dfe5c06-ef4e-4fc9-ac3e-ccd8d67dadba",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FDSC_0249-Custom-1480x987.jpg?alt=media&token=b46d4334-67e2-4e73-85b0-42b069c5165c",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2Frtx_nobg.jpg?alt=media&token=d2add133-2592-45ae-b78a-297d3bc44c0d"),
 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_003%2FMODELO_3D%2FUntitled.obj?alt=media&token=3e39b974-9e49-4a65-8f91-b8d6070b271d",
 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_003%2FTEXTURA%2FtexturaGenerica.jpg?alt=media&token=7a78ad20-eff2-4d48-a942-47ecc0ec0c83",
                 new HashMap<String, String>() {{
-                    put("Núcleos", "8");
-                    put("Hilos", "16");
-                    put("Frecuencia base", "4.2 GHz");
-                    put("Frecuencia turbo", "5.0 GHz");
-                    put("Socket", "AM5");
-                    put("TDP", "120W");
-                    put("Caché L3", "96MB");
+                    put("Arquitectura", "Ada Lovelace");
+                    put("Núcleos CUDA", "16384");
+                    put("Memoria GDDR6X", "24GB");
+                    put("Velocidad Memoria", "21 Gbps");
+                    put("Ancho de banda", "1 TB/s");
+                    put("TDP", "450W");
+                    put("Conectores", "PCIe 4.0 x16");
+                    put("Salidas", "3x DisplayPort 1.4a, 1x HDMI 2.1a");
                 }}
         );
         mDatabase.child("products").child("prod_002").setValue(product2);
@@ -118,69 +121,87 @@ public class DatabaseSeederService {
         // Tarjetas Gráficas
         Product product4 = new Product(
                 "prod_004",
-                "teclado *grande",
-                1599.99,
-                1499.99,
-                10,
-                4.9,
-                "Tarjetas Gráficas",
-                "La GPU más potente para gaming 8K y creación de contenido",
-                Arrays.asList("", ""),
+                "Teclado Mecánico Gaming RGB",
+                159.99,
+                139.99,
+                13,
+                4.7,
+                "Periféricos",
+                "Teclado mecánico gaming con interruptores táctiles, retroiluminación RGB personalizable y construcción duradera",
+                Arrays.asList("https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_004%2FIMG%2F614U66QoZQL._AC_SL1500_.jpg?alt=media&token=d0ba0361-123e-49a4-90aa-a218da4ac51b",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_004%2FIMG%2F71Nny-l8oRL._AC_SL1500_.jpg?alt=media&token=bdc91f9d-8e58-4daa-b48f-93837faa1ff0",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_004%2FIMG%2F71rZuZSa4yL._AC_SL1500_.jpg?alt=media&token=f4082b39-2367-4c2f-b132-454da665f4ab"),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_004%2FMODELO_3D%2FUntiteclado.obj?alt=media&token=f5d051ec-a007-42bf-8681-921794b215f6+",
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_004%2FTEXTURAS%2FtexturaGenerica.jpg?alt=media&token=8648eba1-a65e-4833-b529-75f6c40ecc83",
                 new HashMap<String, String>() {{
-                    put("VRAM", "24GB GDDR6X");
-                    put("Núcleos CUDA", "16384");
-                    put("Reloj boost", "2520 MHz");
-                    put("Interfaz", "PCIe 4.0");
-                    put("TDP", "450W");
-                    put("Conectores", "3x DisplayPort 1.4a, 1x HDMI 2.1a");
+                    put("Tipo", "Mecánico");
+                    put("Interruptores", "Red switches (lineales)");
+                    put("Retroiluminación", "RGB 16.8 millones de colores");
+                    put("Teclas", "104 teclas anti-ghosting");
+                    put("Material", "ABS doble inyección");
+                    put("Conexión", "USB 2.0 gold-plated");
+                    put("Tasa de sondeo", "1000Hz");
+                    put("Dimensiones", "440 x 135 x 38 mm");
+                    put("Peso", "1.1 kg");
                 }}
         );
         mDatabase.child("products").child("prod_004").setValue(product4);
 
         Product product5 = new Product(
                 "prod_005",
-                "AMD RX 7900 XTX * medianamente bien",
-                999.99,
-                899.99,
+                "Combo Gaming Teclado + Mouse RGB",
+                129.99,
+                109.99,
                 15,
-                4.8,
-                "Tarjetas Gráficas",
-                "GPU AMD de alto rendimiento con arquitectura RDNA 3",
-                Arrays.asList("", ""),
+                4.7,
+                "Periféricos",
+                "Kit completo para gaming con teclado mecánico y mouse ergonómico, iluminación RGB sincronizada",
+                Arrays.asList("https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_005%2FIMG%2F61Cks99XBwL._AC_SL1500_.jpg?alt=media&token=07fc6cb8-21c3-4f4c-8a23-2e32e4e1c2d3",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_005%2FIMG%2F61bhDUxAB0L._AC_SL1500_.jpg?alt=media&token=33932c9c-404b-4f70-b8c2-ddc2cc6b59e2",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_005%2FIMG%2F71T5d2WerYL._AC_SL1500_.jpg?alt=media&token=5ef4a4a9-cfa7-4a64-b688-5f270fb5b63c",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_005%2FIMG%2F71wc5rhfSdL._AC_SL1500_.jpg?alt=media&token=ece7f335-f459-47e7-ad8a-e28ac267dfb7"),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_005%2FMODELO_3D%2FUntitled.obj?alt=media&token=76b62072-bb29-4c7c-aa13-efd7f3587191",
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_005%2FTEXTURAS%2FMouse_baseColor.png?alt=media&token=d99833da-38f3-40af-aa09-7482a7547ead",
                 new HashMap<String, String>() {{
-                    put("VRAM", "24GB GDDR6");
-                    put("Ancho de banda", "960 GB/s");
-                    put("Reloj boost", "2500 MHz");
-                    put("Interfaz", "PCIe 4.0");
-                    put("TDP", "355W");
-                    put("Conectores", "2x DisplayPort 2.1, 1x HDMI 2.1a");
+                    put("Teclado - Tipo", "Mecánico con switches Red");
+                    put("Teclado - Teclas", "104 teclas anti-ghosting");
+                    put("Teclado - Iluminación", "RGB 16.8M colores");
+                    put("Mouse - Sensor", "Óptico 12,000 DPI");
+                    put("Mouse - Botones", "6 programables");
+                    put("Mouse - Peso", "110g (ajustable)");
+                    put("Conexión", "USB 2.0");
+                    put("Compatibilidad", "Windows, macOS, Linux");
+                    put("Incluye", "Reposamuelles, cable trenzado");
                 }}
         );
         mDatabase.child("products").child("prod_005").setValue(product5);
 
         Product product6 = new Product(
                 "prod_006",
-                "auriculares, *pequeno",
-                799.99,
-                749.99,
-                20,
-                4.7,
-                "Tarjetas Gráficas",
-                "GPU de gama alta con DLSS 3 y Ray Tracing",
-                Arrays.asList("", ""),
+                "Auriculares Premium con Cancelación de Ruido",
+                299.99,
+                249.99,
+                17,
+                4.8,
+                "Audio",
+                "Auriculares inalámbricos con cancelación activa de ruido (ANC) y sonido Hi-Res para una experiencia inmersiva",
+                Arrays.asList("https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_006%2FIMG%2F51rpbVmi9XL._AC_SL1200_.jpg?alt=media&token=b66f3d86-faeb-41b6-9bd5-f02b13e84126",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_006%2FIMG%2F71hQC0mJ9BL._AC_SL1500_.jpg?alt=media&token=b44fdbec-955c-4376-b4d2-e5a1ad6ccb0c",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_006%2FIMG%2F41co0OjQB%2BL._AC_SL1200_.jpg?alt=media&token=501d049c-29f7-4898-a470-af1b9d5b7087",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_006%2FIMG%2F91hx2gnY0qL._AC_SL1500_.jpg?alt=media&token=e895a1a4-1bf5-48e0-9f19-6d0dff8d3b67"),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_006%2FMODELO_3D%2FheadphonesSF.obj?alt=media&token=81dad9c7-c9e3-4be0-a6b1-ebe0768efd9b",
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_006%2FTEXTURAS%2FHeadphones_Base_Color.png?alt=media&token=f8c6aa33-2d88-4bd9-8fd5-8a68b6669887",
                 new HashMap<String, String>() {{
-                    put("VRAM", "12GB GDDR6X");
-                    put("Núcleos CUDA", "7680");
-                    put("Reloj boost", "2610 MHz");
-                    put("Interfaz", "PCIe 4.0");
-                    put("TDP", "285W");
-                    put("Conectores", "3x DisplayPort 1.4a, 1x HDMI 2.1");
+                    put("Tipo", "Over-ear inalámbricos");
+                    put("Cancelación de ruido", "ANC con 3 modos");
+                    put("Autonomía", "30 horas (con ANC)");
+                    put("Carga rápida", "5 min = 3 horas de uso");
+                    put("Control de sonido", "Equalizador personalizable");
+                    put("Conectividad", "Bluetooth 5.2 + entrada 3.5mm");
+                    put("Micrófono", "Array de 4 mics con reducción de ruido");
+                    put("Respuesta en frecuencia", "4Hz-40kHz");
+                    put("Peso", "265g");
+                    put("Incluye", "Estuche rígido, cable USB-C y audio");
                 }}
         );
         mDatabase.child("products").child("prod_006").setValue(product6);
@@ -188,69 +209,83 @@ public class DatabaseSeederService {
         // Memoria RAM
         Product product7 = new Product(
                 "prod_007",
-                "ram *bien G.Skill Trident Z5 RGB 32GB DDR5-6000",
-                199.99,
-                179.99,
-                35,
-                4.8,
+                "Kit RAM HyperX Fury DDR4 32GB",
+                149.99,
+                129.99,
+                13,
+                4.7,
                 "Memoria RAM",
-                "Kit de memoria DDR5 de alto rendimiento con iluminación RGB",
-                Arrays.asList("", ""),
+                "Memoria HyperX Fury DDR4 con disipador de calor y perfil bajo para compatibilidad mejorada",
+                Arrays.asList("https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_007%2FIMG%2F61uXihcspuL._AC_SL1500_.jpg?alt=media&token=3745f8e4-a54f-4c9e-a79b-9ee81306443c",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_007%2FIMG%2F61MYgWr%2BxWL._AC_SL1500_.jpg?alt=media&token=f3863210-f1f6-4061-810d-a49d0d242972",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_007%2FIMG%2F61kfY6Ydm2L._AC_SL1200_.jpg?alt=media&token=d959d8e5-39af-47f1-8263-101f70d8de69",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_007%2FIMG%2F71hj9eGW4ML._AC_SL1500_.jpg?alt=media&token=c3fcc199-d73a-4e35-9d8b-83798d95bced"),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_007%2FMODELO_3D%2FUntitled.obj?alt=media&token=c3f489ea-49b6-442d-a3c0-05e0330cb307",
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_007%2FTEXTURAS%2FtexturaGenerica.jpg?alt=media&token=afc6e879-6985-49fc-a3ae-5b378772ca4a",
                 new HashMap<String, String>() {{
                     put("Capacidad", "32GB (2x16GB)");
-                    put("Tecnología", "DDR5");
-                    put("Velocidad", "6000MHz");
-                    put("Latencia", "CL36");
+                    put("Tecnología", "DDR4");
+                    put("Velocidad", "3200MHz");
+                    put("Latencia", "CL16");
                     put("Voltaje", "1.35V");
-                    put("Iluminación", "RGB");
+                    put("Compatibilidad", "Intel XMP-ready");
+                    put("Disipador", "Heat spreader negro");
+                    put("Perfil", "Bajo (34.1mm)");
+                    put("Garantía", "Vitalicia limitada");
                 }}
         );
         mDatabase.child("products").child("prod_007").setValue(product7);
 
         Product product8 = new Product(
                 "prod_008",
-                "USB *grande Corsair Dominator Platinum RGB 64GB DDR5-5600",
-                349.99,
-                329.99,
-                25,
-                4.9,
-                "Memoria RAM",
-                "Memoria DDR5 premium con iluminación RGB CAPELLIX",
+                "USB Kingston DataTraveler Max 1TB",
+                129.99,
+                109.99,
+                15,
+                4.6,
+                "Almacenamiento",
+                "USB 3.2 Gen 2 de alta velocidad con diseño compacto y resistente",
                 Arrays.asList("", ""),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_008%2FMODELO_3D%2FUntitled.obj?alt=media&token=183ab3a4-7b64-4812-9d65-d69a7df5fa63",
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_008%2FTEXTURAS%2FtexturaGenerica.jpg?alt=media&token=5fa7e17d-0c99-4ef6-8ca9-1646cfaa5fba ",
                 new HashMap<String, String>() {{
-                    put("Capacidad", "64GB (2x32GB)");
-                    put("Tecnología", "DDR5");
-                    put("Velocidad", "5600MHz");
-                    put("Latencia", "CL36");
-                    put("Voltaje", "1.25V");
-                    put("Iluminación", "RGB CAPELLIX");
+                    put("Capacidad", "1TB");
+                    put("Interfaz", "USB 3.2 Gen 2");
+                    put("Velocidad lectura", "1000MB/s");
+                    put("Velocidad escritura", "900MB/s");
+                    put("Compatibilidad", "USB-A y USB-C incluido");
+                    put("Seguridad", "Cifrado AES de 256-bit");
+                    put("Resistencia", "A prueba de agua y polvo (IP55)");
+                    put("Dimensiones", "72.94 x 26.92 x 12.5 mm");
+                    put("Garantía", "5 años");
                 }}
         );
         mDatabase.child("products").child("prod_008").setValue(product8);
 
         Product product9 = new Product(
                 "prod_009",
-                "*bien Laptop",
-                79.99,
-                69.99,
-                50,
-                4.6,
-                "Memoria RAM",
-                "Memoria DDR4 de bajo perfil y alto rendimiento",
+                "Microsoft Surface Laptop 5",
+                1299.99,
+                1199.99,
+                8,
+                4.8,
+                "Laptops",
+                "Laptop premium con pantalla táctil PixelSense, procesador Intel Core i7 y diseño ultradelgado",
                 Arrays.asList("", ""),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_009%2FMODELOS_3D%2FUntitled.obj?alt=media&token=180a76d7-3015-4186-821d-2a361b8fba18",
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_009%2FTEXTURAS%2FLaptop1_baseColor.png?alt=media&token=de697db7-ca04-487a-bc02-7471812a27f9",
                 new HashMap<String, String>() {{
-                    put("Capacidad", "16GB (2x8GB)");
-                    put("Tecnología", "DDR4");
-                    put("Velocidad", "3200MHz");
-                    put("Latencia", "CL16");
-                    put("Voltaje", "1.35V");
-                    put("Perfil", "Bajo perfil");
+                    put("Procesador", "Intel Core i7-1255U (10 núcleos)");
+                    put("Memoria RAM", "16GB LPDDR5X");
+                    put("Almacenamiento", "512GB SSD");
+                    put("Pantalla", "13.5\" PixelSense (2256 x 1504) táctil");
+                    put("Grágicos", "Intel Iris Xe");
+                    put("Sistema Operativo", "Windows 11 Pro");
+                    put("Batería", "Hasta 18 horas de uso");
+                    put("Conectividad", "WiFi 6, Bluetooth 5.1");
+                    put("Puertos", "USB-C, USB-A, Surface Connect, 3.5mm");
+                    put("Peso", "1.27 kg");
+                    put("Material", "Aluminio y Alcantara");
                 }}
         );
         mDatabase.child("products").child("prod_009").setValue(product9);
@@ -258,69 +293,80 @@ public class DatabaseSeederService {
         // Almacenamiento
         Product product10 = new Product(
                 "prod_010",
-                "Samsung 980 Pro 2TB PCIe 4.0 NVMe",
-                249.99,
-                229.99,
-                40,
-                4.9,
+                "SSD Kingston A400 960GB SATA III",
+                89.99,
+                79.99,
+                11,
+                4.7,
                 "Almacenamiento",
-                "SSD NVMe de alto rendimiento con interfaz PCIe 4.0",
+                "Disco sólido SATA III de alto rendimiento para actualización de equipos",
                 Arrays.asList("", ""),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_010%2FMOELDO_3D%2FUntitled.obj?alt=media&token=851e5ce9-803b-4a6a-bfb4-5763f7e30256",
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_010%2FTEXTURAS%2FNone_baseColor.png?alt=media&token=13ced338-472e-4cfb-836a-0cbdb33c3069",
                 new HashMap<String, String>() {{
-                    put("Capacidad", "2TB");
-                    put("Interfaz", "PCIe 4.0 x4");
-                    put("Lectura", "7000 MB/s");
-                    put("Escritura", "5100 MB/s");
-                    put("Factor de forma", "M2_2280");
-                    put("Garantía", "5 años o 1200 TBW");
+                    put("Capacidad", "960GB");
+                    put("Interfaz", "SATA III 6Gb/s");
+                    put("Lectura", "500 MB/s");
+                    put("Escritura", "450 MB/s");
+                    put("Factor de forma", "2.5\"");
+                    put("Consumo", "Bajo (1.4W idle)");
+                    put("Resistencia", "1500G anti-shock");
+                    put("Tecnología", "3D NAND");
+                    put("Garantía", "3 años");
+                    put("Compatibilidad", "PCs y laptops");
                 }}
         );
         mDatabase.child("products").child("prod_010").setValue(product10);
 
         Product product11 = new Product(
                 "prod_011",
-                "uiia i u i i i i ai",
-                149.99,
-                129.99,
-                45,
-                4.8,
-                "Almacenamiento",
-                "SSD NVMe para gaming con heatsink incluido",
+                "Peluche de Gato Realista 40cm",
+                29.99,
+                24.99,
+                17,
+                4.9,
+                "Juguetes",
+                "Peluche suave y realista de gato, perfecto para niños y coleccionistas",
                 Arrays.asList("", ""),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_011%2FMODELOS_3D%2FUntitled.obj?alt=media&token=a77545d1-8c31-408b-b81d-53f97a534907",
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_011%2FTEXTURAS%2FMaterial.001_baseColor.png?alt=media&token=467f39c8-2f1c-4333-8026-5654215cca90",
                 new HashMap<String, String>() {{
-                    put("Capacidad", "1TB");
-                    put("Interfaz", "PCIe 4.0 x4");
-                    put("Lectura", "7300 MB/s");
-                    put("Escritura", "6300 MB/s");
-                    put("Factor de forma", "M2_2280");
-                    put("Garantía", "5 años o 600 TBW");
+                    put("Altura", "40 cm");
+                    put("Material", "Poliéster hipoalergénico");
+                    put("Relleno", "Fibra siliconada ultra suave");
+                    put("Colores disponibles", "Atigrado, negro, blanco, naranja");
+                    put("Edad recomendada", "3+ años");
+                    put("Lavable", "Sí (superficie con paño húmedo)");
+                    put("Características especiales", "Bigotes de nylon resistente");
+                    put("Incluye", "Collar con cascabel decorativo");
+                    put("Certificaciones", "Normas CE de seguridad");
                 }}
         );
         mDatabase.child("products").child("prod_011").setValue(product11);
 
         Product product12 = new Product(
                 "prod_012",
-                "SSD",
-                119.99,
+                "SSD WD Black SN850X 1TB NVMe M.2",
+                129.99,
                 109.99,
-                30,
-                4.7,
+                15,
+                4.9,
                 "Almacenamiento",
-                "Disco duro para NAS con tecnología CMR y 7200 RPM",
+                "SSD NVMe PCIe Gen4 de alto rendimiento para gaming y creación de contenido",
                 Arrays.asList("", ""),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_012%2FMODELOS_3D%2FSSD_M2.obj?alt=media&token=e5df14e3-35b7-4f76-8aa8-114a323e57f0",
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_012%2FTEXTURAS%2Fne.png?alt=media&token=de70d137-caa2-48c9-893d-24f8507032a4",
                 new HashMap<String, String>() {{
-                    put("Capacidad", "4TB");
-                    put("Velocidad", "7200 RPM");
-                    put("Interfaz", "SATA 6Gb/s");
-                    put("Caché", "64MB");
-                    put("Tecnología", "CMR");
-                    put("Garantía", "3 años");
+                    put("Capacidad", "1TB");
+                    put("Interfaz", "PCIe Gen4 x4");
+                    put("Velocidad Lectura", "7300 MB/s");
+                    put("Velocidad Escritura", "6300 MB/s");
+                    put("Factor de forma", "M.2 2280");
+                    put("Tecnología", "3D NAND");
+                    put("TBW", "600 TB");
+                    put("MTTF", "1.75 millones de horas");
+                    put("Garantía", "5 años");
+                    put("Incluye", "Software WD Black Dashboard");
                 }}
         );
         mDatabase.child("products").child("prod_012").setValue(product12);
