@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5"
     android:id="@+id/adminUsersFragment"
-    android:paddingTop="16dp"
     tools:context=".Fragments.UsuariosFragment">
 
     <!-- App Bar -->
@@ -98,7 +97,7 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:src="@drawable/ic_user"
-            android:tint="#9E9E9E" />
+            app:tint="#9E9E9E" />
 
         <TextView
             android:layout_width="wrap_content"

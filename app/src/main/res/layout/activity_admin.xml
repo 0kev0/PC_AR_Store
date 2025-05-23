@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_admin"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-
-    <!-- Bottom Navigation -->
+    <!-- Material Toolbar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -15,45 +16,50 @@
         android:background="@color/fondo"
         android:elevation="4dp"
         android:backgroundTint="@color/fondo"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+        app:titleTextColor="@color/fondo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/toolbar_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Admin Dashboard"
-            android:textColor="#172A40"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp">
 
-        <ImageView
-            android:id="@+id/logo2"
-            android:layout_width="153dp"
-            android:layout_height="55dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/azamoz_logo2"
-            android:layout_gravity="end"
-            android:layout_marginEnd="16dp" />
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Admin Dashboard"
+                android:textColor="#172A40"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_weight="1"/>
 
+            <ImageView
+                android:id="@+id/logo2"
+                android:layout_width="153dp"
+                android:layout_height="55dp"
+                android:src="@drawable/azamoz_logo2"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"/>
+        </LinearLayout>
     </com.google.android.material.appbar.MaterialToolbar>
-    <!-- Contenedor de fragmentos -->
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:name="com.example.pcarstore.Fragments.AdminFragment"
-        android:layout_width="408dp"
-        android:layout_height="735dp"
-        android:layout_marginTop="179dp"
-        android:layout_marginBottom="468dp"
-        app:layout_constraintBottom_toTopOf="@+id/admin_bottom_nav"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="0.281" />
+        app:layout_constraintBottom_toTopOf="@+id/admin_bottom_nav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Bottom Navigation View -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/admin_bottom_nav"
         android:layout_width="match_parent"
@@ -63,6 +69,8 @@
         app:itemIconTint="@drawable/admin_nav_color_state"
         app:itemTextColor="@drawable/admin_nav_color_state"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/buttonnav_admin" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:menu="@menu/buttonnav_admin"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
