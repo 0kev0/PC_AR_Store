@@ -140,6 +140,10 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
     private final float[] worldLightDirection = {0.0f, 0.0f, 0.0f, 0.0f};
     private final float[] viewLightDirection = new float[4];
 
+    private float scaleFactor = 0.1f; // Valor inicial
+    private float rotationAngle = 0f;
+    private static final float SCALE_STEP = 0.05f;
+    private static final float ROTATION_STEP = 15f;
     private TextView instructionsText;
 
     // Firebase Storage
@@ -174,6 +178,29 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
         productId = getIntent().getStringExtra("product_id");
         modelPath = getIntent().getStringExtra("model_path");
         texturePath = getIntent().getStringExtra("texture_path");
+
+        ImageButton btnIncrease = findViewById(R.id.btn_increase);
+        ImageButton btnDecrease = findViewById(R.id.btn_decrease);
+        ImageButton btnRotate = findViewById(R.id.btn_rotate);
+
+        btnIncrease.setOnClickListener(v -> {
+            scaleFactor += SCALE_STEP;
+            // Limitar el tamaño máximo si es necesario
+            scaleFactor = Math.min(scaleFactor, 2.0f);
+        });
+
+        btnDecrease.setOnClickListener(v -> {
+            scaleFactor -= SCALE_STEP;
+            // Limitar el tamaño mínimo si es necesario
+            scaleFactor = Math.max(scaleFactor, 0.05f);
+        });
+
+        btnRotate.setOnClickListener(v -> {
+            rotationAngle += ROTATION_STEP;
+            if (rotationAngle >= 360f) {
+                rotationAngle = 0f;
+            }
+        });
 
         if (modelPath == null || texturePath == null) {
             messageSnackbarHelper.showError(this, "Missing model or texture path");
@@ -531,6 +558,17 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
             }
 
             anchor.getPose().toMatrix(modelMatrix, 0);
+
+            // AÑADIDO: Matriz de escala para controlar el tamaño del modelo
+            float[] scaleMatrix = new float[16];
+            Matrix.setIdentityM(scaleMatrix, 0);
+            Matrix.scaleM(scaleMatrix, 0, this.scaleFactor, this.scaleFactor, this.scaleFactor);
+            float[] rotationMatrix = new float[16];
+            Matrix.setRotateM(rotationMatrix, 0, rotationAngle, 0f, 1f, 0f); // Rotar alrededor del eje Y
+            Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, rotationMatrix, 0);
+            // Combinar la matriz de pose con la matriz de escala
+            Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, scaleMatrix, 0);
+
             Matrix.multiplyMM(modelViewMatrix, 0, viewMatrix, 0, modelMatrix, 0);
             Matrix.multiplyMM(modelViewProjectionMatrix, 0, projectionMatrix, 0, modelViewMatrix, 0);
 
@@ -551,7 +589,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
 
         backgroundRenderer.drawVirtualScene(render, virtualSceneFramebuffer, Z_NEAR, Z_FAR);
     }
-
     private void handleTap(Frame frame, Camera camera) {
         MotionEvent tap = tapHelper.poll();
         if (tap != null && camera.getTrackingState() == TrackingState.TRACKING) {

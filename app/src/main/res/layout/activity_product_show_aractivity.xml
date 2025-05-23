@@ -22,13 +22,67 @@
             android:id="@+id/settings_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
             android:layout_margin="25dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_settings"
-            tools:layout_editor_absoluteX="349dp"
-            tools:layout_editor_absoluteY="17dp" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Contenedor para los botones de control -->
+        <LinearLayout
+            android:id="@+id/control_buttons_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/round_background_controls"
+            android:padding="8dp"
+            android:elevation="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Botón para disminuir tamaño -->
+            <ImageButton
+                android:id="@+id/btn_decrease"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginHorizontal="4dp"
+                android:src="@drawable/ic_remove"
+                android:contentDescription="Disminuir tamaño"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@android:color/white"
+                android:scaleType="centerInside"
+                android:padding="12dp"/>
+
+            <!-- Botón para rotar -->
+            <ImageButton
+                android:id="@+id/btn_rotate"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginHorizontal="4dp"
+                android:src="@drawable/ic_rotate"
+                android:contentDescription="Rotar modelo"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@android:color/white"
+                android:scaleType="centerInside"
+                android:padding="12dp"/>
+
+            <!-- Botón para aumentar tamaño -->
+            <ImageButton
+                android:id="@+id/btn_increase"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginHorizontal="4dp"
+                android:src="@drawable/ic_add"
+                android:contentDescription="Aumentar tamaño"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@android:color/white"
+                android:scaleType="centerInside"
+                android:padding="12dp"/>
+        </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

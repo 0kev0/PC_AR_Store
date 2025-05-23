@@ -1,7 +1,5 @@
 package com.example.pcarstore.Fragments;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +29,7 @@ import com.example.pcarstore.Adapters.ProductImagesAdapter;
 import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.R;
+import com.example.pcarstore.Services.DownloadService;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,12 +38,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
-import java.io.IOException;
+
 
 public class ProductDetailFragment extends Fragment {
 
@@ -159,7 +155,6 @@ public class ProductDetailFragment extends Fragment {
         btnWishlist.setOnClickListener(v -> handleWishlistClick());
         checkWishlistStatus();
     }
-
     private void handleWishlistClick() {
         if (currentProduct == null) return;
 
@@ -191,7 +186,6 @@ public class ProductDetailFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> showToast("Error al añadir a la lista de deseos"));
     }
-
     private void removeFromWishlist() {
         wishlistRef.child(productId)
                 .removeValue()
@@ -202,7 +196,6 @@ public class ProductDetailFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> showToast("Error al eliminar de la lista de deseos"));
     }
-
     private void updateWishlistButton(boolean isInWishlist) {
         if (isInWishlist) {
             btnWishlist.setText("Quitar de favoritos");
@@ -218,7 +211,6 @@ public class ProductDetailFragment extends Fragment {
             btnWishlist.setTextColor(Color.parseColor("#FF4081"));
         }
     }
-
     private void checkWishlistStatus() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null || wishlistRef == null) {
@@ -243,7 +235,6 @@ public class ProductDetailFragment extends Fragment {
                     }
                 });
     }
-
     private void showLoginRequiredDialog(String message) {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Inicio de sesión requerido")
@@ -257,93 +248,34 @@ public class ProductDetailFragment extends Fragment {
                 .setCancelable(false)
                 .show();
     }
-        private void openARModel() {
-        // Verificar si tenemos un producto cargado
+    private void openARModel() {
         if (currentProduct != null && currentProduct.getModel3dUrl() != null && currentProduct.getTextureUrl() != null) {
-            progressDialog.show();
+            DownloadService downloadService = new DownloadService(getContext());
 
-            //Iniciar descarga de archivos
-            downloadFiles(currentProduct.getModel3dUrl(), currentProduct.getTextureUrl());
+            downloadService.downloadModelAndTexture(
+                    currentProduct.getModel3dUrl(),
+                    currentProduct.getTextureUrl(),
+                    new DownloadService.DownloadCallback() {
+                        @Override
+                        public void onDownloadComplete(File modelFile, File textureFile) {
+                            // Archivos descargados correctamente
+                            Intent arIntent = new Intent(getActivity(), ProductShowARActivity.class);
+                            arIntent.putExtra("product_id", productId);
+                            arIntent.putExtra("model_path", modelFile.getAbsolutePath());
+                            arIntent.putExtra("texture_path", textureFile.getAbsolutePath());
+                            startActivity(arIntent);
+                        }
+
+                        @Override
+                        public void onDownloadFailed(String errorMessage) {
+                            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                        }
+                    });
         } else {
             Toast.makeText(getContext(), "Error: Modelo 3D o texturas no disponibles", Toast.LENGTH_SHORT).show();
         }
     }
 
-    @SuppressLint("SetWorldReadable")
-    private void downloadFiles(String modelUrl, String textureUrl) {
-        modelLoaded = false;
-        textureLoaded = false;
-
-        StorageReference modelRef = storage.getReferenceFromUrl(modelUrl);
-        StorageReference textureRef = storage.getReferenceFromUrl(textureUrl);
-
-        try {
-            // archivos para AR
-            modelFile = File.createTempFile("model_", ".obj", getContext().getCacheDir());
-            textureFile = File.createTempFile("texture_", ".png", getContext().getCacheDir());
-
-            modelRef.getFile(modelFile).addOnSuccessListener(taskSnapshot -> {
-                Log.d(TAG, "Model downloaded to: " + modelFile.getAbsolutePath());
-                if (modelFile.setReadable(true, false)) {
-                    Log.d(TAG, "Model file permissions set successfully");
-                } else {
-                    Log.w(TAG, "Failed to set model file permissions");
-                }
-                modelLoaded = true;
-            }).addOnFailureListener(exception -> {
-                Log.e(TAG, "Error downloading model: " + exception.getMessage());
-                Toast.makeText(getContext(), "Error al descargar el modelo 3D", Toast.LENGTH_SHORT).show();
-                progressDialog.dismiss();
-            });
-
-            textureRef.getFile(textureFile).addOnSuccessListener(taskSnapshot -> {
-                Log.d(TAG, "Texture downloaded to: " + textureFile.getAbsolutePath());
-                if (textureFile.setReadable(true, false)) {
-                    Log.d(TAG, "Texture file permissions set successfully");
-                } else {
-                    Log.w(TAG, "Failed to set texture file permissions");
-                }
-                textureLoaded = true;
-                checkIfFilesAreReady();
-            }).addOnFailureListener(exception -> {
-                Log.e(TAG, "Error downloading texture: " + exception.getMessage());
-                Toast.makeText(getContext(), "Error al descargar la textura", Toast.LENGTH_SHORT).show();
-                progressDialog.dismiss();
-            });
-
-        } catch (IOException e) {
-            Log.e(TAG, "Error creating temp files: " + e.getMessage());
-            Toast.makeText(getContext(), "Error al crear archivos temporales", Toast.LENGTH_SHORT).show();
-            progressDialog.dismiss();
-        }
-    }
-
-    private void checkIfFilesAreReady() {
-        if (modelLoaded && textureLoaded && modelFile.exists() && textureFile.exists()) {
-            progressDialog.dismiss();
-
-            // Verificación adicional con Toast
-            String verificationMsg = "Archivos listos:\n" +
-                    "Modelo: " + modelFile.getAbsolutePath() + "\n" +
-                    "Textura: " + textureFile.getAbsolutePath() + "\n" +
-                    "Permisos Modelo: " + (modelFile.canRead() ? "LEÍBLE" : "NO LEÍBLE") + "\n" +
-                    "Permisos Textura: " + (textureFile.canRead() ? "LEÍBLE" : "NO LEÍBLE");
-            Log.d(TAG, verificationMsg);
-
-            Intent arIntent = new Intent(getActivity(), ProductShowARActivity.class);
-            arIntent.putExtra("product_id", productId);
-            arIntent.putExtra("model_path", modelFile.getAbsolutePath());
-            arIntent.putExtra("texture_path", textureFile.getAbsolutePath());
-            startActivity(arIntent);
-        } else {
-            String errorMsg = "Error: Archivos no disponibles\n" +
-                    "Modelo: " + (modelFile != null ? modelFile.exists() : "null") + "\n" +
-                    "Textura: " + (textureFile != null ? textureFile.exists() : "null");
-
-            Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
-            progressDialog.dismiss();
-        }
-    }
     private void setupRealtimeListener() {
         productListener = productRef.addValueEventListener(new ValueEventListener() {
             @Override
