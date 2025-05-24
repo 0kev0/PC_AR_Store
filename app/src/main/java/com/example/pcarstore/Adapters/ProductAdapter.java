@@ -93,7 +93,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             lottieLoading = itemView.findViewById(R.id.lottieLoading);
             mAuth = FirebaseAuth.getInstance();
 
-            lottieLoading.setAnimation(R.raw.loading_animation);
+            lottieLoading.setAnimation(R.raw.loading_animation2);
             lottieLoading.loop(true);
         }
 
