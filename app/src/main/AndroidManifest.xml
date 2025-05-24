@@ -30,7 +30,7 @@
 
         <!-- Actividad de inicio (Splash Screen) -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".Activities.SplashActivity"
             android:exported="true"
 >
             <intent-filter>
@@ -88,6 +88,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <service android:name=".Services.SoundService" />
 
         <!-- Metadata ARCore -->
         <meta-data

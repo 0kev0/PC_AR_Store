@@ -1,4 +1,4 @@
-package com.example.pcarstore;
+package com.example.pcarstore.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,10 +13,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.example.pcarstore.Activities.LoginActivity;
+import com.example.pcarstore.R;
+import com.example.pcarstore.Services.SoundService;
 
 public class SplashActivity extends AppCompatActivity {
-    private static final long SPLASH_DELAY = 3000;// 3 segundos
+    private static final long SPLASH_DELAY = 3000; // 3 segundos
     private LottieAnimationView loadingAnimation;
 
     @Override
@@ -39,22 +40,25 @@ public class SplashActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             loadingAnimation.setVisibility(View.VISIBLE);
             loadingAnimation.playAnimation();
-        }, 500);
+        }, 700);
 
         new Handler(Looper.getMainLooper()).postDelayed(this::navigateToLogin, SPLASH_DELAY);
     }
 
-    private void navigateToLogin() {
-        startActivity(new Intent(this, LoginActivity.class));
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        finish();
-    }
-
     @Override
     protected void onDestroy() {
+        // Detener el servicio al salir
+        stopService(new Intent(this, SoundService.class));
         if (loadingAnimation != null) {
             loadingAnimation.cancelAnimation();
         }
         super.onDestroy();
+    }
+
+    private void navigateToLogin() {
+        startService(new Intent(this, SoundService.class));
+        startActivity(new Intent(this, LoginActivity.class));
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        finish();
     }
 }
