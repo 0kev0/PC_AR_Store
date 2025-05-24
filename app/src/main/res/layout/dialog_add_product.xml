@@ -69,18 +69,20 @@
                 android:inputType="number"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Categoría -->
+        <!-- Categoría (ahora como Spinner) -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            app:placeholderText="Categoría">
+            app:placeholderText="Categoría"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etProductCategory"
+            <AutoCompleteTextView
+                android:id="@+id/spinerCategoria"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Categoría"/>
+                android:hint="Categoría"
+                android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Descripción -->

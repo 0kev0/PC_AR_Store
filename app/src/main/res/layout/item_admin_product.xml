@@ -27,7 +27,7 @@
             android:contentDescription="Imagen del producto"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_products"
-            app:tint="@color/colorPrimary" />
+ />
 
         <!-- Detalles del Producto -->
         <LinearLayout
