@@ -32,6 +32,22 @@ public class Order {
         return calendar.getTime();
     }
 
+    public void setDate(Object date) {
+        if (date instanceof Long) {
+            this.date = new Date((Long) date);
+        } else if (date instanceof Date) {
+            this.date = (Date) date;
+        }
+    }
+
+    public void setDeliveryDate(Object deliveryDate) {
+        if (deliveryDate instanceof Long) {
+            this.deliveryDate = new Date((Long) deliveryDate);
+        } else if (deliveryDate instanceof Date) {
+            this.deliveryDate = (Date) deliveryDate;
+        }
+    }
+
     // Getters y Setters
     public String getOrderId() {
         return orderId;
@@ -89,4 +105,5 @@ public class Order {
     public void setItems(Map<String, OrderItem> items) {
         this.items = items;
     }
+
 }

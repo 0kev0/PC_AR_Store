@@ -9,9 +9,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/nav_users"
-        android:icon="@drawable/ic_users"
-        android:title="Usuarios"
+        android:id="@+id/nav_ventas"
+        android:icon="@drawable/ic_sales"
+        android:title="Ventas"
         app:showAsAction="ifRoom" />
 
     <item

@@ -33,4 +33,11 @@
     <color name="on_surface_medium">#99000000</color> <!-- 60% opacity black -->
     <color name="surface_stroke">#1F000000</color> <!-- 12% opacity black -->
 
+    <style name="FullScreenDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
+
 </resources>
