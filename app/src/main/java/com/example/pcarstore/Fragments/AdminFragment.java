@@ -276,6 +276,10 @@ public class AdminFragment extends Fragment {
             FragmentTransaction transaction = requireActivity()
                     .getSupportFragmentManager()
                     .beginTransaction();
+            transaction.setCustomAnimations(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+            );
             transaction.replace(R.id.fragmentContaineradmin, fragment2);
             transaction.addToBackStack(null);
             transaction.commit();

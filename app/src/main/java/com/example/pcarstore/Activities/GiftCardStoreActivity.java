@@ -92,6 +92,7 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
                         "Error al cargar tarjetas", Toast.LENGTH_SHORT).show();
             }
         });
+        Toast.makeText(GiftCardStoreActivity.this,"Error al cargar tarjetas", Toast.LENGTH_SHORT).show();
     }
     private void showRecipientSelectionDialog(GiftCard giftCard) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -321,9 +322,7 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
         transactionsRef.setValue(transaction)
                 .addOnFailureListener(e -> Log.e("Payment", "Error saving transaction", e));
     }
-    private void revertPayment(String userEmail, double amount) {
-        // Implementa la reversión del pago si es necesario
-    }
+    private void revertPayment(String userEmail, double amount) {}
     private void showProgressDialog() {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);

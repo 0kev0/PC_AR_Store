@@ -1,5 +1,7 @@
 package com.example.pcarstore.ModelsDB;
 
+import com.google.firebase.database.PropertyName;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +30,10 @@ public class Order {
     private Date calculateDeliveryDate(Date purchaseDate) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(purchaseDate);
-        calendar.add(Calendar.MINUTE, 1); // Agrega 1 minuto
+        calendar.add(Calendar.MINUTE, 1);
         return calendar.getTime();
     }
+
 
     // Getters y Setters
     public String getOrderId() {
@@ -89,4 +92,5 @@ public class Order {
     public void setItems(Map<String, OrderItem> items) {
         this.items = items;
     }
+
 }
