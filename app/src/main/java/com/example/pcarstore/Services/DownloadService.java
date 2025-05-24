@@ -76,8 +76,15 @@ public class DownloadService {
         });
     }
 
-    public void downloadModelAndTexture(String modelUrl, String textureUrl, DownloadCallback callback) {
+    public void downloadModelAndTexture(String modelUrl, String textureUrl,
+                                        String modelFilename, String textureFilename,
+                                        DownloadCallback callback) {
         showProgress("Preparando descargas...", 0, null);
+
+        // Crear archivos con nombres específicos en el directorio de caché
+        File cacheDir = context.getCacheDir();
+        this.modelFile = new File(cacheDir, modelFilename);
+        this.textureFile = new File(cacheDir, textureFilename);
 
         StorageReference modelRef = storage.getReferenceFromUrl(modelUrl);
         StorageReference textureRef = storage.getReferenceFromUrl(textureUrl);
@@ -101,28 +108,19 @@ public class DownloadService {
 
     private void startDownloads(StorageReference modelRef, StorageReference textureRef,
                                 long modelSize, long textureSize, DownloadCallback callback) {
-        try {
-            modelFile = File.createTempFile("model_", ".obj", context.getCacheDir());
-            textureFile = File.createTempFile("texture_", ".png", context.getCacheDir());
+        // Eliminar la creación de archivos temporales ya que ahora los recibimos como parámetro
+        String modelMsg = "Descargando modelo 3D";
+        showProgress(modelMsg, 0, modelSize > 0 ? "Tamaño: " + formatFileSize(modelSize) : null);
 
-            String modelMsg = "Descargando modelo 3D";
-            showProgress(modelMsg, 0, modelSize > 0 ? "Tamaño: " + formatFileSize(modelSize) : null);
+        downloadModel(modelRef, modelSize, () -> {
+            String textureMsg = "Descargando texturas";
+            showProgress(textureMsg, 0, textureSize > 0 ? "Tamaño: " + formatFileSize(textureSize) : null);
 
-            downloadModel(modelRef, modelSize, () -> {
-                String textureMsg = "Descargando texturas";
-                showProgress(textureMsg, 0, textureSize > 0 ? "Tamaño: " + formatFileSize(textureSize) : null);
-
-                downloadTexture(textureRef, textureSize, () -> {
-                    showProgress("Descargas completadas", 100, null);
-                    checkFilesReady(callback);
-                });
+            downloadTexture(textureRef, textureSize, () -> {
+                showProgress("Descargas completadas", 100, null);
+                checkFilesReady(callback);
             });
-
-        } catch (IOException e) {
-            Log.e(TAG, "Error creating temp files", e);
-            dismissProgress();
-            callback.onDownloadFailed("Error al crear archivos temporales");
-        }
+        });
     }
 
     private void downloadModel(StorageReference modelRef, long modelSize, Runnable onSuccess) {
