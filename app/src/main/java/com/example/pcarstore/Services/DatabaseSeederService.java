@@ -402,7 +402,7 @@ public class DatabaseSeederService {
 
         Product product14 = new Product(
                 "prod_014",
-                "MSI MAG B650 Tomahawk",
+                "PC Fan Ventilador 140mm",
                 219.99,
                 199.99,
                 25,
