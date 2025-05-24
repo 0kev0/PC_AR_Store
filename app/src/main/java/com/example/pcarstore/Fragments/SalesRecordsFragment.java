@@ -63,7 +63,8 @@ public class SalesRecordsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         adapter.setOnUserClickListener(userId -> {
-            try {
+            Toast.makeText(requireContext(), "Mostrando órdenes de " + userId, Toast.LENGTH_SHORT).show();
+           try {
                 if (isAdded() && !isDetached()) {
                     UserOrdersSalesDialog dialog = UserOrdersSalesDialog.newInstance(userId);
 
@@ -83,6 +84,7 @@ public class SalesRecordsFragment extends Fragment {
                 Toast.makeText(requireContext(), "Error al mostrar órdenes",
                         Toast.LENGTH_SHORT).show();
             }
+
         });
     }
 

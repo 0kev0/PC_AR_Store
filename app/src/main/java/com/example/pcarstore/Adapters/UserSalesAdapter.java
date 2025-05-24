@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pcarstore.Dialogs.UserOrdersSalesDialog;
 import com.example.pcarstore.ModelsDB.UserSales;
 import com.example.pcarstore.R;
 import com.google.firebase.database.DataSnapshot;
@@ -71,26 +72,8 @@ public class UserSalesAdapter extends RecyclerView.Adapter<UserSalesAdapter.User
     }
 
     private void showUserDetailsDialog(UserSales userSales) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Detalles del Usuario");
-
-        // Inflar un layout personalizado si lo deseas
-        View dialogView = LayoutInflater.from(context).inflate(R.layout.item_user_sales, null);
-
-        TextView tvDialogUserId = dialogView.findViewById(R.id.tvOrderId);
-        TextView tvDialogOrderCount = dialogView.findViewById(R.id.tvStatus);
-        TextView tvDialogTotalAmount = dialogView.findViewById(R.id.tvTotal);
-
-        tvDialogUserId.setText("Usuario: " + userSales.getUserId());
-        tvDialogOrderCount.setText("Total pedidos: " + userSales.getOrderCount());
-        tvDialogTotalAmount.setText(String.format(Locale.getDefault(), "Monto total: $%.2f", userSales.getTotalAmount()));
-
-        builder.setView(dialogView);
-        builder.setPositiveButton("Aceptar", (dialog, which) -> dialog.dismiss());
-
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        UserOrdersSalesDialog dialog = UserOrdersSalesDialog.newInstance(userSales.getUserId());
+        dialog.show(((androidx.fragment.app.FragmentActivity) context).getSupportFragmentManager(), "UserOrdersSalesDialog");
     }
 
     private void loadUserName(String userId, TextView textView) {

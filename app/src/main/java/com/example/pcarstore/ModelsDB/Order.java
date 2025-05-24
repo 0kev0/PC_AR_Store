@@ -1,5 +1,7 @@
 package com.example.pcarstore.ModelsDB;
 
+import com.google.firebase.database.PropertyName;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,25 +30,10 @@ public class Order {
     private Date calculateDeliveryDate(Date purchaseDate) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(purchaseDate);
-        calendar.add(Calendar.MINUTE, 1); // Agrega 1 minuto
+        calendar.add(Calendar.MINUTE, 1);
         return calendar.getTime();
     }
 
-    public void setDate(Object date) {
-        if (date instanceof Long) {
-            this.date = new Date((Long) date);
-        } else if (date instanceof Date) {
-            this.date = (Date) date;
-        }
-    }
-
-    public void setDeliveryDate(Object deliveryDate) {
-        if (deliveryDate instanceof Long) {
-            this.deliveryDate = new Date((Long) deliveryDate);
-        } else if (deliveryDate instanceof Date) {
-            this.deliveryDate = (Date) deliveryDate;
-        }
-    }
 
     // Getters y Setters
     public String getOrderId() {

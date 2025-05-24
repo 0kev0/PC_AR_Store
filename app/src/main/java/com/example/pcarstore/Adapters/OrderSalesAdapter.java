@@ -13,12 +13,18 @@ import com.example.pcarstore.R;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class OrderSalesAdapter extends RecyclerView.Adapter<OrderSalesAdapter.OrderViewHolder> {
-    private List<Order> orders;
+    private List<Map<String, Object>> orders;
 
-    public OrderSalesAdapter(List<Order> orders) {
+    public OrderSalesAdapter(List<Map<String, Object>> orders) {
         this.orders = orders;
+    }
+
+    public void updateOrders(List<Map<String, Object>> newOrders) {
+        this.orders = newOrders;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -31,11 +37,13 @@ public class OrderSalesAdapter extends RecyclerView.Adapter<OrderSalesAdapter.Or
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        Order order = orders.get(position);
+        Map<String, Object> order = orders.get(position);
 
-        holder.tvOrderId.setText("Orden #" + order.getOrderId().substring(0, 8));
-        holder.tvStatus.setText(order.getStatus());
-        holder.tvTotal.setText(String.format(Locale.getDefault(), "$%.2f", order.getTotal()));
+        holder.tvOrderId.setText((String) order.get("orderId"));
+        holder.tvStatus.setText((String) order.get("status"));
+
+        Double total = (Double) order.get("total");
+        holder.tvTotal.setText(String.format("$%.2f", total != null ? total : 0.0));
     }
 
     @Override
@@ -50,7 +58,7 @@ public class OrderSalesAdapter extends RecyclerView.Adapter<OrderSalesAdapter.Or
             super(itemView);
             tvOrderId = itemView.findViewById(R.id.tvOrderId);
             tvStatus = itemView.findViewById(R.id.tvStatus);
-            tvTotal = itemView.findViewById(R.id.tvTotal);
+            tvTotal = itemView.findViewById(R.id.tvTotalH);
         }
     }
 }
