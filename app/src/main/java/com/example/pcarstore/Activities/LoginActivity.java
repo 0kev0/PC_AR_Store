@@ -113,8 +113,8 @@ public class LoginActivity extends AppCompatActivity {
         catalogo.setOnClickListener(v -> VerCatologo(v));
 
 
-        test = findViewById(R.id.test);
-        test.setOnClickListener(v -> ARtest(v));
+        // test = findViewById(R.id.test);
+       // test.setOnClickListener(v -> ARtest(v));
 
         RegisterGoogle = findViewById(R.id.RegisterGoogle);
         credentialManager = CredentialManager.create(this);

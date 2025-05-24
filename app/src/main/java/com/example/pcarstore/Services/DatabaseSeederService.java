@@ -353,7 +353,8 @@ public class DatabaseSeederService {
                 4.9,
                 "Almacenamiento",
                 "SSD NVMe PCIe Gen4 de alto rendimiento para gaming y creación de contenido",
-                Arrays.asList("", ""),
+                Arrays.asList("",
+                        ""),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_012%2FMODELOS_3D%2FSSD_M2.obj?alt=media&token=e5df14e3-35b7-4f76-8aa8-114a323e57f0",
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_012%2FTEXTURAS%2Fne.png?alt=media&token=de70d137-caa2-48c9-893d-24f8507032a4",
                 new HashMap<String, String>() {{
@@ -374,24 +375,27 @@ public class DatabaseSeederService {
         // Placas Base
         Product product13 = new Product(
                 "prod_013",
-                "ASUS ROG Maximus Z790 Hero",
+                "Alexa echo III",
                 599.99,
                 549.99,
                 15,
                 4.9,
-                "Placas Base",
-                "Placa base premium para Intel de 13ª generación con WiFi 6E",
-                Arrays.asList("", ""),
-                "",
-                "",
+                "Asistentes de voz",
+                "Asistente de voz inteligente de última generación con conectividad mejorada",
+                Arrays.asList("https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_013%2FIMG%2FOIP.jpeg?alt=media&token=5059136b-2857-41da-b886-9b5f7bf04c4b",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_013%2FIMG%2F01LW4140443_HeroSquare-525fa698ae274ad0a534f39ae1acbc2d.jpg?alt=media&token=23aa3fc3-5f4d-43e8-8a06-1c43bf971568",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_013%2FIMG%2FR.jpeg?alt=media&token=90fb3d9e-4023-4099-86f3-e3a80eb81e83",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_013%2FIMG%2Fv8RBJYunWkui5xbKQiYGpe.jpg?alt=media&token=f9938e4a-06be-470c-8a1b-a0a859a24d4a"),
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_013%2FMODELOS_3D%2FUntitled.obj?alt=media&token=f00ecc75-5289-4411-879e-9880496d3c2e",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_013%2FTEXTURAS%2Falexa_texture_0.png?alt=media&token=c733edea-ddb1-453c-aeb5-133f95fde63b",
                 new HashMap<String, String>() {{
-                    put("Chipset", "Intel Z790");
-                    put("Socket", "LGA 1700");
-                    put("Formato", "ATX");
-                    put("Memoria", "4x DDR5 hasta 128GB");
-                    put("PCIe", "1x PCIe 5.0 x16, 1x PCIe 4.0 x16");
-                    put("M_2", "5x slots M_2");
-                    put("Red", "WiFi 6E, 2.5Gb Ethernet");
+                    put("Tecnología de voz", "Reconocimiento avanzado");
+                    put("Conectividad", "WiFi 6E, Bluetooth 5.2");
+                    put("Altavoces", "Sistema de audio premium 360°");
+                    put("Procesador", "CPU multi-núcleo dedicada");
+                    put("Compatibilidad", "Funciona con dispositivos inteligentes principales");
+                    put("Asistente", "Alexa con IA mejorada");
+                    put("Pantalla", "Pantalla táctil HD integrada");
                 }}
         );
         mDatabase.child("products").child("prod_013").setValue(product13);
