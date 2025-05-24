@@ -70,7 +70,7 @@ public class ProductDetailFragment extends Fragment {
     private boolean modelLoaded = false;
     private boolean textureLoaded = false;
     private ProgressDialog progressDialog;
-
+    private static final long CACHE_EXPIRATION_TIME = 120000; // 2 minutos en milisegundos
 
     public static ProductDetailFragment newInstance(String productId) {
         ProductDetailFragment fragment = new ProductDetailFragment();
@@ -250,20 +250,31 @@ public class ProductDetailFragment extends Fragment {
     }
     private void openARModel() {
         if (currentProduct != null && currentProduct.getModel3dUrl() != null && currentProduct.getTextureUrl() != null) {
+            File cacheDir = getContext().getCacheDir();
+            String modelFilename = currentProduct.getModel3dUrl().substring(currentProduct.getModel3dUrl().lastIndexOf('/') + 1);
+            String textureFilename = currentProduct.getTextureUrl().substring(currentProduct.getTextureUrl().lastIndexOf('/') + 1);
+
+            File cachedModel = new File(cacheDir, modelFilename);
+            File cachedTexture = new File(cacheDir, textureFilename);
+
+            if (cachedModel.exists() && cachedTexture.exists() &&
+                    !hasCacheExpired(cachedModel) && !hasCacheExpired(cachedTexture)) {
+                Toast.makeText(getContext(), "Modelo 3D y textura disponibles en caché", Toast.LENGTH_SHORT).show();
+                launchARActivity(cachedModel, cachedTexture);
+                return;
+            }
+
             DownloadService downloadService = new DownloadService(getContext());
 
             downloadService.downloadModelAndTexture(
                     currentProduct.getModel3dUrl(),
                     currentProduct.getTextureUrl(),
+                    modelFilename,
+                    textureFilename,
                     new DownloadService.DownloadCallback() {
                         @Override
                         public void onDownloadComplete(File modelFile, File textureFile) {
-                            // Archivos descargados correctamente
-                            Intent arIntent = new Intent(getActivity(), ProductShowARActivity.class);
-                            arIntent.putExtra("product_id", productId);
-                            arIntent.putExtra("model_path", modelFile.getAbsolutePath());
-                            arIntent.putExtra("texture_path", textureFile.getAbsolutePath());
-                            startActivity(arIntent);
+                            launchARActivity(modelFile, textureFile);
                         }
 
                         @Override
@@ -275,7 +286,19 @@ public class ProductDetailFragment extends Fragment {
             Toast.makeText(getContext(), "Error: Modelo 3D o texturas no disponibles", Toast.LENGTH_SHORT).show();
         }
     }
+    private boolean hasCacheExpired(File cachedFile) {
+        long lastModified = cachedFile.lastModified();
+        long currentTime = System.currentTimeMillis();
+        return (currentTime - lastModified) > CACHE_EXPIRATION_TIME;
+    }
 
+    private void launchARActivity(File modelFile, File textureFile) {
+        Intent arIntent = new Intent(getActivity(), ProductShowARActivity.class);
+        arIntent.putExtra("product_id", productId);
+        arIntent.putExtra("model_path", modelFile.getAbsolutePath());
+        arIntent.putExtra("texture_path", textureFile.getAbsolutePath());
+        startActivity(arIntent);
+    }
     private void setupRealtimeListener() {
         productListener = productRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -478,7 +501,6 @@ public class ProductDetailFragment extends Fragment {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
     }
-
 
     @Override
     public void onDestroyView() {

@@ -65,9 +65,7 @@ public class GiftCardDialog extends DialogFragment {
         Button btnRedeem = dialogView.findViewById(R.id.btnRedeem);
         ProgressBar progressBar = dialogView.findViewById(R.id.progressBar);
 
-        builder.setView(dialogView)
-                .setTitle("Canjear Gift Card")
-                .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+        builder.setView(dialogView);
 
         dialog = builder.create();
 

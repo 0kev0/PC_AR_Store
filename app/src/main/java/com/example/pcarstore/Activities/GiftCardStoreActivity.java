@@ -299,7 +299,7 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
     }
     private String generateGiftCardCode() {
         // Implementa tu lógica de generación de código
-        return "GC-" + System.currentTimeMillis();
+        return "PDM-" + System.currentTimeMillis();
     }
     private void sendGiftCardNotification(GiftCard giftCard, String recipientEmail) {
         // Implementa el envío de notificación
