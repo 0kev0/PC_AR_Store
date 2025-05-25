@@ -41,6 +41,7 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.example.pcarstore.Services.SoundService;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -270,20 +271,70 @@ public class PaymentConfirmationDialog extends DialogFragment {
         if (appliedDiscountCode != null) {
             markDiscountAsUsed(appliedDiscountCode, () -> {
                 updateUserBalance(amount, () -> {
-                    if (listener != null) {
-                        listener.onPaymentConfirmed(currentDiscount);
-                    }
-                    dismiss();
+                    saveTransaction(amount, () -> {
+                        if (listener != null) {
+                            listener.onPaymentConfirmed(currentDiscount);
+                        }
+                        dismiss();
+                    });
                 });
             });
         } else {
             updateUserBalance(amount, () -> {
-                if (listener != null) {
-                    listener.onPaymentConfirmed(0.0);
-                }
-                dismiss();
+                saveTransaction(amount, () -> {
+                    if (listener != null) {
+                        listener.onPaymentConfirmed(0.0);
+                    }
+                    dismiss();
+                });
             });
         }
+    }
+
+    private void saveTransaction(double amount, Runnable onComplete) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference transactionsRef = FirebaseDatabase.getInstance()
+                .getReference("transactions");
+
+        String transactionId = transactionsRef.push().getKey();
+
+        // Crear objeto de transacción
+        Map<String, Object> transaction = new HashMap<>();
+        transaction.put("amount", amount);
+        transaction.put("date", ServerValue.TIMESTAMP);
+        transaction.put("description", "Compra de productos");
+        transaction.put("status", "completed");
+        transaction.put("type", "sale");
+        transaction.put("userId", userId);
+
+        // Agregar detalles de los productos
+        List<Map<String, Object>> products = new ArrayList<>();
+        for (OrderItem item : orderItems) {
+            Map<String, Object> product = new HashMap<>();
+            product.put("productId", item.getProductId());
+            product.put("quantity", item.getQuantity());
+            product.put("price", item.getPrice());
+            products.add(product);
+        }
+        transaction.put("products", products);
+
+        // Agregar información de envío y descuento si aplica
+        transaction.put("shippingCost", shippingCost);
+        if (appliedDiscountCode != null) {
+            transaction.put("discountCode", appliedDiscountCode);
+            transaction.put("discountAmount", currentDiscount);
+        }
+
+        transactionsRef.child(transactionId).setValue(transaction)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Transaction", "Transacción guardada exitosamente");
+                    onComplete.run();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Transaction", "Error al guardar transacción", e);
+                    Toast.makeText(getContext(), "Error al registrar transacción", Toast.LENGTH_SHORT).show();
+                    onComplete.run();
+                });
     }
 
     private void updateUserBalance(double amount, Runnable onComplete) {

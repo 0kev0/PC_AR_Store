@@ -15,9 +15,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/nav_products"
-        android:icon="@drawable/ic_products"
-        android:title="Productos"
+        android:id="@+id/nav_balance"
+        android:icon="@drawable/ic_bag"
+        android:title="Balance"
         app:showAsAction="ifRoom" />
 
     <item

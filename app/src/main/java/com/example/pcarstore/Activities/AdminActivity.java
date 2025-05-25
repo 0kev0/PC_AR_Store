@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import com.example.pcarstore.Fragments.AdminFragment;
+import com.example.pcarstore.Fragments.BalanceAdminFragment;
 import com.example.pcarstore.Fragments.SalesRecordsFragment;
 import com.example.pcarstore.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -46,11 +47,10 @@ public class AdminActivity extends AppCompatActivity {
             selectedFragment = new AdminFragment();
         } else if (itemId == R.id.nav_ventas) {
             selectedFragment = new SalesRecordsFragment();
-            Toast.makeText(this, "Registro de ventas", Toast.LENGTH_SHORT).show(); // Corregido typo
-        } else if (itemId == R.id.nav_products) {
-            // Implementa tu fragmento de inventario aquí
-            Toast.makeText(this, "Inventario (no implementado)", Toast.LENGTH_SHORT).show();
-            return false; // No carga fragmento
+            Toast.makeText(this, "Registro de ventas", Toast.LENGTH_SHORT).show();
+        } else if (itemId == R.id.nav_balance) {
+            selectedFragment = new BalanceAdminFragment();
+            Toast.makeText(this, "Balance", Toast.LENGTH_SHORT).show();
         }
 
         if (selectedFragment != null) {
