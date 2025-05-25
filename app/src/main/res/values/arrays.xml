@@ -4,4 +4,13 @@
         <item>Mayor monto primero</item>
         <item>Menor monto primero</item>
     </string-array>
+
+    <string-array name="period_options">
+        <item>Hoy</item>
+        <item>Esta semana</item>
+        <item>Este mes</item>
+        <item>Este año</item>
+        <item>Personalizado</item>
+    </string-array>
+
 </resources>

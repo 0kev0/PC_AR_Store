@@ -236,9 +236,7 @@ public class CatalogoFragment extends Fragment{
     }
 
     private void addToWishlist(Product product) {
-        // Actualizamos el modelo inmediatamente para evitar múltiples clicks
         product.setInWishlist(true);
-        // Notificamos al adapter del cambio
         productAdapter.notifyDataSetChanged();
 
         wishlistRef.child(product.getProductId()).setValue(true)
@@ -254,9 +252,7 @@ public class CatalogoFragment extends Fragment{
     }
 
     private void removeFromWishlist(Product product) {
-        // Actualizamos el modelo inmediatamente para evitar múltiples clicks
         product.setInWishlist(false);
-        // Notificamos al adapter del cambio
         productAdapter.notifyDataSetChanged();
 
         wishlistRef.child(product.getProductId()).removeValue()
@@ -264,7 +260,6 @@ public class CatalogoFragment extends Fragment{
                     showToast("Eliminado de tu lista de deseos");
                 })
                 .addOnFailureListener(e -> {
-                    // En caso de error, revertimos el cambio
                     product.setInWishlist(true);
                     productAdapter.notifyDataSetChanged();
                     showToast("Error al eliminar de la lista de deseos");

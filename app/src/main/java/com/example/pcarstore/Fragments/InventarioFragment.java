@@ -4,9 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +27,7 @@ import com.example.pcarstore.Dialogs.EditProductDialog;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.R;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,22 +40,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class InventarioFragment extends Fragment implements AdminProductAdapter.OnProductActionsListener,
-        AddProductDialog.ProductDialogListener,EditProductDialog.EditProductDialogListener {
+public class InventarioFragment extends Fragment {
 
     private static final int PICK_IMAGES_REQUEST = 1;
     private static final int RESULT_OK = Activity.RESULT_OK;
     private RecyclerView recyclerView;
     private AdminProductAdapter adapter;
     private DatabaseReference productsRef;
+    private DatabaseReference transactionsRef;
     private MaterialButton btnAddProduct;
     private List<Product> productList = new ArrayList<>();
     private List<String> selectedImageUrls = new ArrayList<>();
-
-    public InventarioFragment() {
-        // Constructor vacío requerido
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -59,34 +61,83 @@ public class InventarioFragment extends Fragment implements AdminProductAdapter.
 
         // Inicializar Firebase
         productsRef = FirebaseDatabase.getInstance().getReference("products");
+        transactionsRef = FirebaseDatabase.getInstance().getReference("transactions");
 
         // Configurar RecyclerView
         recyclerView = view.findViewById(R.id.productsRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Inicializar adapter
-        adapter = new AdminProductAdapter(this);
+        // Configurar adaptador con listeners internos
+        adapter = new AdminProductAdapter(new AdminProductAdapter.OnProductActionsListener() {
+            @Override
+            public void onEditProduct(Product product) {
+                showEditDialog(product);
+            }
+
+            @Override
+            public void onDeleteProduct(Product product) {
+                showDeleteConfirmation(product);
+            }
+        });
         recyclerView.setAdapter(adapter);
 
-        //btn para agregar nuevo producto
+        // Botón para agregar producto
         btnAddProduct = view.findViewById(R.id.btnAddProduct);
-        btnAddProduct.setOnClickListener(v -> AddProductDialog.showAddProductDialog(view, this));
+        btnAddProduct.setOnClickListener(v -> showAddProductDialog());
 
-        // Cargar productos
         loadProducts();
-
         return view;
     }
 
-    @Override
-    public void onProductAdded(Product product) {
-        loadProducts();
+    private void showAddProductDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View dialogView = inflater.inflate(R.layout.dialog_add_product, null);
 
+        // Configurar vistas del diálogo
+        TextInputEditText etName = dialogView.findViewById(R.id.etProductName);
+        TextInputEditText etPrice = dialogView.findViewById(R.id.etProductPrice);
+        TextInputEditText etCost = dialogView.findViewById(R.id.etProductCost);
+        TextInputEditText etStock = dialogView.findViewById(R.id.etProductStock);
+        AutoCompleteTextView spinnerCategory = dialogView.findViewById(R.id.spinerCategoria);
+        TextInputEditText etDescription = dialogView.findViewById(R.id.etProductDescription);
+        TextInputEditText etRating = dialogView.findViewById(R.id.etProductRating);
+        Button btnSelectImages = dialogView.findViewById(R.id.btnSelectImages);
+        RecyclerView rvSelectedImages = dialogView.findViewById(R.id.rvSelectedImages);
+
+        // Configurar adaptador de imágenes
+        ImagesAdapter imagesAdapter = new ImagesAdapter(selectedImageUrls);
+        rvSelectedImages.setLayoutManager(new LinearLayoutManager(getContext(),
+                LinearLayoutManager.HORIZONTAL, false));
+        rvSelectedImages.setAdapter(imagesAdapter);
+
+        // Cargar categorías
+        loadCategories(spinnerCategory);
+
+        // Seleccionar imágenes
+        btnSelectImages.setOnClickListener(v -> selectImages());
+
+        builder.setView(dialogView)
+                .setTitle("Agregar Producto")
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    String name = etName.getText().toString().trim();
+                    String priceStr = etPrice.getText().toString().trim();
+                    String costStr = etCost.getText().toString().trim();
+                    String stockStr = etStock.getText().toString().trim();
+                    String category = spinnerCategory.getText().toString().trim();
+                    String description = etDescription.getText().toString().trim();
+                    String ratingStr = etRating.getText().toString().trim();
+
+                    if (validateProductInput(name, priceStr, costStr, stockStr, category, ratingStr)) {
+                        addProduct(name, priceStr, costStr, stockStr, category, description, ratingStr);
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
-    // Implementación de ProductDialogListener
-    @Override
-    public boolean validateProductInput(String name, String price, String cost, String stock, String category, String rating) {
+    private boolean validateProductInput(String name, String price, String cost,
+                                         String stock, String category, String rating) {
         if (name.isEmpty() || category.isEmpty()) {
             Toast.makeText(getContext(), "Nombre y categoría son obligatorios", Toast.LENGTH_SHORT).show();
             return false;
@@ -100,7 +151,7 @@ public class InventarioFragment extends Fragment implements AdminProductAdapter.
                 return false;
             }
         } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Ingrese valores numéricos válidos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Valores numéricos inválidos", Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -111,27 +162,76 @@ public class InventarioFragment extends Fragment implements AdminProductAdapter.
                 return false;
             }
         } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Stock debe ser un número entero", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        try {
-            double ratingValue = Double.parseDouble(rating);
-            if (ratingValue < 0 || ratingValue > 5) {
-                Toast.makeText(getContext(), "Rating debe estar entre 0 y 5", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Rating debe ser un número válido", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Stock debe ser entero", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         return true;
     }
 
-    @Override
-    public void selectImages(List<String> selectedImageUrls, ImagesAdapter imagesAdapter) {
-        this.selectedImageUrls = selectedImageUrls;
+    private void addProduct(String name, String priceStr, String costStr,
+                            String stockStr, String category,
+                            String description, String ratingStr) {
+        try {
+            double price = Double.parseDouble(priceStr);
+            double cost = Double.parseDouble(costStr);
+            int stock = Integer.parseInt(stockStr);
+            double rating = Double.parseDouble(ratingStr);
+
+            Product product = new Product();
+            product.setName(name);
+            product.setPrice(price);
+            product.setCost(cost);
+            product.setStock(stock);
+            product.setCategory(category);
+            product.setDescription(description);
+            product.setRating(rating);
+            product.setImageUrls(new ArrayList<>(selectedImageUrls));
+
+            // Guardar producto
+            String productId = productsRef.push().getKey();
+            product.setProductId(productId);
+
+            productsRef.child(productId).setValue(product)
+                    .addOnSuccessListener(aVoid -> {
+                        // Registrar transacción como egreso
+                        registerInventoryPurchase(product, productId);
+                        selectedImageUrls.clear();
+                        Toast.makeText(getContext(), "Producto agregado", Toast.LENGTH_SHORT).show();
+                        loadProducts();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(getContext(), "Error al guardar: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Error en valores numéricos", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void registerInventoryPurchase(Product product, String productId) {
+        String transactionId = transactionsRef.push().getKey();
+        double totalCost = product.getCost() * product.getStock();
+
+        Map<String, Object> transaction = new HashMap<>();
+        transaction.put("amount", totalCost);
+        transaction.put("date", System.currentTimeMillis());
+        transaction.put("description", "Compra de inventario: " + product.getName());
+        transaction.put("status", "completed");
+        transaction.put("type", "inventory_purchase"); // Tipo para identificar como egreso
+        transaction.put("productId", productId);
+        transaction.put("quantity", product.getStock());
+        transaction.put("totalCost", totalCost);
+
+        if (transactionId != null) {
+            transactionsRef.child(transactionId).setValue(transaction)
+                    .addOnFailureListener(e -> {
+                        Log.e("Transaction", "Error al registrar transacción", e);
+                    });
+        }
+    }
+
+    private void selectImages() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -140,61 +240,90 @@ public class InventarioFragment extends Fragment implements AdminProductAdapter.
     }
 
     @Override
-    public void addProductToFirebase(Product product) {
-        DatabaseReference newProductRef = productsRef.push();
-        String productId = "prod_" + System.currentTimeMillis();
-        product.setProductId(productId);
-
-        newProductRef.setValue(product)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(getContext(), "Producto agregado exitosamente", Toast.LENGTH_SHORT).show();
-                    selectedImageUrls.clear();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error al agregar producto: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
-
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGES_REQUEST && resultCode == RESULT_OK && data != null) {
             if (data.getClipData() != null) {
-                // Múltiples imágenes seleccionadas
                 int count = data.getClipData().getItemCount();
                 for (int i = 0; i < count; i++) {
-                    Uri imageUri = data.getClipData().getItemAt(i).getUri();
-                    uploadImageToFirebase(imageUri);
+                    uploadImage(data.getClipData().getItemAt(i).getUri());
                 }
             } else if (data.getData() != null) {
-                // Una sola imagen seleccionada
-                Uri imageUri = data.getData();
-                uploadImageToFirebase(imageUri);
+                uploadImage(data.getData());
             }
         }
     }
 
-    private void uploadImageToFirebase(Uri imageUri) {
-        // Generar nombre único para la imagen
+    private void uploadImage(Uri imageUri) {
         String filename = "product_" + System.currentTimeMillis() + ".jpg";
-        StorageReference imageRef = FirebaseStorage.getInstance().getReference("product_images/" + filename);
+        StorageReference imageRef = FirebaseStorage.getInstance()
+                .getReference("product_images/" + filename);
 
         imageRef.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot -> {
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        String imageUrl = uri.toString();
-                        selectedImageUrls.add(imageUrl);
-                        // Notificar al adapter si es necesario
+                        selectedImageUrls.add(uri.toString());
                     });
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error al subir imagen: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error al subir imagen", Toast.LENGTH_SHORT).show();
                 });
     }
 
-    // Resto de los métodos permanecen igual...
+    private void loadCategories(AutoCompleteTextView spinner) {
+        DatabaseReference categoriesRef = FirebaseDatabase.getInstance().getReference("categories");
+        categoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<String> categories = new ArrayList<>();
+                for (DataSnapshot categorySnapshot : snapshot.getChildren()) {
+                    String category = categorySnapshot.child("name").getValue(String.class);
+                    if (category != null) {
+                        categories.add(category);
+                    }
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        getContext(),
+                        android.R.layout.simple_dropdown_item_1line,
+                        categories
+                );
+                spinner.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), "Error al cargar categorías", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showEditDialog(Product product) {
+        // Implementación de diálogo de edición similar al de agregar
+        // ...
+    }
+
+    private void showDeleteConfirmation(Product product) {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Eliminar Producto")
+                .setMessage("¿Eliminar " + product.getName() + "?")
+                .setPositiveButton("Eliminar", (dialog, which) -> {
+                    deleteProduct(product.getProductId());
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void deleteProduct(String productId) {
+        productsRef.child(productId).removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(), "Producto eliminado", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Error al eliminar", Toast.LENGTH_SHORT).show();
+                });
+    }
+
     private void loadProducts() {
         productsRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -212,93 +341,8 @@ public class InventarioFragment extends Fragment implements AdminProductAdapter.
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "Error al cargar productos: " + error.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error al cargar productos", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    // Implementación de los métodos de EditProductDialogListener
-    @Override
-    public boolean validateInputs(String name, String price, String stock) {
-        if (name.isEmpty()) {
-            Toast.makeText(getContext(), "Ingrese un nombre válido", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        try {
-            double priceValue = Double.parseDouble(price);
-            if (priceValue <= 0) {
-                Toast.makeText(getContext(), "El precio debe ser mayor a 0", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Ingrese un precio válido", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        try {
-            int stockValue = Integer.parseInt(stock);
-            if (stockValue < 0) {
-                Toast.makeText(getContext(), "El stock no puede ser negativo", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Ingrese un stock válido", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        return true;
-    }
-    @Override
-    public void updateProduct(String productId, String name, double price, int stock) {
-        HashMap<String, Object> updates = new HashMap<>();
-        updates.put("name", name);
-        updates.put("price", price);
-        updates.put("stock", stock);
-
-        productsRef.child(productId).updateChildren(updates)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(getContext(), "Producto actualizado", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error al actualizar: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
-    @Override
-    public void onEditProduct(Product product) {
-        EditProductDialog.showEditDialog(getView(), product, this);
-    }
-
-    @Override
-    public void onDeleteProduct(Product product) {
-        new AlertDialog.Builder(getContext())
-                .setTitle("Eliminar Producto")
-                .setMessage("¿Estás seguro de eliminar " + product.getName() + "?")
-                .setPositiveButton("Eliminar", (dialog, which) -> {
-                    deleteProduct(product.getProductId());
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
-    }
-
-    private void deleteProduct(String productId) {
-        productsRef.child(productId).removeValue()
-                .addOnSuccessListener(aVoid -> {
-                    showToast("Producto eliminado");
-                })
-                .addOnFailureListener(e -> {
-                    showToast("Error al eliminar: " + e.getMessage());
-                });
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        // Limpiar listeners si es necesario
     }
 }
