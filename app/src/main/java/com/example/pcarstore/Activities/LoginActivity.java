@@ -153,19 +153,30 @@ public class LoginActivity extends AppCompatActivity {
     private void checkCurrentSession() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            // Verificar si el rol coincide
+            // Verificar si el usuario existe en la base de datos
             mDatabase.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    User user = snapshot.getValue(User.class);
-                    if (user != null && user.getRole() != null) {
-                        String storedRole = sessionManager.getUserRole();
-                        if (!user.getRole().equals(storedRole)) {
-                            sessionManager.createSession(currentUser.getUid(),
-                                    currentUser.getEmail(),
-                                    user.getRole());
+                    if (!snapshot.exists()) {
+                        // Si no existe, registrarlo como nuevo usuario (rol "client" por defecto)
+                      //  registerNewUser(currentUser.getUid(), currentUser.getEmail());
+                    } else {
+                        // Si existe, verificar el rol como antes
+                        User user = snapshot.getValue(User.class);
+                        if (user != null && user.getRole() != null) {
+                            String storedRole = sessionManager.getUserRole();
+                            if (!user.getRole().equals(storedRole)) {
+                                sessionManager.createSession(
+                                        currentUser.getUid(),
+                                        currentUser.getEmail(),
+                                        user.getRole()
+                                );
+                            }
+                            redirectBasedOnRole(user.getRole());
+                        } else {
+                            // Rol nulo o inválido: manejar como error
+                            handleInvalidRole();
                         }
-                        redirectBasedOnRole(user.getRole());
                     }
                 }
 
@@ -185,6 +196,9 @@ public class LoginActivity extends AppCompatActivity {
         switch (role.toLowerCase()) {
             case "admin":
                 destinationActivity = AdminActivity.class;
+                break;
+            case "client":
+                destinationActivity = InicioActivity.class;
                 break;
             case "user":
                 destinationActivity = InicioActivity.class;
