@@ -112,10 +112,6 @@ public class LoginActivity extends AppCompatActivity {
         catalogo = findViewById(R.id.ContinueWithoutAcount);
         catalogo.setOnClickListener(v -> VerCatologo(v));
 
-
-        // test = findViewById(R.id.test);
-       // test.setOnClickListener(v -> ARtest(v));
-
         RegisterGoogle = findViewById(R.id.RegisterGoogle);
         credentialManager = CredentialManager.create(this);
 
@@ -133,7 +129,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User dbUser = snapshot.getValue(User.class);
                 if (dbUser != null && dbUser.getRole() != null) {
-                    // Guardar sesión y redirigir según rol
                     sessionManager.createSession(user.getUid(), user.getEmail(), dbUser.getRole());
                     redirectBasedOnRole(dbUser.getRole());
                 } else {
@@ -153,7 +148,6 @@ public class LoginActivity extends AppCompatActivity {
     private void checkCurrentSession() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            // Verificar si el usuario existe en la base de datos
             mDatabase.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -174,7 +168,6 @@ public class LoginActivity extends AppCompatActivity {
                             }
                             redirectBasedOnRole(user.getRole());
                         } else {
-                            // Rol nulo o inválido: manejar como error
                             handleInvalidRole();
                         }
                     }
@@ -271,24 +264,75 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Log.d(TAG, "Usuario registrado con éxito");
-                        startActivity(new Intent(LoginActivity.this, InicioActivity.class));
-                        finish();
-                    } else if (task == null) {
-                        Log.w(TAG, "Error de autenticación", task.getException());
-                        Toast.makeText(LoginActivity.this,
-                                "Error en autenticación con Firebase",
-                                Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Usuario autenticado con éxito");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            // Primero guardar datos, luego redirigir
+                            saveUserDataAndRedirect(user);
+                        }
                     } else {
-                        Log.w(TAG, "Error de registro", task.getException());
-                        Toast.makeText(LoginActivity.this,
-                                "Error en autenticación con Firebase",
-                                Toast.LENGTH_SHORT).show();
+                        handleGoogleAuthError(task.getException());
                     }
                 });
     }
 
-    // Manejo del resultado si usas startActivityForResult
+    private void handleGoogleAuthError(Exception exception) {
+        Log.w(TAG, "Error en autenticación Google", exception);
+        String errorMessage = "Error en autenticación";
+
+        if (exception instanceof ApiException) {
+            ApiException apiException = (ApiException) exception;
+            errorMessage = "Error Google: " + apiException.getStatusCode();
+        }
+
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveUserDataAndRedirect(FirebaseUser user) {
+        showProgressDialog("Configurando tu cuenta...");
+
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("uid", user.getUid());
+        userData.put("email", user.getEmail());
+        userData.put("displayName", user.getDisplayName());
+        userData.put("photoUrl", user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null);
+        userData.put("provider", "google");
+        userData.put("lastLogin", ServerValue.TIMESTAMP);
+
+        // Verificar si es usuario existente
+        mDatabase.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    // Nuevo usuario
+                    userData.put("createdAt", ServerValue.TIMESTAMP);
+                    userData.put("role", "client"); // Rol por defecto
+                }
+
+                // Actualizar/crear datos
+                mDatabase.child(user.getUid()).updateChildren(userData)
+                        .addOnSuccessListener(aVoid -> {
+                            dismissProgressDialog();
+                            Log.d(TAG, "Datos guardados correctamente");
+                            verifyUserRole(user); // Ahora sí redirigimos
+                        })
+                        .addOnFailureListener(e -> {
+                            dismissProgressDialog();
+                            Log.e(TAG, "Error al guardar datos", e);
+                            Toast.makeText(LoginActivity.this,
+                                    "Error al guardar datos de usuario",
+                                    Toast.LENGTH_SHORT).show();
+                        });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                dismissProgressDialog();
+                Log.e(TAG, "Error en base de datos", error.toException());
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
