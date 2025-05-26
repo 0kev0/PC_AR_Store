@@ -20,13 +20,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pcarstore.Activities.GiftCardStoreActivity;
 import com.example.pcarstore.Activities.InicioActivity;
 import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Adapters.CategoryAdapter;
 import com.example.pcarstore.Adapters.ProductAdapter;
+import com.example.pcarstore.Dialogs.PrimeReminder;
 import com.example.pcarstore.ModelsDB.Category;
 import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.Product;
+import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -512,5 +515,34 @@ public class CatalogoFragment extends Fragment{
     private void showError(String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         Log.e(TAG, message);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkPrimeReminder();
+    }
+
+    private void checkPrimeReminder() {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(firebaseUser.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        User user = snapshot.getValue(User.class);
+                        if (user != null) {
+                            user.setUserId(snapshot.getKey());
+                            PrimeReminder.showIfNeeded(requireActivity(), user);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("PrimeCheck", "Error: " + error.getMessage());
+                    }
+                });
     }
 }

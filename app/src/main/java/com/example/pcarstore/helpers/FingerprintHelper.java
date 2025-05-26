@@ -3,10 +3,12 @@ package com.example.pcarstore.helpers;
 import android.content.Context;
 import android.hardware.fingerprint.FingerprintManager;
 import android.util.Log;
+import android.view.MenuItem;
 
 public class FingerprintHelper extends FingerprintManager.AuthenticationCallback {
     private static final String TAG = "FingerprintHelper";
     private final FingerprintAuthListener mListener;
+    private MenuItem targetMenuItem;
 
     public FingerprintHelper(FingerprintAuthListener listener) {
         this.mListener = listener;
@@ -69,6 +71,11 @@ public class FingerprintHelper extends FingerprintManager.AuthenticationCallback
             }
         }
     }
+
+    public void setTargetMenuItem(MenuItem targetItem) {
+        this.targetMenuItem = targetItem;
+    }
+
 
     public interface FingerprintAuthListenerExtended extends FingerprintAuthListener {
         void onFingerprintAuthHelp(String helpMessage);

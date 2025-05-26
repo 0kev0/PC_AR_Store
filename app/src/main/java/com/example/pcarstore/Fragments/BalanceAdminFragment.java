@@ -211,7 +211,7 @@ public class BalanceAdminFragment extends Fragment {
         double netBalance = income - expenses;
 
         // Generar PDF
-        File pdfFile = PDFGenerator.generateBalancePDF(requireContext(), income, expenses, netBalance);
+        File pdfFile = PDFGenerator.generateFinancialReport(requireContext(), income, expenses, netBalance, transactionList);
 
         if (pdfFile != null && pdfFile.exists()) {
             // Compartir el PDF
