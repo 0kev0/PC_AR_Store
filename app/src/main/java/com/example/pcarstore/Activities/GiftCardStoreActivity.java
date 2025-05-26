@@ -59,6 +59,9 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
         });
         rvGiftCards.setLayoutManager(new LinearLayoutManager(this));
         rvGiftCards.setAdapter(adapter);
+        if(giftCardList.isEmpty()) {
+            Toast.makeText(this, "No hay gift cards disponibles", Toast.LENGTH_SHORT).show();
+        }
     }
     private void loadGiftCardsFromFirebase() {
         showProgressDialog();
@@ -70,29 +73,40 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 hideProgressDialog();
                 giftCardList.clear();
+
+                // Debug: Verifica si hay datos
+                Log.d("FirebaseDebug", "Snapshot exists: " + snapshot.exists());
+                Log.d("FirebaseDebug", "Children count: " + snapshot.getChildrenCount());
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     try {
                         GiftCard giftCard = dataSnapshot.getValue(GiftCard.class);
                         if (giftCard != null) {
                             giftCard.setCardId(dataSnapshot.getKey());
                             giftCardList.add(giftCard);
+                            // Debug: Imprime los datos de cada tarjeta
+                            Log.d("FirebaseDebug", "GiftCard loaded: " + giftCard.getCardId());
                         }
                     } catch (Exception e) {
                         Log.e("Firebase", "Error parsing gift card", e);
                     }
                 }
+
                 adapter.notifyDataSetChanged();
+
+                if (giftCardList.isEmpty()) {
+                    Toast.makeText(GiftCardStoreActivity.this,
+                            "No hay giftcards disponibles", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 hideProgressDialog();
-                Log.e("Firebase", "Error loading gift cards", error.toException());
                 Toast.makeText(GiftCardStoreActivity.this,
-                        "Error al cargar tarjetas", Toast.LENGTH_SHORT).show();
+                        "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-        Toast.makeText(GiftCardStoreActivity.this,"Error al cargar tarjetas", Toast.LENGTH_SHORT).show();
     }
     private void showRecipientSelectionDialog(GiftCard giftCard) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
