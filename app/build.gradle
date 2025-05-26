@@ -63,8 +63,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-database'
-    implementation 'com.google.firebase:firebase-storage' //Firebase Storage
+
+    //Firebase Storage
+    implementation 'com.google.firebase:firebase-storage'
     implementation 'com.google.firebase:firebase-firestore'
+
+    //Mesagges Firebase
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
     implementation 'com.google.firebase:firebase-functions:20.0.0'
 

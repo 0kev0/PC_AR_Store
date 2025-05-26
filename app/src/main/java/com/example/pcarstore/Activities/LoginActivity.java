@@ -1,7 +1,12 @@
 package com.example.pcarstore.Activities;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.hardware.fingerprint.FingerprintManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.text.InputType;
@@ -16,6 +21,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -112,10 +118,6 @@ public class LoginActivity extends AppCompatActivity {
         catalogo = findViewById(R.id.ContinueWithoutAcount);
         catalogo.setOnClickListener(v -> VerCatologo(v));
 
-
-        // test = findViewById(R.id.test);
-       // test.setOnClickListener(v -> ARtest(v));
-
         RegisterGoogle = findViewById(R.id.RegisterGoogle);
         credentialManager = CredentialManager.create(this);
 
@@ -125,6 +127,8 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.LoginGoogle).setOnClickListener(v -> loginUser());
 
         RegisterGoogle.setOnClickListener(v -> registerGoogle());
+
+        isFingerprintAuthAvailable();
     }
 
     private void verifyUserRole(FirebaseUser user) {
@@ -133,7 +137,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User dbUser = snapshot.getValue(User.class);
                 if (dbUser != null && dbUser.getRole() != null) {
-                    // Guardar sesión y redirigir según rol
                     sessionManager.createSession(user.getUid(), user.getEmail(), dbUser.getRole());
                     redirectBasedOnRole(dbUser.getRole());
                 } else {
@@ -153,7 +156,6 @@ public class LoginActivity extends AppCompatActivity {
     private void checkCurrentSession() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            // Verificar si el usuario existe en la base de datos
             mDatabase.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -174,7 +176,6 @@ public class LoginActivity extends AppCompatActivity {
                             }
                             redirectBasedOnRole(user.getRole());
                         } else {
-                            // Rol nulo o inválido: manejar como error
                             handleInvalidRole();
                         }
                     }
@@ -271,24 +272,75 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Log.d(TAG, "Usuario registrado con éxito");
-                        startActivity(new Intent(LoginActivity.this, InicioActivity.class));
-                        finish();
-                    } else if (task == null) {
-                        Log.w(TAG, "Error de autenticación", task.getException());
-                        Toast.makeText(LoginActivity.this,
-                                "Error en autenticación con Firebase",
-                                Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Usuario autenticado con éxito");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            // Primero guardar datos, luego redirigir
+                            saveUserDataAndRedirect(user);
+                        }
                     } else {
-                        Log.w(TAG, "Error de registro", task.getException());
-                        Toast.makeText(LoginActivity.this,
-                                "Error en autenticación con Firebase",
-                                Toast.LENGTH_SHORT).show();
+                        handleGoogleAuthError(task.getException());
                     }
                 });
     }
 
-    // Manejo del resultado si usas startActivityForResult
+    private void handleGoogleAuthError(Exception exception) {
+        Log.w(TAG, "Error en autenticación Google", exception);
+        String errorMessage = "Error en autenticación";
+
+        if (exception instanceof ApiException) {
+            ApiException apiException = (ApiException) exception;
+            errorMessage = "Error Google: " + apiException.getStatusCode();
+        }
+
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveUserDataAndRedirect(FirebaseUser user) {
+        showProgressDialog("Configurando tu cuenta...");
+
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("uid", user.getUid());
+        userData.put("email", user.getEmail());
+        userData.put("displayName", user.getDisplayName());
+        userData.put("photoUrl", user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null);
+        userData.put("provider", "google");
+        userData.put("lastLogin", ServerValue.TIMESTAMP);
+
+        // Verificar si es usuario existente
+        mDatabase.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    // Nuevo usuario
+                    userData.put("createdAt", ServerValue.TIMESTAMP);
+                    userData.put("role", "client"); // Rol por defecto
+                }
+
+                // Actualizar/crear datos
+                mDatabase.child(user.getUid()).updateChildren(userData)
+                        .addOnSuccessListener(aVoid -> {
+                            dismissProgressDialog();
+                            Log.d(TAG, "Datos guardados correctamente");
+                            verifyUserRole(user); // Ahora sí redirigimos
+                        })
+                        .addOnFailureListener(e -> {
+                            dismissProgressDialog();
+                            Log.e(TAG, "Error al guardar datos", e);
+                            Toast.makeText(LoginActivity.this,
+                                    "Error al guardar datos de usuario",
+                                    Toast.LENGTH_SHORT).show();
+                        });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                dismissProgressDialog();
+                Log.e(TAG, "Error en base de datos", error.toException());
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -513,5 +565,29 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private boolean isFingerprintAuthAvailable() {
+        FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (fingerprintManager == null || !fingerprintManager.isHardwareDetected()) {
+                // El dispositivo no tiene sensor de huella digital
+                return false;
+            }
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_BIOMETRIC)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Permiso no concedido
+                return false;
+            }
+
+            if (!fingerprintManager.hasEnrolledFingerprints()) {
+                // No hay huellas registradas en el dispositivo
+                return false;
+            }
+        }
+
+        return true;
     }
 }
