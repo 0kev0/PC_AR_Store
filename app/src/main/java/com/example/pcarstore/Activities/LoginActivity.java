@@ -1,7 +1,12 @@
 package com.example.pcarstore.Activities;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.hardware.fingerprint.FingerprintManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.text.InputType;
@@ -16,6 +21,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -121,6 +127,8 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.LoginGoogle).setOnClickListener(v -> loginUser());
 
         RegisterGoogle.setOnClickListener(v -> registerGoogle());
+
+        isFingerprintAuthAvailable();
     }
 
     private void verifyUserRole(FirebaseUser user) {
@@ -557,5 +565,29 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private boolean isFingerprintAuthAvailable() {
+        FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (fingerprintManager == null || !fingerprintManager.isHardwareDetected()) {
+                // El dispositivo no tiene sensor de huella digital
+                return false;
+            }
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_BIOMETRIC)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Permiso no concedido
+                return false;
+            }
+
+            if (!fingerprintManager.hasEnrolledFingerprints()) {
+                // No hay huellas registradas en el dispositivo
+                return false;
+            }
+        }
+
+        return true;
     }
 }
