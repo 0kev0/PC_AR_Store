@@ -25,6 +25,7 @@ import com.example.pcarstore.Dialogs.EditProfileDialog;
 import com.example.pcarstore.Dialogs.GiftCardDialog;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,6 +58,7 @@ public class PerfilFragment extends Fragment {
     private TextView tvUserName, tvUserEmail, tvUserBalance;
     private Button btnEditProfile, btnLogout;
     private Button btnOrders, btnWishlist, btnGifCard, btnSettings,btnGifCardShop;
+    MaterialButton btnPrime;
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
@@ -105,6 +107,8 @@ public class PerfilFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -134,6 +138,14 @@ public class PerfilFragment extends Fragment {
         btnGifCard.setOnClickListener(v -> showGifCard());
         btnSettings.setOnClickListener(v -> showSettings());
         btnGifCardShop.setOnClickListener(v -> showGifCardShop());
+
+         btnPrime = view.findViewById(R.id.btnPrime);
+        btnPrime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openPrimeFragment();
+            }
+        });
 
         return view;
     }
@@ -168,6 +180,9 @@ public class PerfilFragment extends Fragment {
         } else if (resultCode != RESULT_OK) {
             Log.d("PerfilFragment", "Selección de imagen cancelada o fallida");
         }
+    }
+    private void openPrimeFragment() {
+
     }
     private void loadUserData() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
