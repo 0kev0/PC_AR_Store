@@ -1,51 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@drawable/dialog_rounded_background"
+    android:padding="24dp">
 
+    <!-- Logo/Banner Principal -->
     <ImageView
         android:id="@+id/iv_prime_banner"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="fitXY"
-        android:contentDescription="@string/prime_banner_desc"/>
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/azamoz_logo2" />
 
+    <!-- Título Principal -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="¡Desbloquea beneficios exclusivos!"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#232F3E"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Subtítulo -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Únete a Prime y disfruta de ventajas increíbles"
+        android:textSize="16sp"
+        android:textColor="#546E7A"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Contenedor de Beneficios -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp"
-        android:gravity="center">
+        android:orientation="vertical"
+        android:layout_marginBottom="24dp">
 
-        <Button
-            android:id="@+id/btn_see_details"
-            android:layout_width="0dp"
+        <!-- Beneficio 1: Envío Gratis -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/see_details"
-            android:layout_marginEnd="8dp"
-            style="@style/Widget.AppCompat.Button.Colored"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
 
-        <Button
-            android:id="@+id/btn_close"
-            android:layout_width="0dp"
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_delivery_truck"
+                android:tint="#FF9800"
+                android:layout_marginEnd="12dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Envío GRATIS"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#232F3E" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="En millones de productos elegibles"
+                    android:textSize="12sp"
+                    android:textColor="#78909C" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Beneficio 2: Entrega Rápida -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/close"
-            android:layout_marginStart="8dp"
-            style="@style/Widget.AppCompat.Button.Borderless"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
 
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_lightning"
+                android:tint="#4CAF50"
+                android:layout_marginEnd="12dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Entrega Express"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#232F3E" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Recibe tus pedidos en 1-2 días"
+                    android:textSize="12sp"
+                    android:textColor="#78909C" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Beneficio 3: Descuentos Exclusivos -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ofertas Exclusivas"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#232F3E" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Acceso anticipado a ofertas especiales"
+                    android:textSize="12sp"
+                    android:textColor="#78909C" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_dont_show"
-        android:layout_width="wrap_content"
+    <!-- Oferta Especial -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/dont_show_again"
-        android:layout_gravity="end"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_marginTop="8dp"/>
+        android:background="@drawable/promo_badge_background"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:layout_marginBottom="20dp">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🎉 PRUEBA GRATIS POR 30 DÍAS"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FF6B35"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancela cuando quieras"
+            android:textSize="12sp"
+            android:textColor="#78909C"
+            android:gravity="center"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Botones de Acción -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Botón Principal -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_start_prime_trial"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Comenzar prueba gratuita"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#FF9900"
+            app:cornerRadius="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Botón Secundario -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_learn_more"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Conocer más beneficios"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textColor="#007185"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Botón Cerrar -->
+        <TextView
+            android:id="@+id/btn_maybe_later"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Quizás más tarde"
+            android:textSize="14sp"
+            android:textColor="#78909C"
+            android:gravity="center"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
 </LinearLayout>

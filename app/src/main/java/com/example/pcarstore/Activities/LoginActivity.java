@@ -161,7 +161,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (!snapshot.exists()) {
                         // Si no existe, registrarlo como nuevo usuario (rol "client" por defecto)
-                      //  registerNewUser(currentUser.getUid(), currentUser.getEmail());
+                        //  registerNewUser(currentUser.getUid(), currentUser.getEmail());
                     } else {
                         // Si existe, verificar el rol como antes
                         User user = snapshot.getValue(User.class);
@@ -370,37 +370,22 @@ public class LoginActivity extends AppCompatActivity {
 
         showProgressDialog("Verificando credenciales...");
 
-        // Primero verificar si el correo existe
-        mAuth.fetchSignInMethodsForEmail(email)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        // Correo existe, proceder con login normal
-                        if (!task.getResult().getSignInMethods().isEmpty()) {
-                            performEmailLogin(email, password);
-                        } else {
-                            // Correo no registrado
-                            dismissProgressDialog();
-                            showEmailNotRegisteredDialog(email);
-                        }
-                    } else {
-                        dismissProgressDialog();
-                        Toast.makeText(this, "Error al verificar correo", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void performEmailLogin(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            if (user.isEmailVerified()) {
-                                verifyUserRole(user);
-                            } else {
+                            // Verificar si el correo está confirmado
+                            if (!user.isEmailVerified()) {
                                 dismissProgressDialog();
                                 showEmailNotVerifiedDialog(user);
+                                mAuth.signOut(); // Cerrar sesión hasta que verifique
+                            } else {
+                                verifyUserRole(user.getUid());
                             }
+                        } else {
+                            dismissProgressDialog();
+                            Toast.makeText(this, "Error al obtener usuario", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         handleLoginError(task.getException());
@@ -408,43 +393,34 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private void showEmailNotRegisteredDialog(String email) {
-        new AlertDialog.Builder(this)
-                .setTitle("Cuenta no registrada")
-                .setMessage("El correo " + email + " no está registrado. ¿Desea crear una cuenta?")
-                .setPositiveButton("Registrar", (dialog, which) -> {
-                    // Llevar a pantalla de registro con el email prellenado
-                    Intent intent = new Intent(this, RegisterActivity.class);
-                    intent.putExtra("email", email);
-                    startActivity(intent);
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
-    }
-
     private void showEmailNotVerifiedDialog(FirebaseUser user) {
-        new AlertDialog.Builder(this)
-                .setTitle("Correo no verificado")
-                .setMessage("Por favor verifica tu correo electrónico antes de iniciar sesión. ¿Deseas que reenviemos el correo de verificación?")
-                .setPositiveButton("Reenviar", (dialog, which) -> {
-                    sendVerificationEmail(user);
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Correo no verificado");
+        builder.setMessage("Debes verificar tu dirección de correo electrónico antes de poder iniciar sesión. ¿Deseas que te enviemos otro correo de verificación?");
+
+        builder.setPositiveButton("Reenviar verificación", (dialog, which) -> {
+            sendEmailVerification(user);
+        });
+
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+
+        builder.show();
     }
 
-    private void sendVerificationEmail(FirebaseUser user) {
+    private void sendEmailVerification(FirebaseUser user) {
         showProgressDialog("Enviando correo de verificación...");
+
         user.sendEmailVerification()
                 .addOnCompleteListener(task -> {
                     dismissProgressDialog();
+
                     if (task.isSuccessful()) {
                         Toast.makeText(this,
                                 "Correo de verificación enviado a " + user.getEmail(),
                                 Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(this,
-                                "Error al enviar correo: " + task.getException().getMessage(),
+                                "Error al enviar correo de verificación: " + task.getException().getMessage(),
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -579,10 +555,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void ChangePassword(View view) {
+        // Crear diálogo para solicitar correo electrónico
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Restablecer Contraseña");
         builder.setMessage("Ingrese su correo electrónico para recibir el enlace de restablecimiento");
 
+        // Configurar campo de entrada
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         input.setHint("correo@ejemplo.com");

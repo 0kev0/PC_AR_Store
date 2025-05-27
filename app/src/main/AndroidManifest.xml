@@ -69,7 +69,8 @@
         <activity
             android:name=".Activities.InicioActivity"
             android:exported="false"
-            android:theme="@style/Theme.PCARStore" />
+            android:theme="@style/Theme.PCARStore"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
 
         <!-- Actividades AR -->
         <activity
@@ -103,7 +104,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".Services.SoundService" />
 
         <!-- Metadata ARCore -->
