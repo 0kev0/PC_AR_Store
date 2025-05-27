@@ -16,14 +16,16 @@
         android:background="@color/white"
         android:padding="16dp">
 
-        <!-- Imagen del producto - IZQUIERDA -->
+        <!-- Imagen del producto -->
         <ImageView
             android:id="@+id/productImage"
-            android:layout_width="150dp"
-            android:layout_height="160dp"
+            android:layout_width="300dp"
+            android:layout_height="211dp"
             android:adjustViewBounds="true"
             android:background="@drawable/image_rounded_corners"
             android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/placer_holder" />
@@ -31,8 +33,8 @@
         <!-- Animación de carga -->
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottieLoading"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/productImage"
             app:layout_constraintEnd_toEndOf="@id/productImage"
@@ -41,28 +43,27 @@
             app:lottie_autoPlay="true"
             app:lottie_loop="true" />
 
-        <!-- Categoría del producto - DERECHA -->
+        <!-- Categoría del producto -->
         <TextView
             android:id="@+id/productCategory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
             android:textColor="#607D8B"
             android:textSize="12sp"
             android:textAllCaps="true"
             android:textStyle="bold"
             android:letterSpacing="0.05"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/productImage"
-            app:layout_constraintTop_toTopOf="@id/productImage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/productImage"
             tools:text="RUEDAS" />
 
-        <!-- Nombre del producto - DERECHA -->
+        <!-- Nombre del producto -->
         <TextView
             android:id="@+id/productName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="6dp"
             android:ellipsize="end"
             android:maxLines="2"
@@ -70,67 +71,50 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/productImage"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/productCategory"
             tools:text="Llantas DeportivasX 18'' Aleación Ligera" />
 
-        <!-- Rating y reseñas - DERECHA -->
+        <!-- Contenedor de rating y stock -->
         <LinearLayout
             android:id="@+id/ratingStockContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/productImage"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/productName">
-
-            <TextView
-                android:id="@+id/productRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#FF6B35"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                tools:text="3.8" />
-
-            <TextView
-                android:id="@+id/productReviews"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textColor="#007185"
-                android:textSize="12sp"
-                tools:text="(221)" />
 
             <TextView
                 android:id="@+id/productStock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:textColor="#78909C"
                 android:textSize="12sp"
+                android:drawableStart="@drawable/ic_home"
+                android:drawablePadding="4dp"
+                android:drawableTint="#78909C"
                 android:visibility="gone"
-                tools:text="50+ bought in past month" />
+                tools:text="Últimas 5 unidades" />
         </LinearLayout>
 
-        <!-- Precio del producto - DERECHA -->
+        <!-- Precio del producto -->
         <TextView
             android:id="@+id/productPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:textColor="#2196F3"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/productImage"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ratingStockContainer"
             tools:text="$299.99" />
 
-        <!-- Precio original (tachado) - DERECHA -->
+        <!-- Precio original (tachado) -->
         <TextView
             android:id="@+id/originalPrice"
             android:layout_width="wrap_content"
@@ -143,88 +127,71 @@
             app:layout_constraintStart_toEndOf="@id/productPrice"
             tools:text="$399.99" />
 
-        <!-- Información de entrega - DERECHA -->
-        <TextView
-            android:id="@+id/deliveryInfo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:textColor="#263238"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/productImage"
-            app:layout_constraintTop_toBottomOf="@id/productPrice"
-            tools:text="Delivery Tue, Jun 3" />
-
-        <!-- Información de envío - DERECHA -->
-        <TextView
-            android:id="@+id/shippingInfo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:textColor="#78909C"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/productImage"
-            app:layout_constraintTop_toBottomOf="@id/deliveryInfo"
-            tools:text="Ships to El Salvador" />
-
-        <!-- Contenedor de botones - ABAJO DE TODA LA INFORMACIÓN -->
+        <!-- Contenedor de botones - Versión mejorada -->
         <LinearLayout
-            android:layout_width="356dp"
-            android:layout_height="64dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:gravity="center"
             android:orientation="horizontal"
+            android:gravity="center"
             android:paddingVertical="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/shippingInfo">
+            app:layout_constraintTop_toBottomOf="@id/productPrice">
 
+            <!-- Botón Detalles -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/addToCartButton"
+                android:id="@+id/viewDetailsButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/blue"
-                android:text="Add to cart"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/white"
+                android:text="Detalles"
                 android:textAllCaps="false"
-                android:textColor="#000000"
+                android:textColor="#2196F3"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                app:cornerRadius="8dp" />
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_info"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                app:iconTint="#2196F3"
+                app:strokeColor="#2196F3"
+                app:strokeWidth="1dp" />
 
+            <!-- Botón Wishlist -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnWishlist"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginHorizontal="4dp"
                 android:backgroundTint="@color/white"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:cornerRadius="8dp"
-                app:icon="@drawable/ic_heart"/>
+                app:icon="@drawable/ic_heart"
+                app:strokeWidth="1dp" />
 
+            <!-- Botón Añadir al carrito -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/viewDetailsButton"
+                android:id="@+id/addToCartButton"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/blue"
-                android:padding="3dp"
-                android:text="Detalles"
+                android:layout_marginStart="4dp"
+                android:backgroundTint="#3A59D1"
+                android:text="Añadir"
                 android:textAllCaps="false"
-                android:textColor="#000000"
+                android:textColor="@color/white"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                app:cornerRadius="8dp" />
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_carrito"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                app:iconTint="@color/white" />
         </LinearLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
