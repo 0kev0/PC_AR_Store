@@ -91,8 +91,4 @@
     <string name="empty_coupons_desc">Icono de cupones vacíos</string>
     <string name="no_coupons_message">No tienes códigos de descuento</string>
     <string name="add_code">Agregar código</string>
-    <string name="prime_banner_desc">Beneficios de membresía Prime</string>
-    <string name="see_details">Ver detalles</string>
-    <string name="close">Cerrar</string>
-    <string name="dont_show_again">No mostrar más</string>
 </resources>
