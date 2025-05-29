@@ -364,7 +364,6 @@ public class CatalogoFragment extends Fragment{
         cartRef.child("items").child(product.getProductId()).setValue(newItem)
                 .addOnSuccessListener(aVoid -> {
                     updateCartTotal(cartRef);
-                    showToast("Producto agregado al carrito");
                 })
                 .addOnFailureListener(e -> showToast("Error al agregar producto"));
     }

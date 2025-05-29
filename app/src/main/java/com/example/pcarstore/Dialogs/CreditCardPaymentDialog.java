@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,14 +25,18 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Locale;
 
-public class CreditCardPaymentDialog extends DialogFragment  {
-
-
+public class CreditCardPaymentDialog extends DialogFragment {
 
     public interface CreditCardPaymentListener {
         void onPaymentConfirmed(String cardName, String cardNumber, String expiry, String cvv, double amount);
         void onPaymentCancelled();
     }
+
+    public void setListener(CreditCardPaymentListener listener) {
+        this.listener = listener;
+    }
+
+
 
     private CreditCardPaymentListener listener;
     private double initialAmount;
@@ -44,7 +49,6 @@ public class CreditCardPaymentDialog extends DialogFragment  {
         return dialog;
     }
 
-    //quitar cuadro del dialogo por defecto
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_credit_card_payment, container, false);
@@ -60,15 +64,29 @@ public class CreditCardPaymentDialog extends DialogFragment  {
         if (getArguments() != null) {
             initialAmount = getArguments().getDouble("amount", 0.0);
         }
+
+        // Intenta obtener el listener del Fragment padre si no se ha asignado manualmente
+        if (listener == null && getParentFragment() instanceof CreditCardPaymentListener) {
+            listener = (CreditCardPaymentListener) getParentFragment();
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null; // Previene memory leaks
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        try {
+        if (context instanceof CreditCardPaymentListener) {
+            listener = (CreditCardPaymentListener) context;
+        } else if (getParentFragment() instanceof CreditCardPaymentListener) {
             listener = (CreditCardPaymentListener) getParentFragment();
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Parent fragment must implement CreditCardPaymentListener");
+        } else {
+            throw new ClassCastException(context.toString()
+                    + " must implement CreditCardPaymentListener");
         }
     }
 
@@ -84,6 +102,8 @@ public class CreditCardPaymentDialog extends DialogFragment  {
         TextInputEditText etExpiry = dialogView.findViewById(R.id.etExpiry);
         TextInputEditText etCvv = dialogView.findViewById(R.id.etCvv);
         TextInputEditText etAmount = dialogView.findViewById(R.id.etAmount);
+        Button btnCancel = dialogView.findViewById(R.id.btnCancelRecarga);
+        Button btnConfirm = dialogView.findViewById(R.id.btnConfirmRecarga);
 
         // Format card number as user types
         etCardNumber.addTextChangedListener(new TextWatcher() {
@@ -145,40 +165,47 @@ public class CreditCardPaymentDialog extends DialogFragment  {
 
         etAmount.setText(String.format(Locale.getDefault(), "%.2f", initialAmount));
 
-        builder.setView(dialogView)
-                .setPositiveButton("Confirmar pago", (dialog, which) -> {
-                    String cardName = etCardName.getText().toString().trim();
-                    String cardNumber = etCardNumber.getText().toString().replaceAll(" ", "");
-                    String expiry = etExpiry.getText().toString().trim();
-                    String cvv = etCvv.getText().toString().trim();
-                    String amountStr = etAmount.getText().toString().trim();
+        // Configurar el botón Cancelar
+        btnCancel.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onPaymentCancelled();
+            }
+            dismiss();
+        });
 
-                    // Validacion de tarjeta
-                    CardValidationResult cardValidation = CardValidatorService.validateCard(
-                            cardNumber, expiry, cvv, cardName);
+        // Configurar el botón Confirmar
+        btnConfirm.setOnClickListener(v -> {
+            String cardName = etCardName.getText().toString().trim();
+            String cardNumber = etCardNumber.getText().toString().replaceAll(" ", "");
+            String expiry = etExpiry.getText().toString().trim();
+            String cvv = etCvv.getText().toString().trim();
+            String amountStr = etAmount.getText().toString().trim();
 
-                    if (!cardValidation.isValid) {
-                        showError(cardValidation.errorMessage);
-                        return;
-                    }
+            // Validación de tarjeta
+            CardValidationResult cardValidation = CardValidatorService.validateCard(
+                    cardNumber, expiry, cvv, cardName);
 
-                    try {
-                        double amount = Double.parseDouble(amountStr);
-                        if (amount <= 0) {
-                            showError("La cantidad debe ser mayor a 0");
-                            return;
-                        }
+            if (!cardValidation.isValid) {
+                showError(cardValidation.errorMessage);
+                return;
+            }
 
-                        // All good
-                        listener.onPaymentConfirmed(cardName, cardNumber, expiry, cvv, amount);
-                    } catch (NumberFormatException e) {
-                        showError("Cantidad inválida");
-                    }
-                })
-                .setNegativeButton("Cancelar", (dialog, which) -> {
-                    listener.onPaymentCancelled();
-                });
+            try {
+                double amount = Double.parseDouble(amountStr);
+                if (amount <= 0) {
+                    showError("La cantidad debe ser mayor a 0");
+                    return;
+                }
 
+                // All good
+                listener.onPaymentConfirmed(cardName, cardNumber, expiry, cvv, amount);
+                dismiss();
+            } catch (NumberFormatException e) {
+                showError("Cantidad inválida");
+            }
+        });
+
+        builder.setView(dialogView);
         return builder.create();
     }
 

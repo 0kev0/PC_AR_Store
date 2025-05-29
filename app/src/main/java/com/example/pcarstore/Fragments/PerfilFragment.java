@@ -23,6 +23,7 @@ import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Activities.OrdersActivity;
 import com.example.pcarstore.Dialogs.EditProfileDialog;
 import com.example.pcarstore.Dialogs.GiftCardDialog;
+import com.example.pcarstore.Dialogs.PrimeMembershipDialog;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.google.android.material.button.MaterialButton;
@@ -143,7 +144,7 @@ public class PerfilFragment extends Fragment {
         btnPrime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openPrimeFragment();
+                showPrimeDialog();
             }
         });
 
@@ -181,9 +182,28 @@ public class PerfilFragment extends Fragment {
             Log.d("PerfilFragment", "Selección de imagen cancelada o fallida");
         }
     }
-    private void openPrimeFragment() {
+    private void showPrimeDialog() {
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "Debes iniciar sesión para adquirir Prime", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        PrimeMembershipDialog dialog = new PrimeMembershipDialog(
+                requireContext(),
+                currentUser,
+                new PrimeMembershipDialog.OnPrimePurchaseListener() {
+                    @Override
+                    public void onPrimePurchased(boolean success) {
+                        if (success) {
+                            // Recargar datos del usuario después de la compra exitosa
+                            loadUserData();
+                        }
+                    }
+                });
+
+        dialog.show();
     }
+
     private void loadUserData() {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 

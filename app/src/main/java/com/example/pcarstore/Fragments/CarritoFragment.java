@@ -135,7 +135,7 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     }
     @Override
     public void updateCartSummary(double subtotal) {
-        // Aplicar descuento por compra mayor a $50
+        // Aplicar descuento por compra mayor a $500
         double finalShippingCost = subtotal > 500 ? shippingCost * 0.5 : shippingCost;
         double total = subtotal + finalShippingCost;
 
