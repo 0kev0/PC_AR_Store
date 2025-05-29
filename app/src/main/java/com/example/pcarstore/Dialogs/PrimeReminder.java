@@ -3,23 +3,19 @@ package com.example.pcarstore.Dialogs;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.core.content.ContextCompat;
 
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 
 public class PrimeReminder {
+    /*************************************************************VARIABLES******************************************************************************************/
     private static final String PREFS_NAME = "PrimePrefs";
     private static final String LAST_SHOWN_KEY = "lastShownTime";
     private static final long REMINDER_INTERVAL = 5 * 60 * 1000; // 5 minutos
@@ -192,5 +188,6 @@ public class PrimeReminder {
                 .putBoolean("dialog_disabled", true)
                 .apply();
     }
+
 
 }

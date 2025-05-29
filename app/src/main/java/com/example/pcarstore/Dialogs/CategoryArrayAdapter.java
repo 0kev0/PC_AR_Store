@@ -13,7 +13,6 @@ import java.util.List;
 public class CategoryArrayAdapter extends ArrayAdapter<String> {
     private final List<String> categories;
     private final List<String> filteredCategories;
-
     public CategoryArrayAdapter(Context context, int resource, List<String> categories) {
         super(context, resource, categories);
         this.categories = new ArrayList<>(categories);
@@ -78,4 +77,5 @@ public class CategoryArrayAdapter extends ArrayAdapter<String> {
             }
         };
     }
+
 }

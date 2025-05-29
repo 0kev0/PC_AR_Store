@@ -33,16 +33,9 @@ import androidx.credentials.GetCredentialRequest;
 import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 
-import com.example.pcarstore.ModelsDB.Category;
-import com.example.pcarstore.ModelsDB.DiscountCode;
-import com.example.pcarstore.ModelsDB.GiftCard;
-import com.example.pcarstore.ModelsDB.Order;
-import com.example.pcarstore.ModelsDB.OrderItem;
-import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.example.pcarstore.Services.DatabaseSeederService;
-import com.example.pcarstore.Services.OrderManager;
 import com.example.pcarstore.helpers.SessionManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -52,7 +45,6 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
-import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -66,20 +58,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
 public class LoginActivity extends AppCompatActivity {
-    private Button catalogo, loginGoogle, RegisterGoogle, test;
+    private Button loginGoogle;
+    private Button test;
     private FirebaseAuth mAuth;
     private EditText etEmail, etPassword;
     private ProgressDialog progressDialog;
 
     private CredentialManager credentialManager;
-    private GoogleSignInClient mGoogleSignInClient;
     private SessionManager sessionManager;
     private DatabaseReference mDatabase;
     private static final int RC_SIGN_IN = 9001;
@@ -109,16 +99,16 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         sessionManager = new SessionManager(this);
         checkCurrentSession();
 
-        catalogo = findViewById(R.id.ContinueWithoutAcount);
+        Button catalogo = findViewById(R.id.ContinueWithoutAcount);
         catalogo.setOnClickListener(v -> VerCatologo(v));
 
-        RegisterGoogle = findViewById(R.id.RegisterGoogle);
+        Button registerGoogle = findViewById(R.id.RegisterGoogle);
         credentialManager = CredentialManager.create(this);
 
         etEmail = findViewById(R.id.etEmail);
@@ -126,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
 
         findViewById(R.id.LoginGoogle).setOnClickListener(v -> loginUser());
 
-        RegisterGoogle.setOnClickListener(v -> registerGoogle());
+        registerGoogle.setOnClickListener(v -> registerGoogle());
 
         isFingerprintAuthAvailable();
     }
@@ -213,9 +203,11 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+
     public void VerCatologo(View view) {
         startActivity(new Intent(this, InicioActivity.class));
     }
+
 
     public void ARtest(View view) {
         startActivity(new Intent(this, AR_test.class));
@@ -631,4 +623,5 @@ public class LoginActivity extends AppCompatActivity {
 
         return true;
     }
+
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String userId;
     private String email;
     private String name;

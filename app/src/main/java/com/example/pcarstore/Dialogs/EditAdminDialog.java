@@ -76,7 +76,6 @@ public class EditAdminDialog {
 
         return true;
     }
-
     private static void updateAdminInfo(Context context,
                                         String name,
                                         String email,
@@ -104,7 +103,6 @@ public class EditAdminDialog {
                 .addOnFailureListener(e ->
                         Toast.makeText(context, "Error al actualizar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
-
     private static void updateUserEmail(Context context,
                                         FirebaseUser user,
                                         String newEmail,

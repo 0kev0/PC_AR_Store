@@ -1,13 +1,10 @@
 package com.example.pcarstore.Adapters;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,26 +13,23 @@ import com.example.pcarstore.ModelsDB.DiscountCode;
 import com.example.pcarstore.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.textview.MaterialTextView;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
 public class DiscountCodesAdapter extends RecyclerView.Adapter<DiscountCodesAdapter.DiscountCodeViewHolder> {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     public interface OnDiscountCodeActionsListener {
         void onDeactivateCode(DiscountCode code);
         void onEditCode(DiscountCode code); // Nuevo método para editar
     }
-
     private List<DiscountCode> discountCodes;
     private final Context context;
     private final OnDiscountCodeActionsListener listener;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-    public DiscountCodesAdapter(List<DiscountCode> discountCodes, Context context,
-                                OnDiscountCodeActionsListener listener) {
+    public DiscountCodesAdapter(List<DiscountCode> discountCodes, Context context, OnDiscountCodeActionsListener listener) {
         this.discountCodes = discountCodes;
         this.context = context;
         this.listener = listener;
@@ -142,4 +136,5 @@ public class DiscountCodesAdapter extends RecyclerView.Adapter<DiscountCodesAdap
             btnDeactivate = itemView.findViewById(R.id.btn_deactivate);
         }
     }
+
 }

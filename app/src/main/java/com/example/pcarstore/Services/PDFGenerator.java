@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class PDFGenerator {
-
     // Colores corporativos
     private static final DeviceRgb PRIMARY_COLOR = new DeviceRgb(56, 142, 60); // Verde corporativo
     private static final DeviceRgb SECONDARY_COLOR = new DeviceRgb(211, 47, 47); // Rojo
@@ -42,11 +41,7 @@ public class PDFGenerator {
     private static final DeviceRgb TEXT_COLOR = new DeviceRgb(33, 33, 33); // Negro
     private static final DeviceRgb LIGHT_GRAY = new DeviceRgb(245, 245, 245);
 
-    public static File generateFinancialReport(Context context,
-                                               double income,
-                                               double expenses,
-                                               double netBalance,
-                                               List<Transaction> transactions) {
+    public static File generateFinancialReport(Context context, double income, double expenses, double netBalance, List<Transaction> transactions) {
 
         // 1. Validación de almacenamiento
         if (!isExternalStorageWritable()) {
@@ -93,7 +88,6 @@ public class PDFGenerator {
             return null;
         }
     }
-
     private static File createReportsDirectory(Context context) {
         File folder = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "FinancialReports");
         if (!folder.exists() && !folder.mkdirs()) {
@@ -102,13 +96,11 @@ public class PDFGenerator {
         }
         return folder;
     }
-
     private static String generateFileName() {
         return "ReporteFinanciero_" +
                 new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
                         .format(new Date()) + ".pdf";
     }
-
     private static void addLogoHeader(Document document, Context context) throws IOException {
         try {
             // 1. Cargar el bitmap del logo desde recursos
@@ -141,7 +133,6 @@ public class PDFGenerator {
                     .setMarginBottom(20));
         }
     }
-
     private static void addReportTitle(Document document, PdfFont font) throws IOException {
         document.add(new Paragraph("REPORTE FINANCIERO")
                 .setFont(font)
@@ -151,7 +142,6 @@ public class PDFGenerator {
                 .setTextAlignment(TextAlignment.CENTER)
                 .setMarginBottom(5));
     }
-
     private static void addReportDate(Document document, PdfFont font) throws IOException {
         String dateStr = new SimpleDateFormat("EEEE, d 'de' MMMM 'de' yyyy", Locale.getDefault())
                 .format(new Date());
@@ -163,9 +153,7 @@ public class PDFGenerator {
                 .setFontColor(TEXT_COLOR)
                 .setMarginBottom(20));
     }
-
-    private static void addExecutiveSummary(Document document, PdfFont font,
-                                            double income, double expenses, double netBalance) throws IOException {
+    private static void addExecutiveSummary(Document document, PdfFont font, double income, double expenses, double netBalance) throws IOException {
 
         String performance = netBalance >= 0 ?
                 "El balance neto positivo indica un desempeño financiero favorable." :
@@ -192,9 +180,7 @@ public class PDFGenerator {
                 .setPadding(10)
                 .setBackgroundColor(LIGHT_GRAY));
     }
-
-    private static void addBalanceTable(Document document, PdfFont font, PdfFont boldFont,
-                                        double income, double expenses, double netBalance) throws IOException {
+    private static void addBalanceTable(Document document, PdfFont font, PdfFont boldFont, double income, double expenses, double netBalance) throws IOException {
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{60, 40}))
                 .setWidth(UnitValue.createPercentValue(90))
@@ -215,9 +201,7 @@ public class PDFGenerator {
 
         document.add(table);
     }
-
-    private static void addTransactionsTable(Document document, PdfFont font, PdfFont boldFont,
-                                             List<Transaction> transactions) throws IOException {
+    private static void addTransactionsTable(Document document, PdfFont font, PdfFont boldFont, List<Transaction> transactions) throws IOException {
 
         document.add(new Paragraph("DETALLE DE TRANSACCIONES")
                 .setFontSize(12)
@@ -251,10 +235,7 @@ public class PDFGenerator {
 
         document.add(table);
     }
-
-    private static void addTransactionRow(Table table, PdfFont font,
-                                          String date, String description,
-                                          String category, String type, double amount) {
+    private static void addTransactionRow(Table table, PdfFont font, String date, String description, String category, String type, double amount) {
 
         DeviceRgb amountColor = "INGRESO".equals(type) ? PRIMARY_COLOR : SECONDARY_COLOR;
 
@@ -265,7 +246,6 @@ public class PDFGenerator {
         table.addCell(createCell(formatCurrency(amount), font, amountColor)
                 .setTextAlignment(TextAlignment.RIGHT));
     }
-
     private static void addFooter(Document document, PdfFont font) throws IOException {
         String footer = "Documento generado automáticamente por el sistema de Azamoz Shopping\n" +
                 "Fecha de generación: " +
@@ -281,7 +261,6 @@ public class PDFGenerator {
                 .setItalic()
                 .setFontColor(TEXT_COLOR));
     }
-
     private static Cell createCell(String text, PdfFont font, DeviceRgb color) {
         return new Cell()
                 .add(new Paragraph(text)
@@ -290,7 +269,6 @@ public class PDFGenerator {
                         .setFontColor(color))
                 .setPadding(5);
     }
-
     private static void addTableHeaderCell(Table table, String text, DeviceRgb color, PdfFont font) {
         table.addCell(new Cell()
                 .add(new Paragraph(text)
@@ -301,18 +279,14 @@ public class PDFGenerator {
                 .setBackgroundColor(color)
                 .setPadding(7));
     }
-
-    private static void addTableRow(Table table, String label, String value,
-                                    DeviceRgb color, PdfFont font) throws IOException {
+    private static void addTableRow(Table table, String label, String value, DeviceRgb color, PdfFont font) throws IOException {
         table.addCell(createCell(label, font, color));
         table.addCell(createCell(value, font, color)
                 .setTextAlignment(TextAlignment.RIGHT));
     }
-
     private static String formatCurrency(double amount) {
         return String.format(Locale.getDefault(), "$%,.2f", Math.abs(amount));
     }
-
     private static boolean isExternalStorageWritable() {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }

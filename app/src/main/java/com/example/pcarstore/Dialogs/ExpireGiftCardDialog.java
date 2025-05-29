@@ -10,15 +10,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ExpireGiftCardDialog {
-
     public interface OnGiftCardExpiredListener {
         void onGiftCardExpired();
         void onExpireError(String error);
     }
 
-    public static void show(Context context, GiftCard giftCard,
-                            DatabaseReference databaseRef,
-                            OnGiftCardExpiredListener listener) {
+
+    public static void show(Context context, GiftCard giftCard, DatabaseReference databaseRef, OnGiftCardExpiredListener listener) {
 
         new AlertDialog.Builder(context)
                 .setTitle("Marcar como vencida")
@@ -62,4 +60,5 @@ public class ExpireGiftCardDialog {
                     }
                 });
     }
+
 }

@@ -3,6 +3,7 @@ package com.example.pcarstore.ModelsDB;
 import java.util.Date;
 
 public class DiscountCode {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String codeId;
     private String code;
     private double discountPercentage; // 15.0 = 15%
@@ -42,6 +43,7 @@ public class DiscountCode {
     public void setExpirationDate(Date expirationDate) { this.expirationDate = expirationDate; }
 
     public String getStatus() { return status; }
+
     public void setStatus(String status) { this.status = status; }
 
     public String getCreatedBy() { return createdBy; }
@@ -56,13 +58,12 @@ public class DiscountCode {
     public double getMinPurchaseRequired() { return minPurchaseRequired; }
     public void setMinPurchaseRequired(double minPurchaseRequired) { this.minPurchaseRequired = minPurchaseRequired; }
 
-    // Método de validación mejorado
+    // Metodo de validación
     public boolean isValid() {
         return "active".equals(status) &&
                 new Date().before(expirationDate) &&
                 usedBy == null;
     }
-
     public static String generateDiscountCode() {
         String characters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         StringBuilder code = new StringBuilder("PDM-");
@@ -75,7 +76,7 @@ public class DiscountCode {
         return code.toString();
     }
 
-    // Método para marcar como usado
+    // Metodo para marcar como usado
     public void markAsUsed(String userId) {
         this.status = "used";
         this.usedBy = userId;

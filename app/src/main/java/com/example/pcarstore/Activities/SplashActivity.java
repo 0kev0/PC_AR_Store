@@ -1,5 +1,6 @@
 package com.example.pcarstore.Activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.example.pcarstore.R;
 import com.example.pcarstore.Services.SoundService;
 
+@SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
     private static final long SPLASH_DELAY = 3000; // 3 segundos
     private LottieAnimationView loadingAnimation;
@@ -61,4 +63,5 @@ public class SplashActivity extends AppCompatActivity {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         finish();
     }
+
 }

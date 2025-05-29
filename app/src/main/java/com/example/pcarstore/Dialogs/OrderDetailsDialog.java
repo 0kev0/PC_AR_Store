@@ -22,7 +22,7 @@ import com.example.pcarstore.R;
 import java.util.Date;
 
 public class OrderDetailsDialog extends DialogFragment {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private final Order order;
     private ProgressBar progressBar;
     private TextView orderStatusTextView;
@@ -77,6 +77,7 @@ public class OrderDetailsDialog extends DialogFragment {
         }
         return view;
     }
+
     private void startProgressUpdate() {
         updateProgressRunnable = new Runnable() {
             @Override
@@ -129,4 +130,5 @@ public class OrderDetailsDialog extends DialogFragment {
         super.onDestroy();
         handler.removeCallbacks(updateProgressRunnable); // Detener actualización
     }
+
 }

@@ -21,6 +21,7 @@ public class EditGiftCardDialog {
         void onUpdateError(String error);
     }
 
+
     public static void show(Context context, GiftCard giftCard,
                             DatabaseReference databaseRef,
                             SimpleDateFormat dateFormatter,
@@ -160,4 +161,5 @@ public class EditGiftCardDialog {
                     }
                 });
     }
+
 }

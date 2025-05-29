@@ -19,16 +19,11 @@ import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.R;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 public class OrdersActivity extends AppCompatActivity {
-
-    private RecyclerView ordersRecyclerView;
     private ProgressBar progressBar;
     private TextView emptyView;
     private OrdersAdapter adapter;
@@ -64,7 +57,7 @@ public class OrdersActivity extends AppCompatActivity {
         ordersRef = FirebaseDatabase.getInstance().getReference("orders");
 
         // Inicializar vistas
-        ordersRecyclerView = findViewById(R.id.ordersRecyclerView);
+        RecyclerView ordersRecyclerView = findViewById(R.id.ordersRecyclerView);
         progressBar = findViewById(R.id.progressBar);
         emptyView = findViewById(R.id.emptyView);
 
@@ -175,4 +168,5 @@ public class OrdersActivity extends AppCompatActivity {
         onBackPressed();
         return true;
     }
+
 }

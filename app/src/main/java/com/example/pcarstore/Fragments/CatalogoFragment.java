@@ -11,20 +11,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pcarstore.Activities.GiftCardStoreActivity;
 import com.example.pcarstore.Activities.InicioActivity;
 import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Adapters.CategoryAdapter;
@@ -35,14 +31,12 @@ import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.Normalizer;
@@ -50,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CatalogoFragment extends Fragment{
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private static final String TAG = "CatalogoFragment";
     private RecyclerView productsRecycler, categoriesRecycler;
     private ProductAdapter productAdapter;
@@ -62,7 +56,6 @@ public class CatalogoFragment extends Fragment{
     private Context context;
     private InicioActivity inicioActivity;
     private FirebaseAuth mAuth;
-    private LinearLayout searchLayoutProducts;
     private EditText searchInput;;
     private DatabaseReference productsRef;
     private boolean isSearchVisible = true;
@@ -78,8 +71,7 @@ public class CatalogoFragment extends Fragment{
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_catalogo, container, false);
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -87,7 +79,7 @@ public class CatalogoFragment extends Fragment{
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         productsRef = database.getReference("products");
 
-        searchLayoutProducts = view.findViewById(R.id.searchLayoutProducts);
+        LinearLayout searchLayoutProducts = view.findViewById(R.id.searchLayoutProducts);
         searchInput = view.findViewById(R.id.searchEditText);
 
         // Configurar el buscador
@@ -194,6 +186,7 @@ public class CatalogoFragment extends Fragment{
             }
         });
     }
+
     public static String normalizeSearchTerm(String input) {
         if (input == null) return "";
 
@@ -521,6 +514,7 @@ public class CatalogoFragment extends Fragment{
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         Log.e(TAG, message);
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -566,4 +560,6 @@ public class CatalogoFragment extends Fragment{
                     }
                 });
     }
+
+
 }

@@ -19,7 +19,6 @@ import java.util.Locale;
 import java.util.UUID;
 
 public class AddDiscountCodeDialog {
-
     public interface OnDiscountCodeCreatedListener {
         void onCodeCreated(DiscountCode code);
         void onCreationError(String error);
@@ -71,8 +70,7 @@ public class AddDiscountCodeDialog {
         builder.create().show();
     }
 
-    private static void showDatePicker(Context context, Calendar calendar, EditText etExpiryDate,
-                                       SimpleDateFormat dateFormat) {
+    private static void showDatePicker(Context context, Calendar calendar, EditText etExpiryDate, SimpleDateFormat dateFormat) {
         new DatePickerDialog(
                 context,
                 (view, year, month, dayOfMonth) -> {
@@ -136,4 +134,5 @@ public class AddDiscountCodeDialog {
                     }
                 });
     }
+
 }

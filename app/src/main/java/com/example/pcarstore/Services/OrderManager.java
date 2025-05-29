@@ -9,8 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OrderManager {
+    /*************************************************************VARIABLES******************************************************************************************/
     private static OrderManager instance;
-    private DatabaseReference ordersRef;
+    private final DatabaseReference ordersRef;
 
     public interface OrderCallback {
         void onSuccess(String orderId);

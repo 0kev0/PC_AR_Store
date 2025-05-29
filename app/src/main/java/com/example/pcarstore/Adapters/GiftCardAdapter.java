@@ -15,22 +15,24 @@ import java.util.List;
 import java.util.Locale;
 
 public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCardViewHolder> {
-
-    private List<GiftCard> giftCards;
-    private Context context;
-    private SimpleDateFormat dateFormat;
-    private OnGiftCardActionsListener listener;
+    /*************************************************************VARIABLES******************************************************************************************/
+    private final List<GiftCard> giftCards;
+    private final Context context;
+    private final SimpleDateFormat dateFormat;
+    private final OnGiftCardActionsListener listener;
 
     public interface OnGiftCardActionsListener {
         void onEditGiftCard(GiftCard giftCard);
         void onDeleteGiftCard(GiftCard giftCard);
     }
+
     public GiftCardAdapter(List<GiftCard> giftCards, Context context, OnGiftCardActionsListener listener) {
         this.giftCards = giftCards;
         this.context = context;
         this.listener = listener;
         this.dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     }
+
     @NonNull
     @Override
     public GiftCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -94,15 +96,6 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
         return giftCards != null ? giftCards.size() : 0;
     }
 
-    public void updateGiftCards(List<GiftCard> newGiftCards) {
-        this.giftCards = newGiftCards;
-        notifyDataSetChanged();
-    }
-
-    public interface OnBuyClickListener {
-        void onBuyClick(GiftCard giftCard);
-    }
-
     public static class GiftCardViewHolder extends RecyclerView.ViewHolder {
         TextView tvCode, tvAmount, tvStatus, tvExpiration, tvRecipient;
         Button btnEdit, btnDelete;
@@ -118,4 +111,5 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
             btnDelete = itemView.findViewById(R.id.btn_deactivate);
         }
     }
+
 }

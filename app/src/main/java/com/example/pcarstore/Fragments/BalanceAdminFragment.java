@@ -46,28 +46,19 @@ import java.util.Locale;
 import java.util.Map;
 
 public class BalanceAdminFragment extends Fragment {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private TextView tvIncome, tvExpenses, tvNetBalance;
-    private Spinner spinnerPeriod;
-    private RecyclerView rvTransactions;
-    private Button btnExport;
-
     private DatabaseReference transactionsRef;
     private TransactionAdapter transactionAdapter;
     private List<Transaction> transactionList;
-
     private double totalIncome = 0.0;
     private double totalExpenses = 0.0;
-
     private static final String[] PERIOD_OPTIONS = {"Hoy", "Esta semana", "Este mes", "Este año", "Todos"};
-
     public BalanceAdminFragment() {
-        // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_balance_admin, container, false);
 
         // Inicializar Firebase
@@ -78,9 +69,9 @@ public class BalanceAdminFragment extends Fragment {
         tvIncome = view.findViewById(R.id.tvIncome);
         tvExpenses = view.findViewById(R.id.tvExpenses);
         tvNetBalance = view.findViewById(R.id.tvNetBalance);
-        spinnerPeriod = view.findViewById(R.id.spinnerPeriod);
-        rvTransactions = view.findViewById(R.id.rvTransactions);
-        btnExport = view.findViewById(R.id.btnExport);
+        Spinner spinnerPeriod = view.findViewById(R.id.spinnerPeriod);
+        RecyclerView rvTransactions = view.findViewById(R.id.rvTransactions);
+        Button btnExport = view.findViewById(R.id.btnExport);
 
         // Configurar RecyclerView
         transactionList = new ArrayList<>();
@@ -202,8 +193,7 @@ public class BalanceAdminFragment extends Fragment {
         }
     }
 
-
-    // Método para generar y compartir el PDF
+    // Metodo para generar y compartir el PDF
     private void generateAndShareBalancePDF() {
         // Obtener los valores actuales del balance
         double income = totalIncome; // tu variable con los ingresos
@@ -229,4 +219,5 @@ public class BalanceAdminFragment extends Fragment {
             Toast.makeText(getContext(), "Error al generar el reporte", Toast.LENGTH_SHORT).show();
         }
     }
+
 }

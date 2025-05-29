@@ -1,6 +1,5 @@
 package com.example.pcarstore.Fragments;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,14 +34,13 @@ import java.util.Map;
 import kotlin.TuplesKt;
 
 public class SalesRecordsFragment extends Fragment {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private RecyclerView recyclerView;
     private UserSalesAdapter adapter;
-    private List<UserSales> userSalesList = new ArrayList<>();
+    private final List<UserSales> userSalesList = new ArrayList<>();
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sales_records, container, false);
 
         initializeViews(view);
@@ -146,4 +144,5 @@ public class SalesRecordsFragment extends Fragment {
         userSalesList.addAll(userSalesMap.values());
         adapter.updateData(new ArrayList<>(userSalesList), true); // Orden descendente por defecto
     }
+
 }

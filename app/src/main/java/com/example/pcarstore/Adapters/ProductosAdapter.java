@@ -23,13 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.ProductViewHolder> {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private List<Product> productList = new ArrayList<>();
     private final OnProductActionsListener listener;
     private final DatabaseReference productsRef;
     private DatabaseReference wishlistRef;
-    private String userId;
-    private FirebaseAuth mAuth;
+    private final FirebaseAuth mAuth;
 
     public interface OnProductActionsListener {
         void onEditProduct(Product product);
@@ -44,7 +43,7 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            this.userId = currentUser.getUid();
+            String userId = currentUser.getUid();
             this.wishlistRef = FirebaseDatabase.getInstance().getReference("wishlist").child(userId);
         }
 
@@ -228,4 +227,5 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
             }
         }
     }
+
 }

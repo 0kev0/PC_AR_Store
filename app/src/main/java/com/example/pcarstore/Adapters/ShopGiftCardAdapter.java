@@ -13,7 +13,6 @@ import com.example.pcarstore.R;
 import java.util.List;
 
 public class ShopGiftCardAdapter extends RecyclerView.Adapter<ShopGiftCardAdapter.GiftCardViewHolder> {
-
     private final List<GiftCard> giftCards;
     private final OnBuyClickListener listener;
 
@@ -47,12 +46,6 @@ public class ShopGiftCardAdapter extends RecyclerView.Adapter<ShopGiftCardAdapte
         return giftCards.size();
     }
 
-    public void updateData(List<GiftCard> newGiftCards) {
-        giftCards.clear();
-        giftCards.addAll(newGiftCards);
-        notifyDataSetChanged();
-    }
-
     static class GiftCardViewHolder extends RecyclerView.ViewHolder {
         final TextView tvPrice;
         final Button btnBuy;
@@ -63,4 +56,5 @@ public class ShopGiftCardAdapter extends RecyclerView.Adapter<ShopGiftCardAdapte
             btnBuy = itemView.findViewById(R.id.btnBuy);
         }
     }
+
 }

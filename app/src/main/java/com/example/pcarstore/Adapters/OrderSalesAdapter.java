@@ -8,20 +8,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pcarstore.ModelsDB.Order;
 import com.example.pcarstore.R;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class OrderSalesAdapter extends RecyclerView.Adapter<OrderSalesAdapter.OrderViewHolder> {
+    /*************************************************************VARIABLES******************************************************************************************/
     private List<Map<String, Object>> orders;
-
     public OrderSalesAdapter(List<Map<String, Object>> orders) {
         this.orders = orders;
     }
-
     public void updateOrders(List<Map<String, Object>> newOrders) {
         this.orders = newOrders;
         notifyDataSetChanged();
@@ -61,4 +58,5 @@ public class OrderSalesAdapter extends RecyclerView.Adapter<OrderSalesAdapter.Or
             tvTotal = itemView.findViewById(R.id.tvTotalH);
         }
     }
+
 }
