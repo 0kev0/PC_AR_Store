@@ -29,13 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WishlistFragment extends Fragment {
-    private RecyclerView rvWishlistItems;
+    /*************************************************************VARIABLES******************************************************************************************/
     private WishlistAdapter wishlistAdapter;
     private List<Product> wishlistProducts;
     private TextView tvWishlistItemCount;
-    private Button btnClearWishlist;
-
-    private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private DatabaseReference wishlistRef;
     private DatabaseReference productsRef;
@@ -45,13 +42,13 @@ public class WishlistFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_wishlist, container, false);
 
         // Inicializar Firebase
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
         // Inicializar vistas
-        rvWishlistItems = view.findViewById(R.id.rvWishlistItems);
+        RecyclerView rvWishlistItems = view.findViewById(R.id.rvWishlistItems);
         tvWishlistItemCount = view.findViewById(R.id.tvWishlistItemCount);
-        btnClearWishlist = view.findViewById(R.id.btnClearWishlist);
+        Button btnClearWishlist = view.findViewById(R.id.btnClearWishlist);
 
         // Configurar RecyclerView
         wishlistProducts = new ArrayList<>();
@@ -175,4 +172,5 @@ public class WishlistFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
     }
+
 }

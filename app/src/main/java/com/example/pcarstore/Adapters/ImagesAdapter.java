@@ -14,7 +14,8 @@ import com.example.pcarstore.R;
 import java.util.List;
 
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder> {
-    private List<String> imageUrls;
+    /*************************************************************VARIABLES******************************************************************************************/
+    private final List<String> imageUrls;
 
     public ImagesAdapter(List<String> imageUrls) {
         this.imageUrls = imageUrls;
@@ -49,4 +50,5 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewH
             imageView = itemView.findViewById(R.id.ivSelectedImage);
         }
     }
+
 }

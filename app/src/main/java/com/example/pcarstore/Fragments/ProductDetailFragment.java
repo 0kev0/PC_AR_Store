@@ -42,36 +42,23 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.File;
 
-
 public class ProductDetailFragment extends Fragment {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private static final String TAG = "ProductDetailFragment";
     private String productId;
     private DatabaseReference productRef;
     private ValueEventListener productListener;
     private DatabaseReference wishlistRef;
-
     private Product currentProduct;
-    private FirebaseStorage storage;
     private TextView productName, productPrice, productSpecs, productDescription;
-
     private RatingBar productRating;
     private RecyclerView imagesRecycler;
     private Button btnAddToCart, btnViewAR;
-    private ProductImagesAdapter imagesAdapter;
     private InicioActivity inicioActivity;
-    private Context context;
-    private FirebaseAuth mAuth;
     private MaterialButton btnWishlist;
-
     // Modelo 3D y textura
-    private File modelFile;
-    private File textureFile;
-    private boolean modelLoaded = false;
-    private boolean textureLoaded = false;
     private ProgressDialog progressDialog;
-
-
+    private static final long CACHE_EXPIRATION_TIME = 120000; // 2 minutos en milisegundos
     public static ProductDetailFragment newInstance(String productId) {
         ProductDetailFragment fragment = new ProductDetailFragment();
         Bundle args = new Bundle();
@@ -87,8 +74,8 @@ public class ProductDetailFragment extends Fragment {
             productId = getArguments().getString("productId");
         }
 
-        storage = FirebaseStorage.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
@@ -104,7 +91,6 @@ public class ProductDetailFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.context = context;
         if (context instanceof InicioActivity) {
             inicioActivity = (InicioActivity) context;
         }
@@ -155,6 +141,7 @@ public class ProductDetailFragment extends Fragment {
         btnWishlist.setOnClickListener(v -> handleWishlistClick());
         checkWishlistStatus();
     }
+
     private void handleWishlistClick() {
         if (currentProduct == null) return;
 
@@ -176,6 +163,7 @@ public class ProductDetailFragment extends Fragment {
             addToWishlist();
         }
     }
+
     private void addToWishlist() {
         wishlistRef.child(productId)
                 .setValue(true) // Guarda como true para indicar que existe
@@ -186,6 +174,7 @@ public class ProductDetailFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> showToast("Error al añadir a la lista de deseos"));
     }
+
     private void removeFromWishlist() {
         wishlistRef.child(productId)
                 .removeValue()
@@ -196,6 +185,7 @@ public class ProductDetailFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> showToast("Error al eliminar de la lista de deseos"));
     }
+
     private void updateWishlistButton(boolean isInWishlist) {
         if (isInWishlist) {
             btnWishlist.setText("Quitar de favoritos");
@@ -211,6 +201,7 @@ public class ProductDetailFragment extends Fragment {
             btnWishlist.setTextColor(Color.parseColor("#FF4081"));
         }
     }
+
     private void checkWishlistStatus() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null || wishlistRef == null) {
@@ -235,6 +226,7 @@ public class ProductDetailFragment extends Fragment {
                     }
                 });
     }
+
     private void showLoginRequiredDialog(String message) {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Inicio de sesión requerido")
@@ -248,22 +240,34 @@ public class ProductDetailFragment extends Fragment {
                 .setCancelable(false)
                 .show();
     }
+
     private void openARModel() {
         if (currentProduct != null && currentProduct.getModel3dUrl() != null && currentProduct.getTextureUrl() != null) {
+            File cacheDir = getContext().getCacheDir();
+            String modelFilename = currentProduct.getModel3dUrl().substring(currentProduct.getModel3dUrl().lastIndexOf('/') + 1);
+            String textureFilename = currentProduct.getTextureUrl().substring(currentProduct.getTextureUrl().lastIndexOf('/') + 1);
+
+            File cachedModel = new File(cacheDir, modelFilename);
+            File cachedTexture = new File(cacheDir, textureFilename);
+
+            if (cachedModel.exists() && cachedTexture.exists() &&
+                    !hasCacheExpired(cachedModel) && !hasCacheExpired(cachedTexture)) {
+                Toast.makeText(getContext(), "Modelo 3D y textura disponibles en caché", Toast.LENGTH_SHORT).show();
+                launchARActivity(cachedModel, cachedTexture);
+                return;
+            }
+
             DownloadService downloadService = new DownloadService(getContext());
 
             downloadService.downloadModelAndTexture(
                     currentProduct.getModel3dUrl(),
                     currentProduct.getTextureUrl(),
+                    modelFilename,
+                    textureFilename,
                     new DownloadService.DownloadCallback() {
                         @Override
                         public void onDownloadComplete(File modelFile, File textureFile) {
-                            // Archivos descargados correctamente
-                            Intent arIntent = new Intent(getActivity(), ProductShowARActivity.class);
-                            arIntent.putExtra("product_id", productId);
-                            arIntent.putExtra("model_path", modelFile.getAbsolutePath());
-                            arIntent.putExtra("texture_path", textureFile.getAbsolutePath());
-                            startActivity(arIntent);
+                            launchARActivity(modelFile, textureFile);
                         }
 
                         @Override
@@ -274,6 +278,20 @@ public class ProductDetailFragment extends Fragment {
         } else {
             Toast.makeText(getContext(), "Error: Modelo 3D o texturas no disponibles", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private boolean hasCacheExpired(File cachedFile) {
+        long lastModified = cachedFile.lastModified();
+        long currentTime = System.currentTimeMillis();
+        return (currentTime - lastModified) > CACHE_EXPIRATION_TIME;
+    }
+
+    private void launchARActivity(File modelFile, File textureFile) {
+        Intent arIntent = new Intent(getActivity(), ProductShowARActivity.class);
+        arIntent.putExtra("product_id", productId);
+        arIntent.putExtra("model_path", modelFile.getAbsolutePath());
+        arIntent.putExtra("texture_path", textureFile.getAbsolutePath());
+        startActivity(arIntent);
     }
 
     private void setupRealtimeListener() {
@@ -293,6 +311,7 @@ public class ProductDetailFragment extends Fragment {
             }
         });
     }
+
     private void updateUI(Product product) {
         productName.setText(product.getName());
         productPrice.setText(String.format("$%.2f", product.getPrice()));
@@ -328,7 +347,7 @@ public class ProductDetailFragment extends Fragment {
         }
 
         if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
-            imagesAdapter = new ProductImagesAdapter(product.getImageUrls());
+            ProductImagesAdapter imagesAdapter = new ProductImagesAdapter(product.getImageUrls());
             imagesRecycler.setAdapter(imagesAdapter);
         }
 
@@ -473,12 +492,12 @@ public class ProductDetailFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> showToast("Error al agregar producto"));
     }
+
     private void showToast(String message) {
         if (getContext() != null) {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
     }
-
 
     @Override
     public void onDestroyView() {
@@ -490,4 +509,5 @@ public class ProductDetailFragment extends Fragment {
             progressDialog.dismiss();
         }
     }
+
 }

@@ -28,19 +28,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
-
-    private List<Product> productList;
+    /*************************************************************VARIABLES******************************************************************************************/
+    private final List<Product> productList;
     private final OnProductClickListener listener;
     private static FirebaseAuth mAuth;
-    private OnCartUpdateListener cartUpdateListener; // Interface for cart updates
-
+    private OnCartUpdateListener cartUpdateListener;
     public interface OnProductClickListener {
         void onProductClick(Product product);
         void onAddToCart(Product product); // Make sure this method is included
         void onWishlistClick(Product product, boolean isInWishlist);
     }
 
-    // Interface for handling cart updates
+    // Interface para actualizacion de carrito
     public interface OnCartUpdateListener {
         void onCartUpdated(Product product, int quantity);
     }
@@ -49,10 +48,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         this.productList = productList;
         this.listener = listener;
         mAuth = FirebaseAuth.getInstance();
-    }
-
-    public void setOnCartUpdateListener(OnCartUpdateListener listener) {
-        this.cartUpdateListener = listener;
     }
 
     @NonNull
@@ -93,7 +88,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             lottieLoading = itemView.findViewById(R.id.lottieLoading);
             mAuth = FirebaseAuth.getInstance();
 
-            lottieLoading.setAnimation(R.raw.loading_animation);
+            lottieLoading.setAnimation(R.raw.loading_animation2);
             lottieLoading.loop(true);
         }
 
@@ -186,10 +181,4 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
     }
 
-    public void updateProductList(List<Product> newProductList) {
-        if (newProductList != null) {
-            productList = newProductList;
-            notifyDataSetChanged();
-        }
-    }
 }

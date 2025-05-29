@@ -4,11 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,18 +19,15 @@ import java.util.List;
 import java.util.Locale;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     public interface OnCartItemListener {
         void onIncreaseQuantity(String productId, int newQuantity);
         void onDecreaseQuantity(String productId, int newQuantity);
         void onRemoveItem(String productId);
     }
-
-    private Context context;
+    private final Context context;
     private List<OrderItem> cartItems;
-    private OnCartUpdatedListener listener;
-    private OnCartItemListener cartItemListener;
-
+    private final OnCartItemListener cartItemListener;
     public interface OnCartUpdatedListener {
         void updateCartSummary(double subtotal);
     }
@@ -41,7 +35,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public CartAdapter(Context context, OnCartUpdatedListener listener, OnCartItemListener cartItemListener) {
         this.context = context;
         this.cartItems = new ArrayList<>(); // Inicializar con lista vacía
-        this.listener = listener;
         this.cartItemListener = cartItemListener;
     }
 
@@ -104,18 +97,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         return cartItems != null ? cartItems.size() : 0; // Protección contra null
     }
 
-    public double calculateSubtotal() {
-        if (cartItems == null || cartItems.isEmpty()) {
-            return 0.0;
-        }
-
-        double subtotal = 0.0;
-        for (OrderItem item : cartItems) {
-            subtotal += item.getPrice() * item.getQuantity();
-        }
-        return subtotal;
-    }
-
     static class CartViewHolder extends RecyclerView.ViewHolder {
         ImageView ivProductImage;
         TextView tvProductName, tvPrice, tvQuantity;
@@ -132,4 +113,5 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             btnRemove = itemView.findViewById(R.id.btnRemove);
         }
     }
+
 }

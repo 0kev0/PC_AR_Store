@@ -2,6 +2,7 @@ package com.example.pcarstore.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 //import com.example.pcarstore.Services.OrderService;
+import com.example.pcarstore.Services.SoundService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,7 +39,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.example.pcarstore.Services.SoundService;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -45,13 +49,12 @@ import java.util.Locale;
 import java.util.Map;
 
 public class PaymentConfirmationDialog extends DialogFragment {
-
-    private List<OrderItem> orderItems;
-    private double cartTotal;
-    private PaymentConfirmationListener listener;
+    /*************************************************************VARIABLES******************************************************************************************/
+    private final List<OrderItem> orderItems;
+    private final double cartTotal;
+    private final PaymentConfirmationListener listener;
     private double currentDiscount = 0.0;
     private String appliedDiscountCode = null;
-    private Button btnConfirmPayment;
     private TextView tvAvailableBalance;
     private TextView tvShipping;
     private TextView tvSubtotal;
@@ -59,7 +62,6 @@ public class PaymentConfirmationDialog extends DialogFragment {
     private TextView tvTotal;
     private double userBalance = 0.0;
     private double shippingCost = 0.0;
-    private User currentUser;
     private boolean isPrimeMember = false;
 
     public interface PaymentConfirmationListener {
@@ -74,7 +76,6 @@ public class PaymentConfirmationDialog extends DialogFragment {
         this.listener = listener;
     }
 
-    //quitar cuadro del dialogo por defecto
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_payment_confirmation, container, false);
@@ -101,7 +102,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
         tvShipping = dialogView.findViewById(R.id.tv_shipping);
         tvDiscount = dialogView.findViewById(R.id.tv_discount);
         tvTotal = dialogView.findViewById(R.id.tv_total);
-        btnConfirmPayment = dialogView.findViewById(R.id.btn_confirm_payment);
+        Button btnConfirmPayment = dialogView.findViewById(R.id.btn_confirm_payment);
         Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
 
         // Configurar RecyclerView
@@ -242,19 +243,25 @@ public class PaymentConfirmationDialog extends DialogFragment {
             }
         });
     }
+
     private void verifyAndProcessPayment() {
         double totalToPay = cartTotal + shippingCost - currentDiscount;
 
         if (userBalance >= totalToPay) {
+            Intent soundIntent = new Intent(getContext(), SoundService.class);
+            if (getContext() != null) {
+                getContext().startService(soundIntent);
+            }
             processPayment(totalToPay);
         } else {
             double missingAmount = totalToPay - userBalance;
             if (listener != null) {
+                dismiss();
                 listener.onInsufficientBalance(missingAmount);
             }
             Toast.makeText(getContext(),
                     String.format(Locale.getDefault(),
-                            "Saldo insuficiente. Faltan %.2f €", missingAmount),
+                            "Saldo insuficiente. Faltan %.2f $", missingAmount),
                     Toast.LENGTH_LONG).show();
         }
     }
@@ -263,20 +270,70 @@ public class PaymentConfirmationDialog extends DialogFragment {
         if (appliedDiscountCode != null) {
             markDiscountAsUsed(appliedDiscountCode, () -> {
                 updateUserBalance(amount, () -> {
-                    if (listener != null) {
-                        listener.onPaymentConfirmed(currentDiscount);
-                    }
-                    dismiss();
+                    saveTransaction(amount, () -> {
+                        if (listener != null) {
+                            listener.onPaymentConfirmed(currentDiscount);
+                        }
+                        dismiss();
+                    });
                 });
             });
         } else {
             updateUserBalance(amount, () -> {
-                if (listener != null) {
-                    listener.onPaymentConfirmed(0.0);
-                }
-                dismiss();
+                saveTransaction(amount, () -> {
+                    if (listener != null) {
+                        listener.onPaymentConfirmed(0.0);
+                    }
+                    dismiss();
+                });
             });
         }
+    }
+
+    private void saveTransaction(double amount, Runnable onComplete) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference transactionsRef = FirebaseDatabase.getInstance()
+                .getReference("transactions");
+
+        String transactionId = transactionsRef.push().getKey();
+
+        // Crear objeto de transacción
+        Map<String, Object> transaction = new HashMap<>();
+        transaction.put("amount", amount);
+        transaction.put("date", ServerValue.TIMESTAMP);
+        transaction.put("description", "Compra de productos");
+        transaction.put("status", "completed");
+        transaction.put("type", "sale");
+        transaction.put("userId", userId);
+
+        // Agregar detalles de los productos
+        List<Map<String, Object>> products = new ArrayList<>();
+        for (OrderItem item : orderItems) {
+            Map<String, Object> product = new HashMap<>();
+            product.put("productId", item.getProductId());
+            product.put("quantity", item.getQuantity());
+            product.put("price", item.getPrice());
+            products.add(product);
+        }
+        transaction.put("products", products);
+
+        // Agregar información de envío y descuento si aplica
+        transaction.put("shippingCost", shippingCost);
+        if (appliedDiscountCode != null) {
+            transaction.put("discountCode", appliedDiscountCode);
+            transaction.put("discountAmount", currentDiscount);
+        }
+
+        transactionsRef.child(transactionId).setValue(transaction)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Transaction", "Transacción guardada exitosamente");
+                    onComplete.run();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Transaction", "Error al guardar transacción", e);
+                    Toast.makeText(getContext(), "Error al registrar transacción", Toast.LENGTH_SHORT).show();
+                    onComplete.run();
+                });
     }
 
     private void updateUserBalance(double amount, Runnable onComplete) {
@@ -309,6 +366,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
             }
         });
     }
+
 
     private void validateAndApplyDiscount(String code) {
         DatabaseReference discountsRef = FirebaseDatabase.getInstance().getReference("discountCodes");
@@ -421,4 +479,5 @@ public class PaymentConfirmationDialog extends DialogFragment {
                     onComplete.run();
                 });
     }
+
 }

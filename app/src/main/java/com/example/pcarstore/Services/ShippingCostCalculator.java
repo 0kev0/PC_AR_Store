@@ -10,12 +10,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class ShippingCostCalculator {
-    public static void calculateShippingCost(
-            String departamento,
-            String ciudad,
-            boolean isPrimeMember,
-            double cartTotal,
-            ShippingCostCallback callback) {
+    public static void calculateShippingCost(String departamento, String ciudad, boolean isPrimeMember, double cartTotal, ShippingCostCallback callback) {
 
         // Prime members get free shipping
         if (isPrimeMember) {
@@ -71,7 +66,6 @@ public class ShippingCostCalculator {
             }
         });
     }
-
     public interface ShippingCostCallback {
         void onCostCalculated(double cost);
     }

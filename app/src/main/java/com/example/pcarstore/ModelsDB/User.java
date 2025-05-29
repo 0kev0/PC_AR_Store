@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String userId;
     private String email;
     private String name;
@@ -112,4 +113,9 @@ public class User {
     public void setMembresiaPrime(boolean membresiaPrime) { this.membresiaPrime = membresiaPrime; }
     public Map<String, Integer> getCart() { return cart; }
     public void setCart(Map<String, Integer> cart) { this.cart = cart; }
+    public void agregarSaldo(double cantidad) {
+        if (cantidad > 0) {
+            this.saldo += cantidad;
+        }
+    }
 }

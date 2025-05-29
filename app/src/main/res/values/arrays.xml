@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="filter_options">
+        <item>Mayor monto primero</item>
+        <item>Menor monto primero</item>
+    </string-array>
+
+    <string-array name="period_options">
+        <item>Hoy</item>
+        <item>Esta semana</item>
+        <item>Este mes</item>
+        <item>Este año</item>
+        <item>Personalizado</item>
+    </string-array>
+
+</resources>

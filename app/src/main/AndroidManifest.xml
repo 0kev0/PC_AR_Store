@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- Permisos necesarios para ARCore -->
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.PICK_IMAGES" />
+    <!-- Permisos para el almacenamiento externo -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Permisos para la Huella digital -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
-    <uses-feature
-        android:name="android.hardware.camera.ar"
-        android:required="true" />
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true" />
+    <!-- Requerimientos de hardware -->
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -31,39 +32,71 @@
         android:usesCleartextTraffic="false"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="31">
-        <activity
-            android:name=".Activities.GiftCardStoreActivity"
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
-            android:theme="@style/Theme.PCARStore" />
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Actividad de inicio (Splash Screen) -->
         <activity
-            android:name=".Activities.ProductShowARActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.AR_test"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.OrdersActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.InicioActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.RegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.AdminActivity"
-            android:exported="false"></activity>
-        <activity
-            android:name=".Activities.LoginActivity"
-            android:configChanges="orientation|screenSize"
+            android:name=".Activities.SplashActivity"
             android:exported="true"
-            android:screenOrientation="locked">
+>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Actividades de autenticación -->
+        <activity
+            android:name=".Activities.LoginActivity"
+            android:exported="false"
+ />
+
+        <activity
+            android:name=".Activities.RegisterActivity"
+            android:exported="false"
+ />
+
+        <!-- Actividad principal -->
+        <activity
+            android:name=".Activities.InicioActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PCARStore"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+
+        <!-- Actividades AR -->
+        <activity
+            android:name=".Activities.ProductShowARActivity"
+            android:exported="false"
+/>
+
+        <activity
+            android:name=".Activities.AR_test"
+            android:exported="false"
+ />
+
+        <!-- Otras actividades -->
+        <activity
+            android:name=".Activities.AdminActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".Activities.OrdersActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".Activities.GiftCardStoreActivity"
+            android:exported="false" />
+
+        <!-- Servicios -->
         <service
             android:name=".Services.MyFirebaseMessagingService"
             android:exported="false">
@@ -71,9 +104,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <service android:name=".Services.SoundService" />
+
+        <!-- Metadata ARCore -->
         <meta-data
             android:name="com.google.ar.core"
             android:value="required" />
     </application>
-
 </manifest>

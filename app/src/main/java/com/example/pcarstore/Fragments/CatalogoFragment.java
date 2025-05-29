@@ -5,17 +5,18 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,11 +25,12 @@ import com.example.pcarstore.Activities.InicioActivity;
 import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Adapters.CategoryAdapter;
 import com.example.pcarstore.Adapters.ProductAdapter;
+import com.example.pcarstore.Dialogs.PrimeReminder;
 import com.example.pcarstore.ModelsDB.Category;
 import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.ModelsDB.Product;
+import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -37,11 +39,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CatalogoFragment extends Fragment{
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private static final String TAG = "CatalogoFragment";
     private RecyclerView productsRecycler, categoriesRecycler;
     private ProductAdapter productAdapter;
@@ -53,8 +56,8 @@ public class CatalogoFragment extends Fragment{
     private Context context;
     private InicioActivity inicioActivity;
     private FirebaseAuth mAuth;
-    private ImageView toggleSearchButton;
-    private TextInputLayout searchLayout;
+    private EditText searchInput;;
+    private DatabaseReference productsRef;
     private boolean isSearchVisible = true;
 
     @Override
@@ -68,17 +71,23 @@ public class CatalogoFragment extends Fragment{
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_catalogo, container, false);
-
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        productsRef = database.getReference("products");
+
+        LinearLayout searchLayoutProducts = view.findViewById(R.id.searchLayoutProducts);
+        searchInput = view.findViewById(R.id.searchEditText);
+
+        // Configurar el buscador
+        setupSearchFunctionality();
 
         initViews(view);
         setupRecyclerViews(view);
         initializeAdapters();
-        setupToggleButton();
         loadData();
         return view;
     }
@@ -87,97 +96,13 @@ public class CatalogoFragment extends Fragment{
         mDatabase = FirebaseDatabase.getInstance().getReference();
         productsRecycler = view.findViewById(R.id.recyclerViewCatalogo);
         categoriesRecycler = view.findViewById(R.id.categoriesRecycler);
-        searchLayout = view.findViewById(R.id.searchLayout);
-        toggleSearchButton = view.findViewById(R.id.toggleSearchButton);
+
 
         // Inicializar referencia a la wishlist
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             wishlistRef = FirebaseDatabase.getInstance().getReference("wishlist").child(currentUser.getUid());
         }
-    }
-
-    private void setupToggleButton() {
-        toggleSearchButton.setOnClickListener(v -> {
-            if (isSearchVisible) {
-                // Animación para ocultar
-                animateViewsOut();
-            } else {
-                // Animación para mostrar
-                animateViewsIn();
-            }
-            isSearchVisible = !isSearchVisible;
-        });
-    }
-
-    private void animateViewsOut() {
-        // Animación para la barra de búsqueda
-        searchLayout.animate()
-                .alpha(0f)
-                .setDuration(300)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .withEndAction(() -> {
-                    searchLayout.setVisibility(View.GONE);
-                    toggleSearchButton.setImageResource(R.drawable.ic_eye);
-                })
-                .start();
-
-        // Animación para las categorías
-        categoriesRecycler.animate()
-                .alpha(0f)
-                .setDuration(300)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .withEndAction(() -> {
-                    categoriesRecycler.setVisibility(View.GONE);
-
-                    // Ajustar constraints después de que termine la animación
-                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) productsRecycler.getLayoutParams();
-                    params.topToBottom = R.id.toggleSearchButton;
-                    productsRecycler.setLayoutParams(params);
-
-                    // Pequeña animación para el RecyclerView de productos
-                    productsRecycler.animate()
-                            .translationYBy(-20f)
-                            .setDuration(100)
-                            .start();
-                })
-                .start();
-    }
-    private void animateViewsIn() {
-        // Preparar vistas antes de animar (transparencia inicial)
-        searchLayout.setAlpha(0f);
-        searchLayout.setVisibility(View.VISIBLE);
-        categoriesRecycler.setAlpha(0f);
-        categoriesRecycler.setVisibility(View.VISIBLE);
-
-        // Animación para la barra de búsqueda
-        searchLayout.animate()
-                .alpha(1f)
-                .setDuration(300)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .withStartAction(() -> {
-                    toggleSearchButton.setImageResource(R.drawable.ic_close_eye);
-                })
-                .start();
-
-        // Animación para las categorías
-        categoriesRecycler.animate()
-                .alpha(1f)
-                .setDuration(300)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .withEndAction(() -> {
-                    // Restaurar constraints después de la animación
-                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) productsRecycler.getLayoutParams();
-                    params.topToBottom = R.id.categoriesRecycler;
-                    productsRecycler.setLayoutParams(params);
-
-                    // Pequeño "rebote" para el RecyclerView de productos
-                    productsRecycler.animate()
-                            .translationYBy(10f)
-                            .setDuration(50)
-                            .start();
-                })
-                .start();
     }
 
     private void setupRecyclerViews(View view) {
@@ -218,6 +143,82 @@ public class CatalogoFragment extends Fragment{
         categoriesRecycler.setAdapter(categoryAdapter);
     }
 
+    private void setupSearchFunctionality() {
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchProducts(s.toString().toLowerCase());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void searchProducts(String searchText) {
+        if (searchText.isEmpty()) {
+            loadAllProducts();
+            return;
+        }
+        final String normalizedSearch = normalizeSearchTerm(searchText);
+        productsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                productList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Product product = snapshot.getValue(Product.class);
+                    if (product != null) {
+                        String productNameNormalized = normalizeSearchTerm(product.getName());
+                        if (productNameNormalized.contains(normalizedSearch)) {
+                            productList.add(product);
+                        }
+                    }
+                }
+                productAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("FirebaseError", databaseError.getMessage());
+            }
+        });
+    }
+
+    public static String normalizeSearchTerm(String input) {
+        if (input == null) return "";
+
+        // Convertir a minúsculas y quitar acentos
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "")
+                .toLowerCase();
+
+        return normalized;
+    }
+
+    private void loadAllProducts() {
+        productsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                productList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Product product = snapshot.getValue(Product.class);
+                    if (product != null) {
+                        productList.add(product);
+                    }
+                }
+                productAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(context, "Error al cargar productos", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void handleWishlistClick(Product product, boolean isInWishlist) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
@@ -237,9 +238,7 @@ public class CatalogoFragment extends Fragment{
     }
 
     private void addToWishlist(Product product) {
-        // Actualizamos el modelo inmediatamente para evitar múltiples clicks
         product.setInWishlist(true);
-        // Notificamos al adapter del cambio
         productAdapter.notifyDataSetChanged();
 
         wishlistRef.child(product.getProductId()).setValue(true)
@@ -255,9 +254,7 @@ public class CatalogoFragment extends Fragment{
     }
 
     private void removeFromWishlist(Product product) {
-        // Actualizamos el modelo inmediatamente para evitar múltiples clicks
         product.setInWishlist(false);
-        // Notificamos al adapter del cambio
         productAdapter.notifyDataSetChanged();
 
         wishlistRef.child(product.getProductId()).removeValue()
@@ -265,7 +262,6 @@ public class CatalogoFragment extends Fragment{
                     showToast("Eliminado de tu lista de deseos");
                 })
                 .addOnFailureListener(e -> {
-                    // En caso de error, revertimos el cambio
                     product.setInWishlist(true);
                     productAdapter.notifyDataSetChanged();
                     showToast("Error al eliminar de la lista de deseos");
@@ -361,7 +357,6 @@ public class CatalogoFragment extends Fragment{
         cartRef.child("items").child(product.getProductId()).setValue(newItem)
                 .addOnSuccessListener(aVoid -> {
                     updateCartTotal(cartRef);
-                    showToast("Producto agregado al carrito");
                 })
                 .addOnFailureListener(e -> showToast("Error al agregar producto"));
     }
@@ -519,4 +514,52 @@ public class CatalogoFragment extends Fragment{
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         Log.e(TAG, message);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkPrimeReminder();
+    }
+
+    private void checkPrimeReminder() {
+        Activity activity = getActivity();
+        if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
+            return;
+        }
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser == null) {
+            return;
+        }
+
+        FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(firebaseUser.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (activity.isFinishing() || activity.isDestroyed()) {
+                            return;
+                        }
+
+                        if (snapshot.exists()) {
+                            User user = snapshot.getValue(User.class);
+                            if (user != null) {
+                                user.setUserId(snapshot.getKey());
+                                PrimeReminder.showIfNeeded(activity, user);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("PrimeCheck", "Error checking prime status: " + error.getMessage());
+                        if (!activity.isFinishing() && !activity.isDestroyed()) {
+                            Toast.makeText(activity, "Error checking membership", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+
 }

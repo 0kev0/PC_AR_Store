@@ -17,15 +17,13 @@ import com.example.pcarstore.R;
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
-
-    private Context context;
-    private List<Category> categoryList;
-    private OnCategoryClickListener listener;
-
+    /*************************************************************VARIABLES******************************************************************************************/
+    private final Context context;
+    private final List<Category> categoryList;
+    private final OnCategoryClickListener listener;
     public interface OnCategoryClickListener {
         void onCategoryClick(Category category);
     }
-
     public CategoryAdapter(Context context, List<Category> categoryList, OnCategoryClickListener listener) {
         this.context = context;
         this.categoryList = categoryList;
@@ -75,9 +73,4 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         }
     }
 
-    public void updateCategories(List<Category> newCategories) {
-        categoryList.clear();
-        categoryList.addAll(newCategories);
-        notifyDataSetChanged();
-    }
 }

@@ -14,11 +14,11 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.Date;
 
 public class CreateGiftCardDialog {
-
     public interface OnGiftCardCreatedListener {
         void onGiftCardCreated(GiftCard giftCard);
         void onCreationError(String error);
     }
+
 
     public static void show(Context context, DatabaseReference databaseRef, OnGiftCardCreatedListener listener) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -131,4 +131,5 @@ public class CreateGiftCardDialog {
         long daysInMillis = days * 24L * 60 * 60 * 1000;
         return new Date(System.currentTimeMillis() + daysInMillis);
     }
+
 }

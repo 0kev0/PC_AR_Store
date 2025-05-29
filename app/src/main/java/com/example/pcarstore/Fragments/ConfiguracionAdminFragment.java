@@ -1,6 +1,7 @@
 package com.example.pcarstore.Fragments;
 
 import android.content.Intent;
+import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,18 +25,26 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class ConfiguracionAdminFragment extends Fragment {
+import java.security.KeyStore;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+
+public class ConfiguracionAdminFragment extends Fragment  {
+    /*************************************************************VARIABLES******************************************************************************************/
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private String currentUserId;
-
     private TextView tvName, tvEmail, tvRole;
     private Button btnEditInfo, changePassword, btnLogout;
+    private FingerprintManager fingerprintManager;
+    private KeyStore keyStore;
+    private KeyGenerator keyGenerator;
+    private static final String KEY_NAME = "mi_app_key";
+    private Cipher cipher;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_configuracion_admin, container, false);
 
         changePassword = view.findViewById(R.id.btnChangePassword);
@@ -127,4 +136,6 @@ public class ConfiguracionAdminFragment extends Fragment {
             });
         }
     }
+
+
 }

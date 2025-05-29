@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/rounded_bg"
+    android:minWidth="300dp"
+    android:layout_gravity="center">
+
+    <!-- Icono Prime -->
+<ImageView
+android:id="@+id/ivPrimeBadge"
+android:layout_width="80dp"
+android:layout_height="80dp"
+android:layout_gravity="center"
+android:src="@drawable/ic_prime"
+app:tint="@color/primary_color"
+android:layout_marginBottom="16dp"/>
+
+    <!-- Título -->
+<TextView
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="Membresía Prime"
+android:textColor="@color/black"
+android:textSize="20sp"
+android:textStyle="bold"
+android:gravity="center"
+android:layout_marginBottom="8dp"/>
+
+    <!-- Beneficios -->
+<TextView
+android:id="@+id/tvBenefits"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="• Envíos gratis en todas las compras\n• Descuentos exclusivos\n• Soporte prioritario"
+android:textColor="@color/primary_color"
+android:textSize="14sp"
+android:gravity="center"
+android:layout_marginBottom="16dp"/>
+
+    <!-- Precio -->
+<TextView
+android:id="@+id/tvPrice"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="$7.00/mes"
+android:textColor="@color/primary_color"
+android:textSize="18sp"
+android:textStyle="bold"
+android:gravity="center"
+android:layout_marginBottom="8dp"/>
+
+    <!-- Saldo actual -->
+<TextView
+android:id="@+id/tvCurrentBalance"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="Saldo actual: $0.00"
+android:textColor="@color/gray"
+android:textSize="14sp"
+android:gravity="center"
+android:layout_marginBottom="24dp"/>
+
+    <!-- Botón de compra -->
+<com.google.android.material.button.MaterialButton
+android:id="@+id/btn_Prime"
+android:layout_width="match_parent"
+android:layout_height="48dp"
+android:text="Adquirir membresía Prime"
+android:textColor="@color/white"
+android:textSize="16sp"
+android:textAllCaps="false"
+app:cornerRadius="8dp"
+app:backgroundTint="@color/primary_color"
+app:icon="@drawable/ic_prime"
+app:iconGravity="textStart"
+app:iconPadding="8dp"
+style="@style/Widget.MaterialComponents.Button"/>
+
+    <!-- Botón de cancelar -->
+<com.google.android.material.button.MaterialButton
+android:id="@+id/btnCancel_prime"
+android:layout_width="match_parent"
+android:layout_height="48dp"
+android:layout_marginTop="8dp"
+android:text="Cancelar"
+android:textColor="@color/primary_color"
+android:textSize="16sp"
+android:textAllCaps="false"
+app:cornerRadius="8dp"
+app:strokeColor="@color/primary_color"
+app:strokeWidth="1dp"
+app:icon="@drawable/ic_cancel"
+app:iconGravity="textStart"
+app:iconPadding="8dp"
+app:iconTint="@color/primary_color"
+style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+    <!-- Progreso -->
+<ProgressBar
+android:id="@+id/progressBar"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_gravity="center"
+android:layout_marginTop="16dp"
+android:visibility="gone"
+android:indeterminateTint="@color/primary_color"/>
+
+    <!-- Info adicional -->
+<TextView
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="¿Qué beneficios obtengo con Prime?"
+android:textColor="@color/primary_color"
+android:textSize="14sp"
+android:gravity="center"
+android:layout_marginTop="16dp"
+android:drawablePadding="4dp"
+android:clickable="true"
+android:focusable="true"/>
+    </LinearLayout>

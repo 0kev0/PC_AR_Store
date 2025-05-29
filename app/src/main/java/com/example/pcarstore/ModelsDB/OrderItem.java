@@ -1,6 +1,7 @@
 package com.example.pcarstore.ModelsDB;
 
 public class OrderItem {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String productId;
     private String productName;
     private double price;

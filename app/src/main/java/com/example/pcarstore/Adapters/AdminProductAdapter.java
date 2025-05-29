@@ -15,10 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapter.ProductViewHolder> {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private List<Product> productList = new ArrayList<>();
     private final OnProductActionsListener listener;
-
     public interface OnProductActionsListener {
         void onEditProduct(Product product);
         void onDeleteProduct(Product product);
@@ -27,6 +26,7 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
     public AdminProductAdapter(OnProductActionsListener listener) {
         this.listener = listener;
     }
+
 
     public void setProducts(List<Product> products) {
         this.productList = new ArrayList<>(products);
@@ -98,4 +98,5 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
             btnDelete.setOnClickListener(v -> listener.onDeleteProduct(product));
         }
     }
+
 }

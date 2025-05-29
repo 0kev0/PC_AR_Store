@@ -22,11 +22,11 @@ import com.example.pcarstore.R;
 import java.util.Date;
 
 public class OrderDetailsDialog extends DialogFragment {
-
-    private Order order;
+    /*************************************************************VARIABLES******************************************************************************************/
+    private final Order order;
     private ProgressBar progressBar;
     private TextView orderStatusTextView;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Runnable updateProgressRunnable;
 
     public OrderDetailsDialog(Order order) {
@@ -69,7 +69,6 @@ public class OrderDetailsDialog extends DialogFragment {
         return dialog;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_order_details, container, false);
@@ -79,19 +78,14 @@ public class OrderDetailsDialog extends DialogFragment {
         return view;
     }
 
-    public void initViews()
-    {
-
-    }
-
     private void startProgressUpdate() {
         updateProgressRunnable = new Runnable() {
             @Override
             public void run() {
                 int progress = calculateProgress(order.getDate(), order.getDeliveryDate());
                 progressBar.setProgress(progress);
-                orderStatusTextView.setText(getOrderStatus(progress)); // Corrección aquí
-                handler.postDelayed(this, 10000); // Actualizar cada 10 segundos
+                orderStatusTextView.setText(getOrderStatus(progress));
+                handler.postDelayed(this, 3000); // Actualizar cada 3 segundos
             }
         };
         handler.post(updateProgressRunnable);
@@ -136,4 +130,5 @@ public class OrderDetailsDialog extends DialogFragment {
         super.onDestroy();
         handler.removeCallbacks(updateProgressRunnable); // Detener actualización
     }
+
 }

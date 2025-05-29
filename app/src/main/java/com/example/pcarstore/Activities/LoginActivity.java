@@ -1,7 +1,12 @@
 package com.example.pcarstore.Activities;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.hardware.fingerprint.FingerprintManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.text.InputType;
@@ -16,6 +21,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -27,16 +33,9 @@ import androidx.credentials.GetCredentialRequest;
 import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 
-import com.example.pcarstore.ModelsDB.Category;
-import com.example.pcarstore.ModelsDB.DiscountCode;
-import com.example.pcarstore.ModelsDB.GiftCard;
-import com.example.pcarstore.ModelsDB.Order;
-import com.example.pcarstore.ModelsDB.OrderItem;
-import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.example.pcarstore.Services.DatabaseSeederService;
-import com.example.pcarstore.Services.OrderManager;
 import com.example.pcarstore.helpers.SessionManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -46,7 +45,6 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
-import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -60,20 +58,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
 public class LoginActivity extends AppCompatActivity {
-    private Button catalogo, loginGoogle, RegisterGoogle, test;
+    private Button loginGoogle;
+    private Button test;
     private FirebaseAuth mAuth;
     private EditText etEmail, etPassword;
     private ProgressDialog progressDialog;
 
     private CredentialManager credentialManager;
-    private GoogleSignInClient mGoogleSignInClient;
     private SessionManager sessionManager;
     private DatabaseReference mDatabase;
     private static final int RC_SIGN_IN = 9001;
@@ -103,20 +99,16 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         sessionManager = new SessionManager(this);
         checkCurrentSession();
 
-        catalogo = findViewById(R.id.ContinueWithoutAcount);
+        Button catalogo = findViewById(R.id.ContinueWithoutAcount);
         catalogo.setOnClickListener(v -> VerCatologo(v));
 
-
-        test = findViewById(R.id.test);
-        test.setOnClickListener(v -> ARtest(v));
-
-        RegisterGoogle = findViewById(R.id.RegisterGoogle);
+        Button registerGoogle = findViewById(R.id.RegisterGoogle);
         credentialManager = CredentialManager.create(this);
 
         etEmail = findViewById(R.id.etEmail);
@@ -124,7 +116,9 @@ public class LoginActivity extends AppCompatActivity {
 
         findViewById(R.id.LoginGoogle).setOnClickListener(v -> loginUser());
 
-        RegisterGoogle.setOnClickListener(v -> registerGoogle());
+        registerGoogle.setOnClickListener(v -> registerGoogle());
+
+        isFingerprintAuthAvailable();
     }
 
     private void verifyUserRole(FirebaseUser user) {
@@ -133,7 +127,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User dbUser = snapshot.getValue(User.class);
                 if (dbUser != null && dbUser.getRole() != null) {
-                    // Guardar sesión y redirigir según rol
                     sessionManager.createSession(user.getUid(), user.getEmail(), dbUser.getRole());
                     redirectBasedOnRole(dbUser.getRole());
                 } else {
@@ -153,19 +146,28 @@ public class LoginActivity extends AppCompatActivity {
     private void checkCurrentSession() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            // Verificar si el rol coincide
             mDatabase.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    User user = snapshot.getValue(User.class);
-                    if (user != null && user.getRole() != null) {
-                        String storedRole = sessionManager.getUserRole();
-                        if (!user.getRole().equals(storedRole)) {
-                            sessionManager.createSession(currentUser.getUid(),
-                                    currentUser.getEmail(),
-                                    user.getRole());
+                    if (!snapshot.exists()) {
+                        // Si no existe, registrarlo como nuevo usuario (rol "client" por defecto)
+                        //  registerNewUser(currentUser.getUid(), currentUser.getEmail());
+                    } else {
+                        // Si existe, verificar el rol como antes
+                        User user = snapshot.getValue(User.class);
+                        if (user != null && user.getRole() != null) {
+                            String storedRole = sessionManager.getUserRole();
+                            if (!user.getRole().equals(storedRole)) {
+                                sessionManager.createSession(
+                                        currentUser.getUid(),
+                                        currentUser.getEmail(),
+                                        user.getRole()
+                                );
+                            }
+                            redirectBasedOnRole(user.getRole());
+                        } else {
+                            handleInvalidRole();
                         }
-                        redirectBasedOnRole(user.getRole());
                     }
                 }
 
@@ -186,6 +188,9 @@ public class LoginActivity extends AppCompatActivity {
             case "admin":
                 destinationActivity = AdminActivity.class;
                 break;
+            case "client":
+                destinationActivity = InicioActivity.class;
+                break;
             case "user":
                 destinationActivity = InicioActivity.class;
                 break;
@@ -198,9 +203,11 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+
     public void VerCatologo(View view) {
         startActivity(new Intent(this, InicioActivity.class));
     }
+
 
     public void ARtest(View view) {
         startActivity(new Intent(this, AR_test.class));
@@ -257,24 +264,76 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Log.d(TAG, "Usuario registrado con éxito");
-                        startActivity(new Intent(LoginActivity.this, InicioActivity.class));
-                        finish();
-                    } else if (task == null) {
-                        Log.w(TAG, "Error de autenticación", task.getException());
-                        Toast.makeText(LoginActivity.this,
-                                "Error en autenticación con Firebase",
-                                Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Usuario autenticado con éxito");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            // Primero guardar datos, luego redirigir
+                            saveUserDataAndRedirect(user);
+                        }
                     } else {
-                        Log.w(TAG, "Error de registro", task.getException());
-                        Toast.makeText(LoginActivity.this,
-                                "Error en autenticación con Firebase",
-                                Toast.LENGTH_SHORT).show();
+                        handleGoogleAuthError(task.getException());
                     }
                 });
     }
 
-    // Manejo del resultado si usas startActivityForResult
+    private void handleGoogleAuthError(Exception exception) {
+        Log.w(TAG, "Error en autenticación Google", exception);
+        String errorMessage = "Error en autenticación";
+
+        if (exception instanceof ApiException) {
+            ApiException apiException = (ApiException) exception;
+            errorMessage = "Error Google: " + apiException.getStatusCode();
+        }
+
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveUserDataAndRedirect(FirebaseUser user) {
+        showProgressDialog("Configurando tu cuenta...");
+
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("uid", user.getUid());
+        userData.put("email", user.getEmail());
+        userData.put("displayName", user.getDisplayName());
+        userData.put("photoUrl", user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null);
+        userData.put("provider", "google");
+        userData.put("lastLogin", ServerValue.TIMESTAMP);
+
+        // Verificar si es usuario existente
+        mDatabase.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    // Nuevo usuario
+                    userData.put("createdAt", ServerValue.TIMESTAMP);
+                    userData.put("role", "client"); // Rol por defecto
+                    userData.put("membresiaPrime", false);
+                }
+
+                // Actualizar/crear datos
+                mDatabase.child(user.getUid()).updateChildren(userData)
+                        .addOnSuccessListener(aVoid -> {
+                            dismissProgressDialog();
+                            Log.d(TAG, "Datos guardados correctamente");
+                            verifyUserRole(user); // Ahora sí redirigimos
+                        })
+                        .addOnFailureListener(e -> {
+                            dismissProgressDialog();
+                            Log.e(TAG, "Error al guardar datos", e);
+                            Toast.makeText(LoginActivity.this,
+                                    "Error al guardar datos de usuario",
+                                    Toast.LENGTH_SHORT).show();
+                        });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                dismissProgressDialog();
+                Log.e(TAG, "Error en base de datos", error.toException());
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -308,13 +367,53 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            verifyUserRole(user.getUid());
+                            // Verificar si el correo está confirmado
+                            if (!user.isEmailVerified()) {
+                                dismissProgressDialog();
+                                showEmailNotVerifiedDialog(user);
+                                mAuth.signOut(); // Cerrar sesión hasta que verifique
+                            } else {
+                                verifyUserRole(user.getUid());
+                            }
                         } else {
                             dismissProgressDialog();
                             Toast.makeText(this, "Error al obtener usuario", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         handleLoginError(task.getException());
+                    }
+                });
+    }
+
+    private void showEmailNotVerifiedDialog(FirebaseUser user) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Correo no verificado");
+        builder.setMessage("Debes verificar tu dirección de correo electrónico antes de poder iniciar sesión. ¿Deseas que te enviemos otro correo de verificación?");
+
+        builder.setPositiveButton("Reenviar verificación", (dialog, which) -> {
+            sendEmailVerification(user);
+        });
+
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+
+        builder.show();
+    }
+
+    private void sendEmailVerification(FirebaseUser user) {
+        showProgressDialog("Enviando correo de verificación...");
+
+        user.sendEmailVerification()
+                .addOnCompleteListener(task -> {
+                    dismissProgressDialog();
+
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this,
+                                "Correo de verificación enviado a " + user.getEmail(),
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this,
+                                "Error al enviar correo de verificación: " + task.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -500,4 +599,29 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private boolean isFingerprintAuthAvailable() {
+        FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (fingerprintManager == null || !fingerprintManager.isHardwareDetected()) {
+                // El dispositivo no tiene sensor de huella digital
+                return false;
+            }
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_BIOMETRIC)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Permiso no concedido
+                return false;
+            }
+
+            if (!fingerprintManager.hasEnrolledFingerprints()) {
+                // No hay huellas registradas en el dispositivo
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

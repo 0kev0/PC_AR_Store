@@ -17,12 +17,12 @@
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_width="212dp"
-            android:layout_height="74dp"
+            android:layout_width="217dp"
+            android:layout_height="57dp"
             android:src="@drawable/azamoz_logo2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentContainerView2"
@@ -39,11 +39,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/bootomnavegationstyle"
-            app:itemTextColor="@color/black"
             app:itemIconTint="#3A59D1"
+            app:itemTextColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
             app:menu="@menu/buttonnav" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

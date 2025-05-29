@@ -2,12 +2,8 @@ package com.example.pcarstore.Dialogs;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -35,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GiftCardDialog extends DialogFragment {
+    /*************************************************************VARIABLES******************************************************************************************/
     private final Context context;
     private final FirebaseAuth mAuth;
     private final DatabaseReference databaseRef;
@@ -65,9 +62,7 @@ public class GiftCardDialog extends DialogFragment {
         Button btnRedeem = dialogView.findViewById(R.id.btnRedeem);
         ProgressBar progressBar = dialogView.findViewById(R.id.progressBar);
 
-        builder.setView(dialogView)
-                .setTitle("Canjear Gift Card")
-                .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+        builder.setView(dialogView);
 
         dialog = builder.create();
 
@@ -223,4 +218,5 @@ public class GiftCardDialog extends DialogFragment {
         void onSuccess(double addedAmount, Double newBalance);
         void onFailure(String error);
     }
+
 }

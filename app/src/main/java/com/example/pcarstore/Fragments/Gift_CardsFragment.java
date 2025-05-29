@@ -34,13 +34,12 @@ public class Gift_CardsFragment extends Fragment implements
         CreateGiftCardDialog.OnGiftCardCreatedListener,
         EditGiftCardDialog.OnGiftCardUpdatedListener,
         ExpireGiftCardDialog.OnGiftCardExpiredListener {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-    private RecyclerView recyclerView;
     private GiftCardAdapter adapter;
-    private List<GiftCard> giftCards = new ArrayList<>();
-    private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private final List<GiftCard> giftCards = new ArrayList<>();
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,11 +49,10 @@ public class Gift_CardsFragment extends Fragment implements
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gift_cards, container, false);
 
-        recyclerView = view.findViewById(R.id.recycler_gift_cards);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_gift_cards);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new GiftCardAdapter(giftCards, getContext(), this);
         recyclerView.setAdapter(adapter);
@@ -149,4 +147,5 @@ public class Gift_CardsFragment extends Fragment implements
     public void onExpireError(String error) {
         // Manejar error específico si es necesario
     }
+
 }

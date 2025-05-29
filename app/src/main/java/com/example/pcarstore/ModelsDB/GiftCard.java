@@ -1,6 +1,7 @@
 package com.example.pcarstore.ModelsDB;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
 import java.util.Date;
@@ -8,119 +9,151 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GiftCard {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String cardId;
     private String code;
     private double amount;
-    private String currency;
-    private Date creationDate;
-    private Date expirationDate;
-    private String status;
+    private String currency = "USD";
+    private Long creationDate;
+    private Long expirationDate;
+    private Long redeemedDate;
+    private String status = "active";
     private String recipientEmail;
     private String createdBy;
     private String redeemedBy;
-    private Date redeemedDate;
 
     public GiftCard() {}
 
-    public GiftCard(String code, double amount, String createdBy) {
-        this.code = code;
+    public GiftCard(double amount, String createdBy) {
+        this.code = generateGiftCardCode();
         this.amount = amount;
-        this.currency = "USD";
-        this.creationDate = new Date();
-        this.expirationDate = new Date(System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000)); // 1 año de validez
-        this.status = "active";
         this.createdBy = createdBy;
+        this.creationDate = System.currentTimeMillis();
+        this.expirationDate = System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000); // 1 año
     }
 
-    public String getRecipientEmail() {
-        return recipientEmail;
+    public GiftCard(String s, double amount, String userId) {
     }
 
+    @PropertyName("cardId")
+    public String getCardId() { return cardId; }
+
+    @PropertyName("cardId")
+    public void setCardId(String cardId) { this.cardId = cardId; }
+
+    @PropertyName("code")
+    public String getCode() { return code; }
+
+    @PropertyName("code")
+    public void setCode(String code) { this.code = code; }
+
+    @PropertyName("amount")
+    public double getAmount() { return amount; }
+
+    @PropertyName("amount")
+    public void setAmount(double amount) { this.amount = amount; }
+
+    @PropertyName("currency")
+    public String getCurrency() { return currency; }
+
+    @PropertyName("currency")
+    public void setCurrency(String currency) { this.currency = currency; }
+    @Exclude
+    public Date getCreationDate() {
+        return creationDate != null ? new Date(creationDate) : null;
+    }
+
+    @Exclude
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate != null ? creationDate.getTime() : null;
+    }
+
+    @Exclude
+    public Date getExpirationDate() {
+        return expirationDate != null ? new Date(expirationDate) : null;
+    }
+
+    @Exclude
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate != null ? expirationDate.getTime() : null;
+    }
+
+    @Exclude
+    public Date getRedeemedDate() {
+        return redeemedDate != null ? new Date(redeemedDate) : null;
+    }
+
+    @Exclude
+    public void setRedeemedDate(Date redeemedDate) {
+        this.redeemedDate = redeemedDate != null ? redeemedDate.getTime() : null;
+    }
+
+    // Getters/Setters para campos almacenados
+    @PropertyName("creationDate")
+    public Long getCreationDateTimestamp() { return creationDate; }
+
+    @PropertyName("creationDate")
+    public void setCreationDateTimestamp(Long creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    @PropertyName("expirationDate")
+    public Long getExpirationDateTimestamp() { return expirationDate; }
+
+    @PropertyName("expirationDate")
+    public void setExpirationDateTimestamp(Long expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    @PropertyName("redeemedDate")
+    public Long getRedeemedDateTimestamp() { return redeemedDate; }
+
+    @PropertyName("redeemedDate")
+    public void setRedeemedDateTimestamp(Long redeemedDate) {
+        this.redeemedDate = redeemedDate;
+    }
+
+    @PropertyName("status")
+    public String getStatus() { return status; }
+
+    @PropertyName("status")
+    public void setStatus(String status) { this.status = status; }
+
+    @PropertyName("recipientEmail")
+    public String getRecipientEmail() { return recipientEmail; }
+
+    @PropertyName("recipientEmail")
     public void setRecipientEmail(String recipientEmail) {
         this.recipientEmail = recipientEmail;
     }
 
-    public String getCardId() {
-        return cardId;
+    @PropertyName("createdBy")
+    public String getCreatedBy() { return createdBy; }
+
+    @PropertyName("createdBy")
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+
+    @PropertyName("redeemedBy")
+    public String getRedeemedBy() { return redeemedBy; }
+
+    @PropertyName("redeemedBy")
+    public void setRedeemedBy(String redeemedBy) { this.redeemedBy = redeemedBy; }
+
+    // -------------------------------
+    // Métodos de negocio
+    // -------------------------------
+
+    @Exclude
+    public boolean isValid() {
+        return "active".equals(status) && !isExpired();
     }
 
-    public void setCardId(String cardId) {
-        this.cardId = cardId;
+    @Exclude
+    public boolean isExpired() {
+        return expirationDate != null && System.currentTimeMillis() > expirationDate;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getRedeemedBy() {
-        return redeemedBy;
-    }
-
-    public void setRedeemedBy(String redeemedBy) {
-        this.redeemedBy = redeemedBy;
-    }
-
-    public Date getRedeemedDate() {
-        return redeemedDate;
-    }
-
-    public void setRedeemedDate(Date redeemedDate) {
-        this.redeemedDate = redeemedDate;
-    }
-
-    // Método para generar códigos de Gift Card (puede moverse a un servicio)
+    @Exclude
     public static String generateGiftCardCode() {
         String characters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         StringBuilder code = new StringBuilder("PDM-");
@@ -133,56 +166,62 @@ public class GiftCard {
         return code.toString();
     }
 
-    // Método para verificar si la tarjeta es válida
-    public boolean isValid() {
-        return "active".equals(status) && new Date().before(expirationDate);
-    }
+    // -------------------------------
+    // Conversión Firebase
+    // -------------------------------
 
+    @Exclude
     public Map<String, Object> toMap() {
         Map<String, Object> result = new HashMap<>();
         result.put("cardId", cardId);
         result.put("code", code);
         result.put("amount", amount);
         result.put("currency", currency);
-        result.put("creationDate", creationDate != null ? creationDate.getTime() : null);
-        result.put("expirationDate", expirationDate != null ? expirationDate.getTime() : null);
+        result.put("creationDate", creationDate);
+        result.put("expirationDate", expirationDate);
         result.put("status", status);
         result.put("createdBy", createdBy);
         result.put("recipientEmail", recipientEmail);
         result.put("redeemedBy", redeemedBy);
-        result.put("redeemedDate", redeemedDate != null ? redeemedDate.getTime() : null);
+        result.put("redeemedDate", redeemedDate);
         return result;
     }
 
+    @Exclude
     public static GiftCard fromSnapshot(DataSnapshot snapshot) {
-        GiftCard giftCard = new GiftCard();
-        giftCard.setCardId(snapshot.child("cardId").getValue(String.class));
-        giftCard.setCode(snapshot.child("code").getValue(String.class));
-        giftCard.setAmount(snapshot.child("amount").getValue(Double.class));
-        giftCard.setCurrency(snapshot.child("currency").getValue(String.class));
-        giftCard.setStatus(snapshot.child("status").getValue(String.class));
-        giftCard.setCreatedBy(snapshot.child("createdBy").getValue(String.class));
-        giftCard.setRecipientEmail(snapshot.child("recipientEmail").getValue(String.class));
-        giftCard.setRedeemedBy(snapshot.child("redeemedBy").getValue(String.class));
+        GiftCard card = new GiftCard();
+        card.setCardId(snapshot.getKey());
 
-        // Conversión de timestamps a Date
-        Long creationTimestamp = snapshot.child("creationDate").getValue(Long.class);
-        if (creationTimestamp != null) {
-            giftCard.setCreationDate(new Date(creationTimestamp));
+        // Mapeo seguro de campos
+        if (snapshot.hasChild("code")) card.setCode(snapshot.child("code").getValue(String.class));
+        if (snapshot.hasChild("amount")) card.setAmount(snapshot.child("amount").getValue(Double.class));
+        if (snapshot.hasChild("currency")) card.setCurrency(snapshot.child("currency").getValue(String.class));
+        if (snapshot.hasChild("status")) card.setStatus(snapshot.child("status").getValue(String.class));
+        if (snapshot.hasChild("createdBy")) card.setCreatedBy(snapshot.child("createdBy").getValue(String.class));
+        if (snapshot.hasChild("recipientEmail")) card.setRecipientEmail(snapshot.child("recipientEmail").getValue(String.class));
+        if (snapshot.hasChild("redeemedBy")) card.setRedeemedBy(snapshot.child("redeemedBy").getValue(String.class));
+
+        // Manejo de fechas
+        if (snapshot.hasChild("creationDate")) {
+            Long ts = snapshot.child("creationDate").getValue(Long.class);
+            card.setCreationDateTimestamp(ts);
         }
 
-        Long expirationTimestamp = snapshot.child("expirationDate").getValue(Long.class);
-        if (expirationTimestamp != null) {
-            giftCard.setExpirationDate(new Date(expirationTimestamp));
+        if (snapshot.hasChild("expirationDate")) {
+            Long ts = snapshot.child("expirationDate").getValue(Long.class);
+            card.setExpirationDateTimestamp(ts);
         }
 
-        Long redeemedTimestamp = snapshot.child("redeemedDate").getValue(Long.class);
-        if (redeemedTimestamp != null) {
-            giftCard.setRedeemedDate(new Date(redeemedTimestamp));
+        if (snapshot.hasChild("redeemedDate")) {
+            Long ts = snapshot.child("redeemedDate").getValue(Long.class);
+            card.setRedeemedDateTimestamp(ts);
         }
 
-        return giftCard;
+        // Auto-actualizar estado si está expirado
+        if ("active".equals(card.getStatus()) && card.isExpired()) {
+            card.setStatus("expired");
+        }
+
+        return card;
     }
-
-
 }

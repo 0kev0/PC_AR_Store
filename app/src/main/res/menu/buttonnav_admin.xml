@@ -9,15 +9,15 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/nav_users"
-        android:icon="@drawable/ic_users"
-        android:title="Usuarios"
+        android:id="@+id/nav_ventas"
+        android:icon="@drawable/ic_sales"
+        android:title="Ventas"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/nav_products"
-        android:icon="@drawable/ic_products"
-        android:title="Productos"
+        android:id="@+id/nav_balance"
+        android:icon="@drawable/ic_bag"
+        android:title="Balance"
         app:showAsAction="ifRoom" />
 
     <item

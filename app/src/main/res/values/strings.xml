@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PC AR Store</string>
+    <string name="app_name">Azamoz Shopping</string>
 
     <!-- Nuevas cadenas para fechas de pedido -->
     <string name="order_date">Orden:</string>

@@ -63,8 +63,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-database'
-    implementation 'com.google.firebase:firebase-storage' //Firebase Storage
+
+    //Firebase Storage
+    implementation 'com.google.firebase:firebase-storage'
     implementation 'com.google.firebase:firebase-firestore'
+
+    //Mesagges Firebase
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
     implementation 'com.google.firebase:firebase-functions:20.0.0'
 
@@ -96,9 +100,14 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
 
-    //JavaMail
-    implementation 'com.sun.mail:android-mail:1.6.6'
-    implementation 'com.sun.mail:android-activation:1.6.6'
+    // Dependencias para generación de PDF
+    implementation 'com.itextpdf:itext7-core:7.1.15'
+    implementation 'androidx.core:core:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.karumi:dexter:6.2.3'
+    implementation 'com.itextpdf:layout:7.2.3'
+    implementation 'com.itextpdf:io:7.2.3'
+    implementation 'com.itextpdf:kernel:7.2.3'
 
     implementation platform('com.google.firebase:firebase-bom:32.0.0')
     implementation 'com.google.firebase:firebase-functions'

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Product {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String productId;
     private String name;
     private double price;
@@ -143,12 +144,12 @@ public class Product {
         this.specifications = specifications != null ? specifications : new HashMap<>();
     }
 
-    // Método para agregar una especificación individual
+    // Metodo para agregar una especificación individual
     public void addSpecification(String key, String value) {
         this.specifications.put(key, value);
     }
 
-    // Método para remover una especificación
+    // Metodo para remover una especificación
     public void removeSpecification(String key) {
         this.specifications.remove(key);
     }
@@ -158,7 +159,7 @@ public class Product {
         return (imageUrls != null && !imageUrls.isEmpty()) ? imageUrls.get(0) : null;
     }
 
-    // Método para calcular el margen de ganancia
+    // Metodo para calcular el margen de ganancia
     public double getProfitMargin() {
         return price - cost;
     }

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Calendar;
 
 public class Order {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String orderId;
     private String userId;
     private Date date;
@@ -28,9 +29,10 @@ public class Order {
     private Date calculateDeliveryDate(Date purchaseDate) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(purchaseDate);
-        calendar.add(Calendar.MINUTE, 1); // Agrega 1 minuto
+        calendar.add(Calendar.MINUTE, 1);
         return calendar.getTime();
     }
+
 
     // Getters y Setters
     public String getOrderId() {
@@ -57,11 +59,9 @@ public class Order {
         this.date = date;
         this.deliveryDate = calculateDeliveryDate(date);
     }
-
     public Date getDeliveryDate() {
         return deliveryDate;
     }
-
     public void setDeliveryDate(Date deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
@@ -89,4 +89,5 @@ public class Order {
     public void setItems(Map<String, OrderItem> items) {
         this.items = items;
     }
+
 }

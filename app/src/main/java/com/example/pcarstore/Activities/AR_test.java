@@ -43,7 +43,6 @@ import com.google.ar.core.TrackingState;
 import com.example.pcarstore.helpers.CameraPermissionHelper;
 import com.example.pcarstore.helpers.DepthSettings;
 import com.example.pcarstore.helpers.DisplayRotationHelper;
-import com.example.pcarstore.helpers.FullScreenHelper;
 import com.example.pcarstore.helpers.InstantPlacementSettings;
 import com.example.pcarstore.helpers.SnackbarHelper;
 import com.example.pcarstore.helpers.TapHelper;

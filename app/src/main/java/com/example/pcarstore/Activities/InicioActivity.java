@@ -16,8 +16,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.badge.BadgeDrawable;
 
 public class InicioActivity extends AppCompatActivity {
-
-    private BottomNavigationView bottomNavigationView;
     private BadgeDrawable cartBadge;
     private int cartItemCount = 0;
 
@@ -26,7 +24,7 @@ public class InicioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(this::onNavigationItemSelected);
 
         // Configurar el badge
@@ -47,15 +45,11 @@ public class InicioActivity extends AppCompatActivity {
             cartBadge.setVisible(false);
         }
     }
+
     public void incrementCartCount() {
         cartItemCount++;
         updateCartBadge(cartItemCount);
 
-    }
-
-
-    private int getCartItemCount() {
-        return cartItemCount;
     }
 
     private boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -82,4 +76,5 @@ public class InicioActivity extends AppCompatActivity {
         transaction.replace(R.id.fragmentContainerView2, fragment);
         transaction.commit();
     }
+
 }

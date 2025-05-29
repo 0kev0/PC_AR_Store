@@ -8,36 +8,20 @@
     android:background="@color/white"
     android:padding="8dp">
 
-    <!-- ImageView para mostrar/ocultar búsqueda y categorías -->
-
-    <!-- Barra de búsqueda -->
-
-    <ImageView
-        android:id="@+id/toggleSearchButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="Toggle búsqueda"
-        android:padding="8dp"
-        app:tint="@color/gray_650"
-        android:src="@drawable/ic_close_eye"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/searchLayout"
+        android:id="@+id/searchLayoutProducts"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:textColorHint="@color/black"
         android:visibility="visible"
         app:errorTextColor="@color/black"
-        android:textColorHint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/categoriesRecycler"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toggleSearchButton">
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/searchEditText"
@@ -63,7 +47,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchLayout"
+        app:layout_constraintTop_toBottomOf="@id/searchLayoutProducts"
         tools:listitem="@layout/item_category" />
 
     <!-- RecyclerView para mostrar los productos -->

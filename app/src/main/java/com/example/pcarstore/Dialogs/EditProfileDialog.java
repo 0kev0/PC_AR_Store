@@ -45,7 +45,6 @@ import java.util.Map;
 
 public class EditProfileDialog extends DialogFragment {
     private static final int PICK_IMAGE_REQUEST = 71;
-
     private final Context context;
     private final FirebaseAuth mAuth;
     private final FirebaseDatabase database;
@@ -61,7 +60,6 @@ public class EditProfileDialog extends DialogFragment {
     private String selectedCiudad;
     private ImageView ivProfilePreview;
     private static final String DEFAULT_PROFILE_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/R.jpeg?alt=media&token=7c62b33a-f487-4257-8dd8-c6955ed6248e";
-
 
     public interface OnProfileUpdateListener {
         void onImageSelectionRequested(Intent intent, int requestCode);
@@ -86,6 +84,7 @@ public class EditProfileDialog extends DialogFragment {
         this.storageRef = storage.getReference("USERS/CLIENTS");
         this.currentUser = mAuth.getCurrentUser();
     }
+
 
     public void show() {
         if (currentUser == null) {
@@ -154,6 +153,7 @@ public class EditProfileDialog extends DialogFragment {
     public void setOnProfileUpdateListener(OnProfileUpdateListener listener) {
         this.listener = listener;
     }
+
     private void loadProfileImage() {
         // Imagen seleccionada para actualizar
         if (imageUri != null) {
@@ -317,7 +317,6 @@ public class EditProfileDialog extends DialogFragment {
             Toast.makeText(context, "No se pudo abrir el selector de imágenes", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void uploadImageAndUpdateProfile(String newName, String departamento, String ciudad) {
         if (currentUser == null) {
@@ -539,4 +538,5 @@ public class EditProfileDialog extends DialogFragment {
             progressDialog.dismiss();
         }
     }
+
 }

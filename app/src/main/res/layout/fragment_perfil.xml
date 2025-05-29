@@ -165,8 +165,22 @@
                 app:iconSize="24dp"
                 android:paddingStart="16dp"
                 android:gravity="start|center_vertical"/>
-
-
+            <!-- Opción Lista de deseos -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPrime"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Membresia prime"
+                android:textAllCaps="false"
+                android:textColor="@color/text_light_color"
+                app:icon="@drawable/ic_prime"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/text_light_color"
+                app:iconSize="24dp"
+                android:paddingStart="16dp"
+                android:gravity="start|center_vertical"/>
 
             <!-- Opción Lista de deseos -->
             <com.google.android.material.button.MaterialButton

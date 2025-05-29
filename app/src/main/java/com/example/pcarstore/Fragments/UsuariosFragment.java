@@ -34,31 +34,28 @@ import java.util.List;
 import java.util.Map;
 
 public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClickListener {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private static final String TAG = "UsuariosFragment";
     private DatabaseReference usersRef;
-    private Button btnNewUser;
     private UserAdapter userAdapter;
     private LinearLayout emptyState;
     private ChipGroup chipGroup;
-    private Chip chipAll, chipClientes, chipAdmins;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_usuarios, container, false);
 
         // Inicializar Firebase
         usersRef = FirebaseDatabase.getInstance().getReference("users");
 
         // Inicializar vistas
-        btnNewUser = view.findViewById(R.id.btnAddUser);
+        Button btnNewUser = view.findViewById(R.id.btnAddUser);
         RecyclerView recyclerView = view.findViewById(R.id.rvUsers);
         emptyState = view.findViewById(R.id.emptyState);
         chipGroup = view.findViewById(R.id.chipGroup);
-        chipAll = view.findViewById(R.id.chipAll);
-        chipClientes = view.findViewById(R.id.chipClientes);
-        chipAdmins = view.findViewById(R.id.chipAdmins);
+        Chip chipAll = view.findViewById(R.id.chipAll);
+        Chip chipClientes = view.findViewById(R.id.chipClientes);
+        Chip chipAdmins = view.findViewById(R.id.chipAdmins);
 
         // Configurar RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -87,7 +84,6 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
             updateEmptyState();
         });
     }
-
 
     private void loadUsers() {
         ProgressDialog progress = new ProgressDialog(getContext());
@@ -297,4 +293,5 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
                     }
                 });
     }
+
 }
