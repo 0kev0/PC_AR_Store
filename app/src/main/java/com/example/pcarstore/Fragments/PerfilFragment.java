@@ -99,9 +99,7 @@ public class PerfilFragment extends Fragment {
 
             @Override
             public void onProfileUpdateFailed(Exception exception) {
-                Toast.makeText(requireContext(),
-                        "Error al actualizar perfil: " + exception.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Error al actualizar perfil: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -355,9 +353,7 @@ public class PerfilFragment extends Fragment {
         if (mAuth.getCurrentUser() != null) {
             startActivity(new Intent(getActivity(), OrdersActivity.class));
         } else {
-            Toast.makeText(getContext(),
-                    "Debes iniciar sesión para ver tus pedidos",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Debes iniciar sesión para ver tus pedidos", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -369,17 +365,13 @@ public class PerfilFragment extends Fragment {
             transaction.addToBackStack(null);
             transaction.commit();
         } else {
-            Toast.makeText(getContext(),
-                    "Debes iniciar sesión para ver tu Wishlist",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Debes iniciar sesión para ver tu Wishlist", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void showGifCard() {
         if (mAuth.getCurrentUser() == null) {
-            Toast.makeText(getContext(),
-                    "Debes iniciar sesión para canjear Gift Cards",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Debes iniciar sesión para canjear Gift Cards", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -409,13 +401,9 @@ public class PerfilFragment extends Fragment {
                     @Override
                     public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
                         if (error != null) {
-                            Toast.makeText(requireContext(),
-                                    "Error al actualizar saldo",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "Error al actualizar saldo", Toast.LENGTH_SHORT).show();
                         } else if (committed) {
-                            Toast.makeText(requireContext(),
-                                    String.format("¡Saldo actualizado! +$%.2f", amount),
-                                    Toast.LENGTH_LONG).show();
+                            Toast.makeText(requireContext(), String.format("¡Saldo actualizado! +$%.2f", amount), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -477,7 +465,7 @@ public class PerfilFragment extends Fragment {
 
     private void showPaymentMethods() {
         // Implement logic to show payment methods
-        Toast.makeText(getContext(), "Mostrar métodos de pago", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "proximamente...", Toast.LENGTH_SHORT).show();
     }
 
     private void enableNotifications() {

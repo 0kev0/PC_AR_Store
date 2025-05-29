@@ -135,9 +135,7 @@ public class RegisterActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         handleRegistrationSuccess(email, fullName);
                     } else {
-                        Toast.makeText(this,
-                                "Error en el registro: " + task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error en el registro: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -155,9 +153,7 @@ public class RegisterActivity extends AppCompatActivity {
                     if (profileTask.isSuccessful()) {
                         saveUserToDatabase(email, fullName, firebaseUser.getUid());
                     } else {
-                        Toast.makeText(this,
-                                "Error al actualizar perfil",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error al actualizar perfil", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

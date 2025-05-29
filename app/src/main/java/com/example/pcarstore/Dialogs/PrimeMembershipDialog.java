@@ -160,7 +160,7 @@ public class PrimeMembershipDialog extends Dialog {
                     // Guardar registro de la transacción
                     saveTransaction(() -> {
                         progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "¡Membresía Prime adquirida con éxito!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "¡Membresía Prime adquirida con éxito :)", Toast.LENGTH_SHORT).show();
                         if (purchaseListener != null) {
                             purchaseListener.onPrimePurchased(true);
                         }
