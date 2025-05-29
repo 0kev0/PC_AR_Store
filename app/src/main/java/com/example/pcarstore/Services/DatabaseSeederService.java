@@ -1,5 +1,9 @@
 package com.example.pcarstore.Services;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
+
 import com.example.pcarstore.ModelsDB.Category;
 import com.example.pcarstore.ModelsDB.Departamento;
 import com.example.pcarstore.ModelsDB.DiscountCode;
@@ -30,8 +34,8 @@ public class DatabaseSeederService {
         insertCategories();
         //insertDepartamentos();
         insertProducts();
-        //insertGiftCards();
-        //insertDiscountCodes();
+        insertGiftCards();
+        insertDiscountCodes();
     }
 
     /**
@@ -781,6 +785,20 @@ public class DatabaseSeederService {
      * Insert gift cards into the database
      */
     private void insertGiftCards() {
+
+        GiftCard specialGiftCard = new GiftCard(100.00, "admin"); // Set your desired amount and creator
+        specialGiftCard.setCardId("gc_special_001"); // Set a unique ID
+        specialGiftCard.setCode("PDM-SUFIII"); // Override the generated code with your specific code
+
+// Set dates (optional, the constructor already sets them)
+        specialGiftCard.setCreationDate(new Date());
+        specialGiftCard.setExpirationDate(new Date(System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000))); // 1 year
+
+// Save to Firebase
+        mDatabase.child("giftCards").child(specialGiftCard.getCardId()).setValue(specialGiftCard)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Special gift card created successfully"))
+                .addOnFailureListener(e -> Log.e(TAG, "Error creating special gift card", e));
+
         // GiftCard 1
         GiftCard gc1 = new GiftCard(GiftCard.generateGiftCardCode(), 50.00, "admin1");
         gc1.setCardId("gc_001");
@@ -843,9 +861,10 @@ public class DatabaseSeederService {
      * Insert discount codes into the database
      */
     private void insertDiscountCodes() {
+
         // Código 1: Descuento del 10%
         DiscountCode code1 = new DiscountCode(
-                "NEWSETUP10",
+                "LIVIN10",
                 10.0,
                 "admin1"
         );

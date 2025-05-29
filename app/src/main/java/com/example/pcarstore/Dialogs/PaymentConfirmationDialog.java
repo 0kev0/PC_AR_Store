@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pcarstore.Adapters.SummaryProductAdapter;
 import com.example.pcarstore.ModelsDB.Departamento;
 import com.example.pcarstore.ModelsDB.DiscountCode;
-import com.example.pcarstore.ModelsDB.OrderItem;;
+import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.R;
 import com.example.pcarstore.Services.SoundService;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,6 +46,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class PaymentConfirmationDialog extends DialogFragment {
+    /*************************************************************VARIABLES******************************************************************************************/
     private final List<OrderItem> orderItems;
     private final double cartTotal;
     private final PaymentConfirmationListener listener;
@@ -89,6 +90,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
         View dialogView = inflater.inflate(R.layout.dialog_payment_confirmation, null);
         builder.setView(dialogView);
 
+        // Inicializar vistas
         tvAvailableBalance = dialogView.findViewById(R.id.tv_available_balance);
         EditText etDiscountCode = dialogView.findViewById(R.id.et_discount_code);
         Button btnApplyDiscount = dialogView.findViewById(R.id.btn_apply_discount);
@@ -100,16 +102,21 @@ public class PaymentConfirmationDialog extends DialogFragment {
         Button btnConfirmPayment = dialogView.findViewById(R.id.btn_confirm_payment);
         Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
 
+        // Configurar RecyclerView
         rvSummaryProducts.setLayoutManager(new LinearLayoutManager(getContext()));
         SummaryProductAdapter adapter = new SummaryProductAdapter(orderItems);
         rvSummaryProducts.setAdapter(adapter);
 
+        // Mostrar costo de envío con valor por defecto mientras se calcula
         tvShipping.setText(String.format(Locale.getDefault(), "%.2f $", 0.0));
 
+        // Cargar datos del usuario (saldo y membresía)
         loadUserData();
 
+        // Configurar montos iniciales (envío se calculará después de cargar datos)
         updatePaymentSummary(cartTotal, 0.0, currentDiscount);
 
+        // Configurar botones
         btnApplyDiscount.setOnClickListener(v -> {
             String discountCode = etDiscountCode.getText().toString().trim();
             if (!discountCode.isEmpty()) {
@@ -142,15 +149,19 @@ public class PaymentConfirmationDialog extends DialogFragment {
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Obtener saldo
                 Double balance = snapshot.child("saldo").getValue(Double.class);
                 if (balance != null) {
                     userBalance = balance;
                     tvAvailableBalance.setText(String.format(Locale.getDefault(),
                             "Saldo disponible: %.2f $", userBalance));
                 }
+
+                // Obtener membresía Prime
                 Boolean prime = snapshot.child("membresiaPrime").getValue(Boolean.class);
                 isPrimeMember = prime != null && prime;
 
+                // Obtener ubicación y calcular envío
                 String departamento = snapshot.child("departamento").getValue(String.class);
                 String ciudad = snapshot.child("ciudad").getValue(String.class);
 
@@ -159,22 +170,24 @@ public class PaymentConfirmationDialog extends DialogFragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                // Usar valores por defecto en caso de error
                 calculateShippingCost("", "", false);
             }
         });
     }
 
     private void calculateShippingCost(String departamento, String ciudad, boolean isPrimeMember) {
-
+        // 1. Verificar membresía Prime (envío gratis)
         if (isPrimeMember) {
             shippingCost = 0.0;
+            // Actualizar UI directamente con mensaje de envío gratis
             tvShipping.setText(String.format(Locale.getDefault(), "GRATIS", shippingCost));
             Log.d("ShippingCost", "Free shipping for Prime member");
             updatePaymentSummary(cartTotal, shippingCost, currentDiscount);
             return;
         }
 
+        // 2. Si no hay datos de ubicación, usar costo por defecto
         if (departamento == null || departamento.isEmpty() || ciudad == null || ciudad.isEmpty()) {
             shippingCost = cartTotal > 500 ? 2.99 : 5.99;
             updatePaymentSummary(cartTotal, shippingCost, currentDiscount);
@@ -182,8 +195,10 @@ public class PaymentConfirmationDialog extends DialogFragment {
             return;
         }
 
+        // 3. Mostrar que se está calculando el costo
         tvShipping.setText("Calculando...");
 
+        // 4. Obtener costos de envío desde el departamento correspondiente
         Query deptQuery = FirebaseDatabase.getInstance()
                 .getReference("departamentos")
                 .orderByChild("nombre")
@@ -196,12 +211,14 @@ public class PaymentConfirmationDialog extends DialogFragment {
                     for (DataSnapshot depSnapshot : dataSnapshot.getChildren()) {
                         Departamento dept = depSnapshot.getValue(Departamento.class);
                         if (dept != null) {
+                            // Calcular costo usando el nuevo modelo
                             shippingCost = dept.calcularCostoEnvio(ciudad);
                             Log.d("ShippingCost", "Calculated shipping cost: " + shippingCost);
 
+                            // Aplicar descuento por compra mayor a $50
                             if (cartTotal > 500) {
                                 Log.d("ShippingCost", "Applying discount > 500");
-                                shippingCost *= 0.5;
+                                shippingCost *= 0.5; // 50% de descuento
                             }
 
                             updatePaymentSummary(cartTotal, shippingCost, currentDiscount);
@@ -210,6 +227,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
                     }
                 }
 
+                // Si no se encuentra el departamento
                 shippingCost = cartTotal > 50 ? 2.99 : 5.99;
                 Log.d("ShippingCost", "Department not found");
                 updatePaymentSummary(cartTotal, shippingCost, currentDiscount);
@@ -276,6 +294,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
 
         String transactionId = transactionsRef.push().getKey();
 
+        // Crear objeto de transacción
         Map<String, Object> transaction = new HashMap<>();
         transaction.put("amount", amount);
         transaction.put("date", ServerValue.TIMESTAMP);
@@ -284,6 +303,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
         transaction.put("type", "sale");
         transaction.put("userId", userId);
 
+        // Agregar detalles de los productos
         List<Map<String, Object>> products = new ArrayList<>();
         for (OrderItem item : orderItems) {
             Map<String, Object> product = new HashMap<>();
@@ -294,6 +314,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
         }
         transaction.put("products", products);
 
+        // Agregar información de envío y descuento si aplica
         transaction.put("shippingCost", shippingCost);
         if (appliedDiscountCode != null) {
             transaction.put("discountCode", appliedDiscountCode);
@@ -341,10 +362,10 @@ public class PaymentConfirmationDialog extends DialogFragment {
         });
     }
 
-
     private void validateAndApplyDiscount(String code) {
         DatabaseReference discountsRef = FirebaseDatabase.getInstance().getReference("discountCodes");
         Query discountQuery = discountsRef.orderByChild("code").equalTo(code);
+        Log.d("DiscountCode", "Validating discount code: " + code);
 
         discountQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -358,6 +379,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
                     DiscountCode discount = discountSnapshot.getValue(DiscountCode.class);
                     if (discount == null) continue;
 
+                    // Validar el código
                     if (!discount.isValid()) {
                         Toast.makeText(getContext(),
                                 getDiscountValidationError(discount),
@@ -365,6 +387,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
                         return;
                     }
 
+                    // Validar mínimo de compra
                     if (cartTotal < discount.getMinPurchaseRequired()) {
                         String message = String.format(Locale.getDefault(),
                                 "Requiere compra mínima de %.2f €",
@@ -373,6 +396,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
                         return;
                     }
 
+                    // Aplicar descuento
                     applyValidDiscount(discount, discountSnapshot.getKey());
                 }
             }
@@ -387,6 +411,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
     private void updatePaymentSummary(double subtotal, double shipping, double discount) {
         tvSubtotal.setText(String.format(Locale.getDefault(), "%.2f $", subtotal));
 
+        // Actualizar con lógica específica para el envío
         if (isPrimeMember) {
             tvShipping.setText("GRATIS (Prime)");
             tvShipping.setTextColor(Color.GREEN);
@@ -395,6 +420,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
             tvShipping.setText("GRATIS");
             Log.d("ShippingCost", "Free shipping");
         } else if (cartTotal > 500 && shipping < 5.99) {
+            // Si tiene descuento por compra mayor a 500
             tvShipping.setText(String.format(Locale.getDefault(), "%.2f $ (50%% desc.)", shipping));
             Log.d("ShippingCost", "Shipping cost with discount: " + shipping);
         } else {

@@ -256,7 +256,7 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     private void createOrder(double newBalance, double amountPaid) {
         Order order = new Order(
                 mAuth.getCurrentUser().getUid(),
-                "completada",
+                "processing",
                 amountPaid
         );
 

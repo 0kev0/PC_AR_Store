@@ -1,17 +1,30 @@
 package com.example.pcarstore.ModelsDB;
 
+import com.google.firebase.database.Exclude;
 import java.util.Date;
 
 public class DiscountCode {
-   private String codeId;
+    /*************************************************************VARIABLES******************************************************************************************/
+    private String codeId;
     private String code;
-    private double discountPercentage;
+    private double discountPercentage; // 15.0 = 15%
+
+    @Exclude
     private Date creationDate;
+    private Long creationDateTimestamp;
+
+    @Exclude
     private Date expirationDate;
-    private String status;
+    private Long expirationDateTimestamp;
+
+    private String status; // "active", "used", "expired"
     private String createdBy;
     private String usedBy;
+
+    @Exclude
     private Date usedDate;
+    private Long usedDateTimestamp;
+
     private double minPurchaseRequired;
 
     public DiscountCode() {}
@@ -20,12 +33,13 @@ public class DiscountCode {
         this.code = code;
         this.discountPercentage = discountPercentage;
         this.createdBy = createdBy;
-        this.creationDate = new Date();
-        this.expirationDate = new Date(System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000));
+        setCreationDate(new Date());
+        setExpirationDate(new Date(System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000))); // 30 días de validez
         this.status = "active";
         this.minPurchaseRequired = 0.0;
     }
 
+    // Getters y Setters normales
     public String getCodeId() { return codeId; }
     public void setCodeId(String codeId) { this.codeId = codeId; }
 
@@ -35,14 +49,7 @@ public class DiscountCode {
     public double getDiscountPercentage() { return discountPercentage; }
     public void setDiscountPercentage(double discountPercentage) { this.discountPercentage = discountPercentage; }
 
-    public Date getCreationDate() { return creationDate; }
-    public void setCreationDate(Date creationDate) { this.creationDate = creationDate; }
-
-    public Date getExpirationDate() { return expirationDate; }
-    public void setExpirationDate(Date expirationDate) { this.expirationDate = expirationDate; }
-
     public String getStatus() { return status; }
-
     public void setStatus(String status) { this.status = status; }
 
     public String getCreatedBy() { return createdBy; }
@@ -51,17 +58,96 @@ public class DiscountCode {
     public String getUsedBy() { return usedBy; }
     public void setUsedBy(String usedBy) { this.usedBy = usedBy; }
 
-    public Date getUsedDate() { return usedDate; }
-    public void setUsedDate(Date usedDate) { this.usedDate = usedDate; }
-
     public double getMinPurchaseRequired() { return minPurchaseRequired; }
     public void setMinPurchaseRequired(double minPurchaseRequired) { this.minPurchaseRequired = minPurchaseRequired; }
 
+    // Getters y Setters para fechas (compatibilidad con Firebase)
+    @Exclude
+    public Date getCreationDate() {
+        if (creationDate == null && creationDateTimestamp != null) {
+            creationDate = new Date(creationDateTimestamp);
+        }
+        return creationDate;
+    }
+
+    @Exclude
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+        this.creationDateTimestamp = creationDate != null ? creationDate.getTime() : null;
+    }
+
+    public Long getCreationDateTimestamp() {
+        if (creationDateTimestamp == null && creationDate != null) {
+            creationDateTimestamp = creationDate.getTime();
+        }
+        return creationDateTimestamp;
+    }
+
+    public void setCreationDateTimestamp(Long creationDateTimestamp) {
+        this.creationDateTimestamp = creationDateTimestamp;
+        this.creationDate = creationDateTimestamp != null ? new Date(creationDateTimestamp) : null;
+    }
+
+    @Exclude
+    public Date getExpirationDate() {
+        if (expirationDate == null && expirationDateTimestamp != null) {
+            expirationDate = new Date(expirationDateTimestamp);
+        }
+        return expirationDate;
+    }
+
+    @Exclude
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+        this.expirationDateTimestamp = expirationDate != null ? expirationDate.getTime() : null;
+    }
+
+    public Long getExpirationDateTimestamp() {
+        if (expirationDateTimestamp == null && expirationDate != null) {
+            expirationDateTimestamp = expirationDate.getTime();
+        }
+        return expirationDateTimestamp;
+    }
+
+    public void setExpirationDateTimestamp(Long expirationDateTimestamp) {
+        this.expirationDateTimestamp = expirationDateTimestamp;
+        this.expirationDate = expirationDateTimestamp != null ? new Date(expirationDateTimestamp) : null;
+    }
+
+    @Exclude
+    public Date getUsedDate() {
+        if (usedDate == null && usedDateTimestamp != null) {
+            usedDate = new Date(usedDateTimestamp);
+        }
+        return usedDate;
+    }
+
+    @Exclude
+    public void setUsedDate(Date usedDate) {
+        this.usedDate = usedDate;
+        this.usedDateTimestamp = usedDate != null ? usedDate.getTime() : null;
+    }
+
+    public Long getUsedDateTimestamp() {
+        if (usedDateTimestamp == null && usedDate != null) {
+            usedDateTimestamp = usedDate.getTime();
+        }
+        return usedDateTimestamp;
+    }
+
+    public void setUsedDateTimestamp(Long usedDateTimestamp) {
+        this.usedDateTimestamp = usedDateTimestamp;
+        this.usedDate = usedDateTimestamp != null ? new Date(usedDateTimestamp) : null;
+    }
+
+    // Metodo de validación
     public boolean isValid() {
+        Date now = new Date();
         return "active".equals(status) &&
-                new Date().before(expirationDate) &&
+                (getExpirationDate() == null || now.before(getExpirationDate())) &&
                 usedBy == null;
     }
+
     public static String generateDiscountCode() {
         String characters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         StringBuilder code = new StringBuilder("PDM-");
@@ -74,9 +160,10 @@ public class DiscountCode {
         return code.toString();
     }
 
+    // Metodo para marcar como usado
     public void markAsUsed(String userId) {
         this.status = "used";
         this.usedBy = userId;
-        this.usedDate = new Date();
+        setUsedDate(new Date());
     }
 }
