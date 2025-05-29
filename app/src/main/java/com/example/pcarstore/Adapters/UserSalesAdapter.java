@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class UserSalesAdapter extends RecyclerView.Adapter<UserSalesAdapter.UserViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
-    private List<UserSales> userSalesList;
+   private List<UserSales> userSalesList;
     private final Context context;
     public interface OnUserClickListener {
         void onUserClick(String userId);
@@ -52,15 +51,12 @@ public class UserSalesAdapter extends RecyclerView.Adapter<UserSalesAdapter.User
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         UserSales userSales = userSalesList.get(position);
 
-        // Mostrar ID de usuario temporalmente
         holder.tvUserId.setText(userSales.getUserId());
         holder.tvOrderCount.setText(String.format("Pedidos: %d", userSales.getOrderCount()));
         holder.tvTotalAmount.setText(String.format(Locale.getDefault(), "Total: $%.2f", userSales.getTotalAmount()));
 
-        // Opcional: Obtener nombre real del usuario desde Firebase
         loadUserName(userSales.getUserId(), holder.tvUserId);
 
-        // Configurar el click listener para el elemento
         holder.itemView.setOnClickListener(v -> {
             showUserDetailsDialog(userSales);
         });

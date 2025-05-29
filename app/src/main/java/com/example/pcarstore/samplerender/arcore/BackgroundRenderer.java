@@ -39,7 +39,7 @@ import java.util.HashMap;
 public class BackgroundRenderer {
   private static final String TAG = BackgroundRenderer.class.getSimpleName();
 
-  // components_per_vertex * number_of_vertices * float_size
+
   private static final int COORDS_BUFFER_SIZE = 2 * 4 * 4;
 
   private static final FloatBuffer NDC_QUAD_COORDS_BUFFER =
@@ -93,9 +93,6 @@ public class BackgroundRenderer {
             Texture.WrapMode.CLAMP_TO_EDGE,
             /*useMipmaps=*/ false);
 
-    // Create a Mesh with three vertex buffers: one for the screen coordinates (normalized device
-    // coordinates), one for the camera texture coordinates (to be populated with proper data later
-    // before drawing), and one for the virtual scene texture coordinates (unit texture quad)
     VertexBuffer screenCoordsVertexBuffer =
         new VertexBuffer(render, /* numberOfEntriesPerVertex=*/ 2, NDC_QUAD_COORDS_BUFFER);
     cameraTexCoordsVertexBuffer =
@@ -201,7 +198,6 @@ public class BackgroundRenderer {
 
   /** Update depth texture with Image contents. */
   public void updateCameraDepthTexture(Image image) {
-    // SampleRender abstraction leaks here
     GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, cameraDepthTexture.getTextureId());
     GLES30.glTexImage2D(
         GLES30.GL_TEXTURE_2D,

@@ -307,7 +307,7 @@ public class PerfilFragment extends Fragment {
 
     private void loadImageWithGlide(String imageUrl) {
         Glide.with(requireContext())
-                .load(imageUrl)
+                .load(R.drawable.default_img)
                 .circleCrop()
                 .placeholder(R.drawable.ic_account_circle)
                 .error(R.drawable.ic_account_circle)
@@ -403,6 +403,8 @@ public class PerfilFragment extends Fragment {
                         if (error != null) {
                             Toast.makeText(requireContext(), "Error al actualizar saldo", Toast.LENGTH_SHORT).show();
                         } else if (committed) {
+                            loadUserDetailsFromDatabase(currentUser.getUid());
+
                             Toast.makeText(requireContext(), String.format("¡Saldo actualizado! +$%.2f", amount), Toast.LENGTH_LONG).show();
                         }
                     }

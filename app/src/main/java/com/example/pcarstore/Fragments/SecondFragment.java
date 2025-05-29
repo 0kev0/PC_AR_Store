@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import com.example.pcarstore.databinding.FragmentSecondBinding;
 
 public class SecondFragment extends Fragment {
-    /*************************************************************VARIABLES******************************************************************************************/
     private FragmentSecondBinding binding;
 
     @Override

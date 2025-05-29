@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PrimeMembershipDialog extends Dialog {
-/*************************************************************VARIABLES******************************************************************************************/
     private static final double PRIME_PRICE = 7.00;
     private User currentUser;
     private final OnPrimePurchaseListener purchaseListener;
@@ -142,7 +141,6 @@ public class PrimeMembershipDialog extends Dialog {
                     return Transaction.abort();
                 }
 
-                // Actualizar saldo y membresía
                 user.setSaldo(user.getSaldo() - PRIME_PRICE);
                 user.setMembresiaPrime(true);
                 currentData.setValue(user);
@@ -157,7 +155,7 @@ public class PrimeMembershipDialog extends Dialog {
                 }
 
                 if (committed) {
-                    // Guardar registro de la transacción
+
                     saveTransaction(() -> {
                         progressBar.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "¡Membresía Prime adquirida con éxito :)", Toast.LENGTH_SHORT).show();
@@ -197,7 +195,7 @@ public class PrimeMembershipDialog extends Dialog {
             return;
         }
 
-        // Crear objeto de transacción
+
         Map<String, Object> transaction = new HashMap<>();
         transaction.put("amount", PRIME_PRICE);
         transaction.put("date", ServerValue.TIMESTAMP);
@@ -205,9 +203,9 @@ public class PrimeMembershipDialog extends Dialog {
         transaction.put("status", "completed");
         transaction.put("type", "prime_membership");
         transaction.put("userId", firebaseUser.getUid());
-        transaction.put("membershipDuration", "30 días"); // Duración de la membresía
+        transaction.put("membershipDuration", "30 días");
 
-        // Guardar la transacción en Firebase
+
         transactionsRef.child(transactionId).setValue(transaction)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Transaction", "Transacción Prime guardada exitosamente");
@@ -215,7 +213,7 @@ public class PrimeMembershipDialog extends Dialog {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("Transaction", "Error al guardar transacción Prime", e);
-                    onComplete.run(); // Continuamos aunque falle el registro
+                    onComplete.run();
                 });
     }
 

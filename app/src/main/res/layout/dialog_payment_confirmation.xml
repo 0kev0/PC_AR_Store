@@ -41,7 +41,7 @@
                 android:id="@+id/til_discount_code"
                 style="@style/RoundedInput"
                 android:layout_width="wrap_content"
-                android:layout_height="52dp"
+                android:layout_height="56dp"
                 android:layout_weight="1"
             app:boxBackgroundMode="outline">
 
@@ -50,6 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="Código descuento"
+                    android:textSize="12dp"
                     android:inputType="textCapCharacters"
                     android:paddingEnd="16dp" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -59,7 +60,7 @@
                 android:id="@+id/btn_apply_discount"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="53dp"
+                android:layout_height="56dp"
                 android:layout_marginStart="8dp"
                 android:backgroundTint="@android:color/white"
                 android:minWidth="100dp"

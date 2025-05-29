@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@color/white"
         android:padding="16dp">
 
         <!-- Header - Order ID and Status -->
@@ -36,18 +37,6 @@
                 android:maxLines="1"
                 tools:text="#ORD-12345678" />
 
-            <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@color/blue"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:textAllCaps="true"
-                tools:text="COMPLETADO" />
         </LinearLayout>
 
         <!-- Order Date -->

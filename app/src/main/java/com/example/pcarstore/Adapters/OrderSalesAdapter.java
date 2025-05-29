@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 public class OrderSalesAdapter extends RecyclerView.Adapter<OrderSalesAdapter.OrderViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
     private List<Map<String, Object>> orders;
     public OrderSalesAdapter(List<Map<String, Object>> orders) {
         this.orders = orders;

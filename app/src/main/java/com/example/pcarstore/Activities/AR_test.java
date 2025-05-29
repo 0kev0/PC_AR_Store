@@ -414,7 +414,6 @@ public class AR_test extends AppCompatActivity implements SampleRender.Renderer 
             try (Image depthImage = frame.acquireDepthImage16Bits()) {
                 backgroundRenderer.updateCameraDepthTexture(depthImage);
             } catch (NotYetAvailableException e) {
-                // This normally means that depth data is not available yet.
             }
         }
 

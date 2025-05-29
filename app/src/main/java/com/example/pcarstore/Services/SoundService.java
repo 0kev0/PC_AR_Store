@@ -12,26 +12,23 @@ public class SoundService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null; // Service no vinculado
+        return null;
     }
     @Override
     public void onCreate() {
         super.onCreate();
-        // Inicializar MediaPlayer
         mediaPlayer = MediaPlayer.create(this, R.raw.notification_sound);
-        mediaPlayer.setLooping(false); // No repetir
+        mediaPlayer.setLooping(false);
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // Reproducir el sonido cuando se inicia el Service
         if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
             mediaPlayer.start();
         }
-        return START_STICKY; // El Service se reinicia si es eliminado por el sistema
+        return START_STICKY;
     }
     @Override
     public void onDestroy() {
-        // Liberar recursos al detener el Service
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Wishlist {
-    /*************************************************************VARIABLES******************************************************************************************/
     private String userId;
     private Map<String, OrderItem> items;
 
@@ -34,7 +33,6 @@ public class Wishlist {
         this.userId = userId;
     }
 
-    // Getters y setters
 
     public void addItem(OrderItem item) {
         items.put(item.getProductId(), item);

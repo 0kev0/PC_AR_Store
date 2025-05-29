@@ -15,10 +15,9 @@ import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 
 public class PrimeReminder {
-    /*************************************************************VARIABLES******************************************************************************************/
     private static final String PREFS_NAME = "PrimePrefs";
     private static final String LAST_SHOWN_KEY = "lastShownTime";
-    private static final long REMINDER_INTERVAL = 5 * 60 * 1000; // 5 minutos
+    private static final long REMINDER_INTERVAL = 5 * 60 * 1000;
 
     public static void showIfNeeded(Activity activity, User user) {
         Log.d("PrimeDialog", "showIfNeeded called");
@@ -94,17 +93,14 @@ public class PrimeReminder {
 
             Log.d("PrimeDialog", "Layout inflated successfully");
 
-            // Referencias a los botones únicamente
             Button subscribeButton = dialogView.findViewById(R.id.btn_start_prime_trial);
             Button MoreInfoButton = dialogView.findViewById(R.id.btn_learn_more);
             TextView dontShowAgain = dialogView.findViewById(R.id.btn_maybe_later);
 
 
-            // Crear el diálogo
             AlertDialog dialog = builder.setView(dialogView).create();
             Log.d("PrimeDialog", "Dialog created successfully");
 
-            // Configurar listeners de los botones
             if (subscribeButton != null) {
                 subscribeButton.setOnClickListener(v -> {
                     Log.d("PrimeDialog", "Subscribe button clicked");

@@ -25,9 +25,7 @@ import com.example.pcarstore.Adapters.SummaryProductAdapter;
 import com.example.pcarstore.ModelsDB.Departamento;
 import com.example.pcarstore.ModelsDB.DiscountCode;
 import com.example.pcarstore.ModelsDB.OrderItem;
-import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
-//import com.example.pcarstore.Services.OrderService;
 import com.example.pcarstore.Services.SoundService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +37,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-import com.example.pcarstore.Services.SoundService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -365,10 +362,10 @@ public class PaymentConfirmationDialog extends DialogFragment {
         });
     }
 
-
     private void validateAndApplyDiscount(String code) {
         DatabaseReference discountsRef = FirebaseDatabase.getInstance().getReference("discountCodes");
         Query discountQuery = discountsRef.orderByChild("code").equalTo(code);
+        Log.d("DiscountCode", "Validating discount code: " + code);
 
         discountQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

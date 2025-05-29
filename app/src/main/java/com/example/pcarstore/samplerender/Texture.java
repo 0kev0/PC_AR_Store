@@ -129,11 +129,6 @@ public class Texture implements Closeable {
     Texture texture = new Texture(render, Target.TEXTURE_2D, wrapMode);
     Bitmap bitmap = null;
     try {
-      // The following lines up to glTexImage2D could technically be replaced with
-      // GLUtils.texImage2d, but this method does not allow for loading sRGB images.
-
-      // Load and convert the bitmap and copy its contents to a direct ByteBuffer. Despite its name,
-      // the ARGB_8888 config is actually stored in RGBA order.
       bitmap =
           convertBitmapToConfig(
               BitmapFactory.decodeStream(render.getAssets().open(assetFileName)),
@@ -188,8 +183,6 @@ public class Texture implements Closeable {
   }
 
   private static Bitmap convertBitmapToConfig(Bitmap bitmap, Bitmap.Config config) {
-    // We use this method instead of BitmapFactory.Options.outConfig to support a minimum of Android
-    // API level 24.
     if (bitmap.getConfig() == config) {
       return bitmap;
     }

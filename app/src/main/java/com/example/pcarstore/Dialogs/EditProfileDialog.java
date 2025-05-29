@@ -112,7 +112,6 @@ public class EditProfileDialog extends DialogFragment {
 
         loadSpinnersData(spinnerDepartamento, spinnerCiudad);
 
-        // Configurar valores iniciales
         if (userData != null && userData.getName() != null && !userData.getName().isEmpty()) {
             etName.setText(userData.getName());
         } else if (currentUser.getDisplayName() != null) {
@@ -129,7 +128,6 @@ public class EditProfileDialog extends DialogFragment {
                 return;
             }
 
-            // Validar que se haya seleccionado un departamento y ciudad
             if (selectedDepartamento == null || selectedDepartamento.isEmpty()) {
                 Toast.makeText(context, "Por favor selecciona un departamento", Toast.LENGTH_SHORT).show();
                 return;
@@ -155,7 +153,6 @@ public class EditProfileDialog extends DialogFragment {
     }
 
     private void loadProfileImage() {
-        // Imagen seleccionada para actualizar
         if (imageUri != null) {
             Glide.with(context)
                     .load(imageUri)
@@ -167,7 +164,6 @@ public class EditProfileDialog extends DialogFragment {
             return;
         }
 
-        //  Imagen del usuario en la base de datos
         if (userData != null && userData.getProfileImageUrl() != null &&
                 !userData.getProfileImageUrl().isEmpty() &&
                 !userData.getProfileImageUrl().equals(DEFAULT_PROFILE_IMAGE_URL)) {
@@ -181,7 +177,6 @@ public class EditProfileDialog extends DialogFragment {
             return;
         }
 
-        //  Imagen de Firebase Auth
         if (currentUser.getPhotoUrl() != null) {
             Glide.with(context)
                     .load(currentUser.getPhotoUrl())
@@ -193,7 +188,6 @@ public class EditProfileDialog extends DialogFragment {
             return;
         }
 
-        //  Imagen por defecto
         Glide.with(context)
                 .load(DEFAULT_PROFILE_IMAGE_URL)
                 .placeholder(R.drawable.limo)
@@ -224,7 +218,6 @@ public class EditProfileDialog extends DialogFragment {
                 departamentoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerDepartamento.setAdapter(departamentoAdapter);
 
-                // Establecer selección actual si existe en userData
                 if (userData != null && userData.getDepartamento() != null && !userData.getDepartamento().isEmpty()) {
                     int position = departamentosList.indexOf(userData.getDepartamento());
                     if (position >= 0) {
@@ -243,7 +236,6 @@ public class EditProfileDialog extends DialogFragment {
                         ciudadAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinnerCiudad.setAdapter(ciudadAdapter);
 
-                        // Establecer selección actual si existe en userData
                         if (userData != null && userData.getCiudad() != null && !userData.getCiudad().isEmpty()) {
                             int ciudadPosition = ciudades.indexOf(userData.getCiudad());
                             if (ciudadPosition >= 0) {
@@ -280,7 +272,6 @@ public class EditProfileDialog extends DialogFragment {
             this.imageUri = imageUri;
             Log.d("EditProfile", "Nueva imagen asignada: " + imageUri.toString());
 
-            // Actualizar la vista previa
             if (ivProfilePreview != null) {
                 Glide.with(context)
                         .load(imageUri)
@@ -330,7 +321,6 @@ public class EditProfileDialog extends DialogFragment {
             return;
         }
 
-        // Verificar si hay una imagen previa que no sea la por defecto
         boolean shouldDeleteOldImage = userData != null &&
                 userData.getProfileImageUrl() != null &&
                 !userData.getProfileImageUrl().isEmpty() &&
@@ -338,10 +328,9 @@ public class EditProfileDialog extends DialogFragment {
 
         Log.d("EditProfile", "Preparando para subir imagen. Eliminar imagen anterior? " + shouldDeleteOldImage);
 
-        // Crear referencia con nueva estructura: USERS/CLIENTS/userId/UserName.jpg
-        String imageName = newName.replaceAll("\\s+", "_") + ".jpg"; // Reemplazar espacios por guiones bajos
-        StorageReference userFolderRef = storageRef.child(currentUser.getUid()); // Referencia a la carpeta del usuario
-        StorageReference fileReference = userFolderRef.child(imageName); // Referencia al archivo
+        String imageName = newName.replaceAll("\\s+", "_") + ".jpg";
+        StorageReference userFolderRef = storageRef.child(currentUser.getUid());
+        StorageReference fileReference = userFolderRef.child(imageName);
 
         Log.d("EditProfile", "Ruta de almacenamiento: " + fileReference.getPath());
         Log.d("EditProfile", "URI de la imagen a subir: " + imageUri.toString());
@@ -359,7 +348,6 @@ public class EditProfileDialog extends DialogFragment {
                     fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
                         Log.d("EditProfile", "URL de descarga obtenida: " + uri.toString());
 
-                        // Eliminar imagen anterior si no es la por defecto
                         if (shouldDeleteOldImage) {
                             StorageReference oldImageRef = storage.getReferenceFromUrl(userData.getProfileImageUrl());
                             Log.d("EditProfile", "Intentando eliminar imagen anterior: " + oldImageRef.getPath());
@@ -395,7 +383,7 @@ public class EditProfileDialog extends DialogFragment {
     }
 
     private void updateProfileWithoutImage(String newName, String departamento, String ciudad) {
-        // Mantener la imagen existente, incluyendo la posibilidad de que sea la por defecto
+
         String currentPhotoUrl = (userData != null && userData.getProfileImageUrl() != null) ?
                 userData.getProfileImageUrl() :
                 (currentUser.getPhotoUrl() != null ? currentUser.getPhotoUrl().toString() : DEFAULT_PROFILE_IMAGE_URL);
@@ -411,7 +399,6 @@ public class EditProfileDialog extends DialogFragment {
         Log.d("EditProfile", "Departamento: " + departamento);
         Log.d("EditProfile", "Ciudad: " + ciudad);
 
-        // 1. Actualizar Firebase Auth
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(newName)
                 .setPhotoUri(imageUrl != null ? Uri.parse(imageUrl) : null)
@@ -421,7 +408,6 @@ public class EditProfileDialog extends DialogFragment {
                 .addOnCompleteListener(authTask -> {
                     if (authTask.isSuccessful()) {
                         Log.d("EditProfile", "Perfil de Auth actualizado exitosamente");
-                        // 2. Actualizar Firebase Database
                         updateUserInDatabase(newName, imageUrl, departamento, ciudad);
                     } else {
                         Log.e("EditProfile", "Error al actualizar perfil de Auth", authTask.getException());
@@ -440,19 +426,16 @@ public class EditProfileDialog extends DialogFragment {
         DatabaseReference userRef = database.getReference("users").child(currentUser.getUid());
         Log.d("EditProfile", "Actualizando usuario en base de datos: " + userRef.getKey());
 
-        // Primero obtener los datos actuales del usuario
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     Log.d("EditProfile", "Datos actuales del usuario encontrados");
-                    // Crear mapa con TODOS los campos necesarios
                     Map<String, Object> updates = new HashMap<>();
                     updates.put("name", newName);
                     updates.put("departamento", departamento);
                     updates.put("ciudad", ciudad);
 
-                    // Actualizar la URL de la imagen
                     if (imageUrl != null) {
                         updates.put("profileImageUrl", imageUrl);
                         Log.d("EditProfile", "Actualizando URL de imagen a: " + imageUrl);
@@ -461,7 +444,6 @@ public class EditProfileDialog extends DialogFragment {
                         updates.put("profileImageUrl", snapshot.child("profileImageUrl").getValue());
                     }
 
-                    // Mantener otros campos importantes
                     String[] fieldsToKeep = {"email", "role", "saldo", "membresiaPrime"};
                     for (String field : fieldsToKeep) {
                         if (snapshot.hasChild(field)) {
@@ -469,13 +451,11 @@ public class EditProfileDialog extends DialogFragment {
                         }
                     }
 
-                    // Actualizar la base de datos
                     Log.d("EditProfile", "Aplicando actualizaciones: " + updates.toString());
                     userRef.updateChildren(updates)
                             .addOnCompleteListener(dbTask -> {
                                 if (dbTask.isSuccessful()) {
                                     Log.d("EditProfile", "Base de datos actualizada exitosamente");
-                                    // Actualizar el objeto local userData
                                     if (userData == null) {
                                         userData = new User.Builder(currentUser.getEmail()).build();
                                         userData.setUserId(currentUser.getUid());

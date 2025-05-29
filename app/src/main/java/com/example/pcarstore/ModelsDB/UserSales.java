@@ -1,7 +1,6 @@
 package com.example.pcarstore.ModelsDB;
 
 public class UserSales {
-    /*************************************************************VARIABLES******************************************************************************************/
     private String userId;
     private String userName;
     private int orderCount;

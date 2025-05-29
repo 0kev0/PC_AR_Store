@@ -37,7 +37,6 @@ public class EditDiscountCodeDialog {
         EditText etDiscount = dialogView.findViewById(R.id.et_discount);
         EditText etExpiryDate = dialogView.findViewById(R.id.et_expiry_date);
 
-        // Configurar valores actuales
         etCode.setText(code.getCode());
         etDiscount.setText(String.valueOf(code.getDiscountPercentage()));
         if (code.getExpirationDate() != null) {

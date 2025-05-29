@@ -91,11 +91,11 @@ public class Mesh implements Closeable {
     this.vertexBuffers = vertexBuffers;
 
     try {
-      // Create vertex array
+
       GLES30.glGenVertexArrays(1, vertexArrayId, 0);
       GLError.maybeThrowGLException("Failed to generate a vertex array", "glGenVertexArrays");
 
-      // Bind vertex array
+
       GLES30.glBindVertexArray(vertexArrayId[0]);
       GLError.maybeThrowGLException("Failed to bind vertex array object", "glBindVertexArray");
 
@@ -104,7 +104,6 @@ public class Mesh implements Closeable {
       }
 
       for (int i = 0; i < vertexBuffers.length; ++i) {
-        // Bind each vertex buffer to vertex array
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vertexBuffers[i].getBufferId());
         GLError.maybeThrowGLException("Failed to bind vertex buffer", "glBindBuffer");
         GLES30.glVertexAttribPointer(

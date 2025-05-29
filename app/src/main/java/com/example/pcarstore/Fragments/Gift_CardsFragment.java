@@ -1,6 +1,7 @@
 package com.example.pcarstore.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,23 +78,30 @@ public class Gift_CardsFragment extends Fragment implements
 
         mDatabase.child("giftCards")
                 .orderByChild("createdBy")
-                .equalTo(currentUser.getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Log.d("GiftCardInfo", "Gift cards encontradas: " + snapshot.getChildrenCount());
+
                         List<GiftCard> loadedGiftCards = new ArrayList<>();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             GiftCard giftCard = GiftCard.fromSnapshot(dataSnapshot);
-                            loadedGiftCards.add(giftCard);
+                            if (giftCard != null) {
+                                loadedGiftCards.add(giftCard);
+                            }
                         }
+
                         giftCards.clear();
                         giftCards.addAll(loadedGiftCards);
                         adapter.notifyDataSetChanged();
+
+                        Log.d("GiftCardInfo", "Mostrando " + giftCards.size() + " gift cards");
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getContext(), "Error al cargar gift cards: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("GiftCardError", "Error: " + error.getMessage());
+                        Toast.makeText(getContext(), "Error al cargar gift cards", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -115,35 +123,28 @@ public class Gift_CardsFragment extends Fragment implements
                 this);
     }
 
-    // Implementación de interfaces de los diálogos
     @Override
     public void onGiftCardCreated(GiftCard giftCard) {
-        // Actualizar UI si es necesario
     }
 
     @Override
     public void onCreationError(String error) {
-        // Manejar error específico si es necesario
     }
 
     @Override
     public void onGiftCardUpdated() {
-        // Refrescar la lista si es necesario
     }
 
     @Override
     public void onUpdateError(String error) {
-        // Manejar error específico si es necesario
     }
 
     @Override
     public void onGiftCardExpired() {
-        // Refrescar la lista si es necesario
     }
 
     @Override
     public void onExpireError(String error) {
-        // Manejar error específico si es necesario
     }
 
 }

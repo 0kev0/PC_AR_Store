@@ -79,21 +79,6 @@ public class SpecularCubemapFilter implements Closeable {
     GLES30.GL_COLOR_ATTACHMENT5,
   };
 
-  // We need to create enough shaders and framebuffers to encompass every face of the cubemap. Each
-  // color attachment is used by the framebuffer to render to a different face of the cubemap, so we
-  // use "chunks" which define as many color attachments as possible for each face. For example, if
-  // we have a maximum of 3 color attachments, we must create two shaders with the following color
-  // attachments:
-  //
-  // layout(location = 0) out vec4 o_FragColorPX;
-  // layout(location = 1) out vec4 o_FragColorNX;
-  // layout(location = 2) out vec4 o_FragColorPY;
-  //
-  // and
-  //
-  // layout(location = 0) out vec4 o_FragColorNY;
-  // layout(location = 1) out vec4 o_FragColorPZ;
-  // layout(location = 2) out vec4 o_FragColorNZ;
   private static class Chunk {
     public final int chunkIndex;
     public final int chunkSize;
@@ -155,8 +140,6 @@ public class SpecularCubemapFilter implements Closeable {
   private final Shader[] shaders;
   private final Mesh mesh;
 
-  // Using OpenGL directly here since cubemap framebuffers are very involved. Indexed by
-  // [mipmapLevel][attachmentChunk].
   private final int[][] framebuffers;
 
   /**
@@ -188,7 +171,6 @@ public class SpecularCubemapFilter implements Closeable {
       shaders = createShaders(render, chunks);
       framebuffers = createFramebuffers(chunks);
 
-      // Create the quad mesh that encompasses the entire view.
       VertexBuffer coordsBuffer = new VertexBuffer(render, COMPONENTS_PER_VERTEX, COORDS_BUFFER);
       mesh =
           new Mesh(
@@ -245,7 +227,6 @@ public class SpecularCubemapFilter implements Closeable {
 
       for (int i = 0; i < NUMBER_OF_CUBE_FACES; ++i) {
         Image image = images[i];
-        // Sanity check for the format of the cubemap.
         if (image.getFormat() != ImageFormat.RGBA_FP16) {
           throw new IllegalArgumentException(
               "Unexpected image format for cubemap: " + image.getFormat());
@@ -277,9 +258,6 @@ public class SpecularCubemapFilter implements Closeable {
 
       GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_CUBE_MAP);
       GLError.maybeThrowGLException("Failed to generate cubemap mipmaps", "glGenerateMipmap");
-
-      // Do the filtering operation, filling the mipmaps of ldTexture with the roughness filtered
-      // cubemap.
       for (int level = 0; level < numberOfMipmapLevels; ++level) {
         int mipmapResolution = resolution >> level;
         GLES30.glViewport(0, 0, mipmapResolution, mipmapResolution);
@@ -350,7 +328,6 @@ public class SpecularCubemapFilter implements Closeable {
             Integer.toString(location));
       }
 
-      // Create the shader and populate its uniforms with the importance sample cache entries.
       shaders[chunk.chunkIndex] =
           Shader.createFromAssets(
                   render, "shaders/cubemap_filter.vert", "shaders/cubemap_filter.frag", defines)
@@ -379,20 +356,16 @@ public class SpecularCubemapFilter implements Closeable {
   }
 
   private int[][] createFramebuffers(ChunkIterable chunks) {
-    // Create the framebuffers for each mipmap level.
     int[][] framebuffers = new int[numberOfMipmapLevels][];
     for (int level = 0; level < numberOfMipmapLevels; ++level) {
       int[] framebufferChunks = new int[chunks.numberOfChunks];
       GLES30.glGenFramebuffers(framebufferChunks.length, framebufferChunks, 0);
       GLError.maybeThrowGLException("Could not create cubemap framebuffers", "glGenFramebuffers");
       for (Chunk chunk : chunks) {
-        // Set the drawbuffers
         GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, framebufferChunks[chunk.chunkIndex]);
         GLError.maybeThrowGLException("Could not bind framebuffer", "glBindFramebuffer");
         GLES30.glDrawBuffers(chunk.chunkSize, ATTACHMENT_ENUMS, 0);
         GLError.maybeThrowGLException("Could not bind draw buffers", "glDrawBuffers");
-        // Since GLES doesn't support glFramebufferTexture, we will use each cubemap face as a
-        // different color attachment.
         for (int attachment = 0; attachment < chunk.chunkSize; ++attachment) {
           GLES30.glFramebufferTexture2D(
               GLES30.GL_FRAMEBUFFER,
@@ -438,7 +411,6 @@ public class SpecularCubemapFilter implements Closeable {
           entry.direction = new float[] {2f * noh * h[0], 2 * noh * h[1], nol};
           float pdf = distributionGgx(noh, roughness) / 4f;
           float log4omegaS = log4(1f / (numberOfImportanceSamples * pdf));
-          // K is a LOD bias that allows a bit of overlapping between samples
           float log4K = 1f; // K = 4
           float l = log4omegaS - log4omegaP + log4K;
           entry.level = min(max(l, 0f), (float) (numberOfMipmapLevels - 1));
@@ -464,7 +436,6 @@ public class SpecularCubemapFilter implements Closeable {
     return result[0];
   }
 
-  // Math!
   private static final float PI_F = (float) Math.PI;
 
   private static int log2(int value) {
@@ -508,9 +479,7 @@ public class SpecularCubemapFilter implements Closeable {
   }
 
   private static float[] hemisphereImportanceSampleDggx(float[] u, float a) {
-    // GGX - Trowbridge-Reitz importance sampling
     float phi = 2.0f * PI_F * u[0];
-    // NOTE: (aa-1) == (a-1)(a+1) produces better fp accuracy
     float cosTheta2 = (1f - u[1]) / (1f + (a + 1f) * ((a - 1f) * u[1]));
     float cosTheta = sqrt(cosTheta2);
     float sinTheta = sqrt(1f - cosTheta2);
@@ -518,7 +487,6 @@ public class SpecularCubemapFilter implements Closeable {
   }
 
   private static float distributionGgx(float noh, float a) {
-    // NOTE: (aa-1) == (a-1)(a+1) produces better fp accuracy
     float f = (a - 1f) * ((a + 1f) * (noh * noh)) + 1f;
     return (a * a) / (PI_F * f * f);
   }

@@ -31,8 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GiftCardDialog extends DialogFragment {
-    /*************************************************************VARIABLES******************************************************************************************/
-    private final Context context;
+   private final Context context;
     private final FirebaseAuth mAuth;
     private final DatabaseReference databaseRef;
     private AlertDialog dialog;
@@ -49,12 +48,13 @@ public class GiftCardDialog extends DialogFragment {
         void onFailure(String error);
     }
 
+
     public void setGiftCardCallback(GiftCardCallback callback) {
         this.callback = callback;
     }
 
     public void show() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.CustomDialogTheme);
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogView = inflater.inflate(R.layout.dialog_discount, null);
 

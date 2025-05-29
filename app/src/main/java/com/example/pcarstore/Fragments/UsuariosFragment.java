@@ -34,8 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClickListener {
-    /*************************************************************VARIABLES******************************************************************************************/
-    private static final String TAG = "UsuariosFragment";
+   private static final String TAG = "UsuariosFragment";
     private DatabaseReference usersRef;
     private UserAdapter userAdapter;
     private LinearLayout emptyState;
@@ -45,10 +44,8 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_usuarios, container, false);
 
-        // Inicializar Firebase
         usersRef = FirebaseDatabase.getInstance().getReference("users");
 
-        // Inicializar vistas
         Button btnNewUser = view.findViewById(R.id.btnAddUser);
         RecyclerView recyclerView = view.findViewById(R.id.rvUsers);
         emptyState = view.findViewById(R.id.emptyState);
@@ -57,16 +54,12 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
         Chip chipClientes = view.findViewById(R.id.chipClientes);
         Chip chipAdmins = view.findViewById(R.id.chipAdmins);
 
-        // Configurar RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         userAdapter = new UserAdapter(this);
         recyclerView.setAdapter(userAdapter);
 
-        // Configurar listeners
         btnNewUser.setOnClickListener(v -> showAddUserDialog());
         setupChipListeners();
-
-        // Cargar datos iniciales
         loadUsers();
 
         return view;
@@ -170,7 +163,7 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
         userRef.updateChildren(updates)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(getContext(), "Usuario actualizado", Toast.LENGTH_SHORT).show();
-                    loadUsers(); // Recargar datos para reflejar cambios
+                    loadUsers();
                 })
                 .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al actualizar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
@@ -202,7 +195,7 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
                 .addOnSuccessListener(aVoid -> {
                     progress.dismiss();
                     Toast.makeText(getContext(), "Usuario eliminado", Toast.LENGTH_SHORT).show();
-                    loadUsers(); // Recargar datos después de eliminar
+                    loadUsers();
                 })
                 .addOnFailureListener(e -> {
                     progress.dismiss();
@@ -213,7 +206,6 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
 
     @Override
     public void onViewDetailsClick(User user) {
-        // Implementar según necesidades
     }
 
     private void showAddUserDialog() {
@@ -287,7 +279,7 @@ public class UsuariosFragment extends Fragment implements UserAdapter.OnUserClic
                     progress.dismiss();
                     if (task.isSuccessful()) {
                         Toast.makeText(getContext(), "Usuario guardado", Toast.LENGTH_SHORT).show();
-                        loadUsers(); // Recargar datos después de agregar
+                        loadUsers();
                     } else {
                         Toast.makeText(getContext(), "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }

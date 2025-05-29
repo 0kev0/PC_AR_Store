@@ -23,7 +23,6 @@ import java.nio.Buffer;
 class GpuBuffer {
   private static final String TAG = GpuBuffer.class.getSimpleName();
 
-  // These values refer to the byte count of the corresponding Java datatypes.
   public static final int INT_SIZE = 4;
   public static final int FLOAT_SIZE = 4;
 
@@ -38,8 +37,7 @@ class GpuBuffer {
       if (!entries.isDirect()) {
         throw new IllegalArgumentException("If non-null, entries buffer must be a direct buffer");
       }
-      // Some GPU drivers will fail with out of memory errors if glBufferData or glBufferSubData is
-      // called with a size of 0, so avoid this case.
+
       if (entries.limit() == 0) {
         entries = null;
       }
@@ -56,7 +54,7 @@ class GpuBuffer {
     }
 
     try {
-      // Clear VAO to prevent unintended state change.
+
       GLES30.glBindVertexArray(0);
       GLError.maybeThrowGLException("Failed to unbind vertex array", "glBindVertexArray");
 
@@ -79,8 +77,7 @@ class GpuBuffer {
   }
 
   public void set(Buffer entries) {
-    // Some GPU drivers will fail with out of memory errors if glBufferData or glBufferSubData is
-    // called with a size of 0, so avoid this case.
+
     if (entries == null || entries.limit() == 0) {
       size = 0;
       return;

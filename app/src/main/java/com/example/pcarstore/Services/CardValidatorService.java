@@ -24,23 +24,21 @@ public class CardValidatorService {
             String cvv,
             String cardHolderName) {
 
-        // Validar número de tarjeta (solo longitud de 16 dígitos)
+
         if (TextUtils.isEmpty(cardNumber) || cardNumber.replaceAll("[^0-9]", "").length() != 16) {
             return new CardValidationResult(false, "El número de tarjeta debe tener 16 dígitos");
         }
 
-        // Validar fecha de expiración (versión más laxa)
         CardValidationResult expiryValidation = validateExpiryDate(expiryDate);
         if (!expiryValidation.isValid) {
             return expiryValidation;
         }
 
-        // Validar CVV (3 o 4 dígitos)
         if (TextUtils.isEmpty(cvv) || !cvv.matches("^[0-9]{3,4}$")) {
             return new CardValidationResult(false, "CVV inválido (3-4 dígitos)");
         }
 
-        // Validar nombre del titular (no vacío)
+
         if (TextUtils.isEmpty(cardHolderName)) {
             return new CardValidationResult(false, "El nombre del titular es requerido");
         }
@@ -66,10 +64,8 @@ public class CardValidatorService {
             return new CardValidationResult(false, "La fecha de expiración es requerida");
         }
 
-        // Limpiar y normalizar la entrada
         String cleanDate = expiryDate.replaceAll("[^0-9]", "");
 
-        // Aceptar diferentes formatos: MMyy, MM/yy, MM-yy, MM yy, etc.
         if (cleanDate.length() != 4) {
             return new CardValidationResult(false, "Formato de fecha inválido (necesita 4 dígitos)");
         }
@@ -78,12 +74,10 @@ public class CardValidatorService {
             int month = Integer.parseInt(cleanDate.substring(0, 2));
             int year = Integer.parseInt(cleanDate.substring(2, 4));
 
-            // Validar mes (1-12)
             if (month < 1 || month > 12) {
                 return new CardValidationResult(false, "Mes inválido (debe ser 01-12)");
             }
 
-            // Validar que no sea una fecha pasada (solo si los datos son válidos)
             Calendar calendar = Calendar.getInstance();
             int currentYear = calendar.get(Calendar.YEAR) % 100;
             int currentMonth = calendar.get(Calendar.MONTH) + 1;

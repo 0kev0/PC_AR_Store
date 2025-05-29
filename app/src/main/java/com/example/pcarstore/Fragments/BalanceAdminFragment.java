@@ -61,11 +61,9 @@ public class BalanceAdminFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_balance_admin, container, false);
 
-        // Inicializar Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         transactionsRef = database.getReference("transactions");
 
-        // Inicializar vistas
         tvIncome = view.findViewById(R.id.tvIncome);
         tvExpenses = view.findViewById(R.id.tvExpenses);
         tvNetBalance = view.findViewById(R.id.tvNetBalance);
@@ -73,19 +71,16 @@ public class BalanceAdminFragment extends Fragment {
         RecyclerView rvTransactions = view.findViewById(R.id.rvTransactions);
         Button btnExport = view.findViewById(R.id.btnExport);
 
-        // Configurar RecyclerView
         transactionList = new ArrayList<>();
         transactionAdapter = new TransactionAdapter(getContext(), transactionList);
         rvTransactions.setLayoutManager(new LinearLayoutManager(getContext()));
         rvTransactions.setAdapter(transactionAdapter);
 
-        // Configurar Spinner
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_spinner_item, PERIOD_OPTIONS);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerPeriod.setAdapter(spinnerAdapter);
 
-        // Listeners
         spinnerPeriod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -109,8 +104,6 @@ public class BalanceAdminFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();
         long startTime = 0;
 
-        // (Misma lógica para calcular startTime según el periodo seleccionado)
-
         if (periodIndex != 4) {
             query = transactionsRef.orderByChild("date").startAt(startTime);
         } else {
@@ -125,7 +118,6 @@ public class BalanceAdminFragment extends Fragment {
                 totalExpenses = 0.0;
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    // Obtener los valores del snapshot directamente
                     String type = dataSnapshot.child("type").getValue(String.class);
                     Double amount = dataSnapshot.child("amount").getValue(Double.class);
                     String description = dataSnapshot.child("description").getValue(String.class);
@@ -144,7 +136,6 @@ public class BalanceAdminFragment extends Fragment {
 
                         transactionList.add(transaction);
 
-                        // Clasificar como ingreso o egreso según el tipo
                         if (type.contains("purchase") || type.equals("expense")) {
                             totalExpenses += amount;
                         } else {
@@ -176,7 +167,7 @@ public class BalanceAdminFragment extends Fragment {
 
     private void setBalanceColor(TextView tvNetBalance, double netBalance) {
         if (tvNetBalance == null || getActivity() == null) {
-            return; // Evitar NullPointerException
+            return;
         }
 
         try {
@@ -193,18 +184,14 @@ public class BalanceAdminFragment extends Fragment {
         }
     }
 
-    // Metodo para generar y compartir el PDF
     private void generateAndShareBalancePDF() {
-        // Obtener los valores actuales del balance
-        double income = totalIncome; // tu variable con los ingresos
-        double expenses = totalExpenses; // tu variable con los egresos
+        double income = totalIncome;
+        double expenses = totalExpenses;
         double netBalance = income - expenses;
 
-        // Generar PDF
         File pdfFile = PDFGenerator.generateFinancialReport(requireContext(), income, expenses, netBalance, transactionList);
 
         if (pdfFile != null && pdfFile.exists()) {
-            // Compartir el PDF
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("application/pdf");
             Uri uri = FileProvider.getUriForFile(requireContext(),

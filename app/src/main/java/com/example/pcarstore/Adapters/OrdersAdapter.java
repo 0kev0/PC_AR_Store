@@ -65,7 +65,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         private final TextView tvDeliveryDate;
         private final TextView tvItemsCount;
         private final TextView tvTotalAmount;
-        private final Button btnViewDetails;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,7 +74,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             tvDeliveryDate = itemView.findViewById(R.id.tvDeliveryDate);
             tvItemsCount = itemView.findViewById(R.id.tvItemsCount);
             tvTotalAmount = itemView.findViewById(R.id.tvTotalAmount);
-            btnViewDetails = itemView.findViewById(R.id.btnViewDetails);
+            Button btnViewDetails = itemView.findViewById(R.id.btnViewDetails);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -121,24 +120,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             tvItemsCount.setText(context.getResources().getQuantityString(
                     R.plurals.items_count, itemCount, itemCount));
 
-            // Configurar estado
-            switch (order.getStatus().toLowerCase()) {
-                case "completed":
-                    tvStatus.setText(context.getString(R.string.status_completed));
-                    tvStatus.setTextColor(ContextCompat.getColor(context, R.color.green));
-                    break;
-                case "cancelled":
-                    tvStatus.setText(context.getString(R.string.status_cancelled));
-                    tvStatus.setTextColor(ContextCompat.getColor(context, R.color.red));
-                    break;
-                case "processing":
-                    tvStatus.setText(context.getString(R.string.status_processing));
-                    tvStatus.setTextColor(ContextCompat.getColor(context, R.color.orange));
-                    break;
-                default:
-                    tvStatus.setText(context.getString(R.string.status_pending));
-                    tvStatus.setTextColor(ContextCompat.getColor(context, R.color.blue));
-            }
+
         }
     }
 

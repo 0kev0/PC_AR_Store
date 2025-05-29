@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GiftCard {
-    /*************************************************************VARIABLES******************************************************************************************/
     private String cardId;
     private String code;
     private double amount;
@@ -29,7 +28,7 @@ public class GiftCard {
         this.amount = amount;
         this.createdBy = createdBy;
         this.creationDate = System.currentTimeMillis();
-        this.expirationDate = System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000); // 1 año
+        this.expirationDate = System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000);
     }
 
     public GiftCard(String s, double amount, String userId) {
@@ -88,7 +87,6 @@ public class GiftCard {
         this.redeemedDate = redeemedDate != null ? redeemedDate.getTime() : null;
     }
 
-    // Getters/Setters para campos almacenados
     @PropertyName("creationDate")
     public Long getCreationDateTimestamp() { return creationDate; }
 
@@ -138,11 +136,6 @@ public class GiftCard {
 
     @PropertyName("redeemedBy")
     public void setRedeemedBy(String redeemedBy) { this.redeemedBy = redeemedBy; }
-
-    // -------------------------------
-    // Métodos de negocio
-    // -------------------------------
-
     @Exclude
     public boolean isValid() {
         return "active".equals(status) && !isExpired();
@@ -166,10 +159,6 @@ public class GiftCard {
         return code.toString();
     }
 
-    // -------------------------------
-    // Conversión Firebase
-    // -------------------------------
-
     @Exclude
     public Map<String, Object> toMap() {
         Map<String, Object> result = new HashMap<>();
@@ -192,7 +181,6 @@ public class GiftCard {
         GiftCard card = new GiftCard();
         card.setCardId(snapshot.getKey());
 
-        // Mapeo seguro de campos
         if (snapshot.hasChild("code")) card.setCode(snapshot.child("code").getValue(String.class));
         if (snapshot.hasChild("amount")) card.setAmount(snapshot.child("amount").getValue(Double.class));
         if (snapshot.hasChild("currency")) card.setCurrency(snapshot.child("currency").getValue(String.class));
@@ -201,7 +189,6 @@ public class GiftCard {
         if (snapshot.hasChild("recipientEmail")) card.setRecipientEmail(snapshot.child("recipientEmail").getValue(String.class));
         if (snapshot.hasChild("redeemedBy")) card.setRedeemedBy(snapshot.child("redeemedBy").getValue(String.class));
 
-        // Manejo de fechas
         if (snapshot.hasChild("creationDate")) {
             Long ts = snapshot.child("creationDate").getValue(Long.class);
             card.setCreationDateTimestamp(ts);
@@ -217,7 +204,6 @@ public class GiftCard {
             card.setRedeemedDateTimestamp(ts);
         }
 
-        // Auto-actualizar estado si está expirado
         if ("active".equals(card.getStatus()) && card.isExpired()) {
             card.setStatus("expired");
         }

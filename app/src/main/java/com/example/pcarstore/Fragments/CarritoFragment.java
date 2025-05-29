@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemListener, CartAdapter.OnCartUpdatedListener, CreditCardPaymentDialog.CreditCardPaymentListener {
-    /*************************************************************VARIABLES******************************************************************************************/
     private TextView tvItemCount, tvTotal;
     private Button btnProceedToCheckout;
     private CartAdapter cartAdapter;
@@ -57,22 +56,18 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_carrito, container, false);
 
-        // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
         String userId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
 
-        // Inicializar referencias a la base de datos
         cartRef = FirebaseDatabase.getInstance().getReference("carts").child(userId);
         userBalanceRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("saldo");
         DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference("orders");
 
-        // Inicializar vistas
         RecyclerView rvCartItems = view.findViewById(R.id.rvCartItems);
         tvItemCount = view.findViewById(R.id.tvItemCount);
         tvTotal = view.findViewById(R.id.tvTotal);
         btnProceedToCheckout = view.findViewById(R.id.btnProceedToCheckout);
 
-        // Configurar RecyclerView
         cartItems = new ArrayList<>();
         cartAdapter = new CartAdapter(getContext(), this, this);
         rvCartItems.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -98,11 +93,9 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // Obtener membresía Prime
                 Boolean prime = snapshot.child("membresiaPrime").getValue(Boolean.class);
                 isPrimeMember = prime != null && prime;
 
-                // Obtener ubicación y calcular envío
                 String departamento = snapshot.child("departamento").getValue(String.class);
                 String ciudad = snapshot.child("ciudad").getValue(String.class);
 
@@ -111,7 +104,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Usar valores por defecto en caso de error
                 calculateShippingCost("", "");
             }
         });
@@ -132,7 +124,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
 
     @Override
     public void updateCartSummary(double subtotal) {
-        // Aplicar descuento por compra mayor a $500
         double finalShippingCost = subtotal > 500 ? shippingCost * 0.5 : shippingCost;
         double total = subtotal + finalShippingCost;
 
@@ -218,7 +209,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        // Use runTransaction to ensure atomic operation
         userBalanceRef.runTransaction(new Transaction.Handler() {
             @NonNull
             @Override
@@ -229,11 +219,9 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
                 }
 
                 if (currentBalance < amountToPay) {
-                    // Mark transaction as aborted but still valid
                     return Transaction.success(mutableData);
                 }
 
-                // Update balance
                 mutableData.setValue(currentBalance - amountToPay);
                 return Transaction.success(mutableData);
             }
@@ -251,12 +239,10 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
                 Double initialBalance = updatedBalance != null ? updatedBalance + amountToPay : amountToPay;
 
                 if (initialBalance < amountToPay) {
-                    // Insufficient balance
                     progressDialog.dismiss();
                     double missingAmount = amountToPay - initialBalance;
                     showAddBalanceDialog(missingAmount);
                 } else if (committed) {
-                    // Successfully updated balance, now create the order
                     createOrder(updatedBalance, amountToPay);
                     progressDialog.dismiss();
                 } else {
@@ -270,7 +256,7 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     private void createOrder(double newBalance, double amountPaid) {
         Order order = new Order(
                 mAuth.getCurrentUser().getUid(),
-                "completada",
+                "processing",
                 amountPaid
         );
 
@@ -347,13 +333,12 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
     }
 
     private void processCardPayment(double amount) {
-        // Primero validar datos de tarjeta (ejemplo)
         CardValidatorService.CardValidationResult validation =
                 CardValidatorService.validateCard(
-                        "4111111111111111", // Número de tarjeta de prueba
-                        "12/25",            // Fecha expiración
-                        "123",              // CVV
-                        "Juan Perez"        // Nombre
+                        "4111111111111111",
+                        "12/25",
+                        "123",
+                        "Juan Perez"
                 );
 
         if (!validation.isValid) {
@@ -395,7 +380,7 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
                 .addOnFailureListener(e -> showError("Error al vaciar carrito: " + e.getMessage()));
     }
 
-    // Métodos auxiliares
+
     private void showError(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
@@ -404,7 +389,6 @@ public class CarritoFragment extends Fragment implements CartAdapter.OnCartItemL
         Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
 
-    // Implementación de interfaces del adaptador
     @Override
     public void onIncreaseQuantity(String productId, int newQuantity) {
         updateItemQuantity(productId, newQuantity);

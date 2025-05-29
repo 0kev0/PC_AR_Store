@@ -6,6 +6,15 @@
     <string name="delivery_date">Entrega:</string>
     <string name="not_available">No disponible</string>
 
+    <!-- Estados del pedido -->
+    <string name="status_received">Recibido</string>
+    <string name="status_preparing">Preparando</string>
+    <string name="status_on_route">En ruta</string>
+    <string name="status_delivery_soon">Entrega próxima</string>
+
+
+
+
     <!-- Asegúrate de que los demás strings estén definidos para que la app compile correctamente -->
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

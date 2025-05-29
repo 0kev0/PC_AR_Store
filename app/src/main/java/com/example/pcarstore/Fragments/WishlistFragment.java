@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WishlistFragment extends Fragment {
-    /*************************************************************VARIABLES******************************************************************************************/
     private WishlistAdapter wishlistAdapter;
     private List<Product> wishlistProducts;
     private TextView tvWishlistItemCount;
@@ -41,36 +40,29 @@ public class WishlistFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_wishlist, container, false);
 
-        // Inicializar Firebase
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
-        // Inicializar vistas
         RecyclerView rvWishlistItems = view.findViewById(R.id.rvWishlistItems);
         tvWishlistItemCount = view.findViewById(R.id.tvWishlistItemCount);
         Button btnClearWishlist = view.findViewById(R.id.btnClearWishlist);
 
-        // Configurar RecyclerView
         wishlistProducts = new ArrayList<>();
-        wishlistAdapter = new WishlistAdapter(getContext(), wishlistProducts, new WishlistAdapter.OnWishlistActionListener() {
-            @Override
-            public void onRemoveItem(Product product) {
-                // Lógica para eliminar de Firebase
-                wishlistRef.child(product.getProductId()).removeValue()
-                        .addOnSuccessListener(aVoid -> {
-                            // Actualizar lista local
-                            wishlistProducts.remove(product);
-                            wishlistAdapter.updateList(wishlistProducts);
-                            Toast.makeText(getContext(), "Eliminado de favoritos", Toast.LENGTH_SHORT).show();
-                        });
-            }
-        });        rvWishlistItems.setLayoutManager(new LinearLayoutManager(getContext()));
+        wishlistAdapter = new WishlistAdapter(getContext(), wishlistProducts, product -> {
+            // Eliminar directamente por producto en lugar de por posición
+            wishlistRef.child(product.getProductId()).removeValue()
+                    .addOnSuccessListener(aVoid -> {
+                        wishlistProducts.remove(product); // Eliminar por objeto
+                        wishlistAdapter.notifyDataSetChanged();
+                        updateItemCount();
+                        Toast.makeText(getContext(), "Eliminado de favoritos", Toast.LENGTH_SHORT).show();
+                    });
+        });
+        rvWishlistItems.setLayoutManager(new LinearLayoutManager(getContext()));
         rvWishlistItems.setAdapter(wishlistAdapter);
 
-        // Configurar botón de limpiar
         btnClearWishlist.setOnClickListener(v -> clearWishlist());
 
-        // Cargar datos si el usuario está autenticado
         if (currentUser != null) {
             setupFirebaseReferences();
             loadWishlistData();
@@ -119,9 +111,8 @@ public class WishlistFragment extends Fragment {
                         Product product = snapshot.getValue(Product.class);
                         if (product != null) {
                             product.setProductId(productId);
-                            product.setInWishlist(true); // Marcar como en wishlist
+                            product.setInWishlist(true);
 
-                            // Evitar duplicados
                             if (!wishlistProducts.contains(product)) {
                                 wishlistProducts.add(product);
                                 wishlistAdapter.notifyDataSetChanged();

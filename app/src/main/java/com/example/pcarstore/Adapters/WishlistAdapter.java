@@ -16,7 +16,6 @@ import com.example.pcarstore.R;
 import java.util.List;
 
 public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
     private final Context context;
     private final List<Product> wishlistProducts;
     private final OnWishlistActionListener listener;
@@ -38,19 +37,14 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
         return new ViewHolder(view);
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = wishlistProducts.get(position);
 
-        // Configurar datos del producto
         holder.productName.setText(product.getName());
         holder.productPrice.setText("$" + product.getPrice());
-        Glide.with(holder.itemView.getContext())
-                .load(product.getMainImageUrl())
-                .into(holder.productImage);
+        Glide.with(context).load(product.getMainImageUrl()).into(holder.productImage);
 
-        // Configurar botón de eliminar
         holder.btnRemove.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onRemoveItem(product);
@@ -63,6 +57,14 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
         return wishlistProducts.size();
     }
 
+    public void removeItem(int position) {
+        if (position >= 0 && position < wishlistProducts.size()) {
+            wishlistProducts.remove(position);
+            notifyItemRemoved(position);
+            // No es necesario notifyItemRangeChanged si usas notifyDataSetChanged
+        }
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView productName, productPrice;
         ImageView productImage, btnRemove;
@@ -73,13 +75,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
             productPrice = itemView.findViewById(R.id.productPrice);
             productImage = itemView.findViewById(R.id.productImage);
             btnRemove = itemView.findViewById(R.id.btnRemove);
-        }
-    }
 
-    // Método para actualizar la lista
-    public void updateList(List<Product> newList) {
-        wishlistProducts.clear();
-        wishlistProducts.addAll(newList);
-        notifyDataSetChanged();
+        }
     }
 }

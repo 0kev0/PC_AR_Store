@@ -19,7 +19,7 @@ import com.example.pcarstore.Services.SoundService;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
-    private static final long SPLASH_DELAY = 3000; // 3 segundos
+    private static final long SPLASH_DELAY = 3000;
     private LottieAnimationView loadingAnimation;
 
     @Override
@@ -33,12 +33,10 @@ public class SplashActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Inicializar Lottie
         loadingAnimation = findViewById(R.id.loadingAnimation);
         loadingAnimation.setAnimation(R.raw.loading_animation2);
         loadingAnimation.loop(true);
 
-        // Mostrar animación
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             loadingAnimation.setVisibility(View.VISIBLE);
             loadingAnimation.playAnimation();
@@ -49,7 +47,6 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        // Detener el servicio al salir
         stopService(new Intent(this, SoundService.class));
         if (loadingAnimation != null) {
             loadingAnimation.cancelAnimation();
