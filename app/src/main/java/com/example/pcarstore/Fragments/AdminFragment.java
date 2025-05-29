@@ -348,9 +348,7 @@ public class AdminFragment extends Fragment implements FingerprintAuthListener {
                 helper.startAuth(fingerprintManager, cryptoObject);
             }
         } catch (Exception e) {
-            Toast.makeText(getContext(),
-                    "Error al iniciar autenticación por huella",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Error al iniciar autenticación por huella", Toast.LENGTH_SHORT).show();
             Log.e("Fingerprint", "Error: " + e.getMessage());
         }
     }

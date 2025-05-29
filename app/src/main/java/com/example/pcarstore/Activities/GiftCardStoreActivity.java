@@ -60,9 +60,7 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
         });
         rvGiftCards.setLayoutManager(new LinearLayoutManager(this));
         rvGiftCards.setAdapter(adapter);
-        if(giftCardList.isEmpty()) {
-            Toast.makeText(this, "No hay gift cards disponibles", Toast.LENGTH_SHORT).show();
-        }
+
     }
 
     private void loadGiftCardsFromFirebase() {
@@ -297,8 +295,6 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
                 .addOnSuccessListener(aVoid -> {
                     hideProgressDialog();
 
-                    Toast.makeText(GiftCardStoreActivity.this,
-                            "Compra exitosa!", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     hideProgressDialog();
@@ -311,7 +307,7 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
                         addBalanceToRecipient(recipientEmail, giftCard.getAmount());
                     }
                     hideProgressDialog();
-                    Toast.makeText(this, "¡Gift Card enviada!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Compra exitosa! ¡Gift Card enviada!", Toast.LENGTH_SHORT).show();
                 });
     }
 

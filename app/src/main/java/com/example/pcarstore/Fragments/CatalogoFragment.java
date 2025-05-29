@@ -543,9 +543,9 @@ public class CatalogoFragment extends Fragment{
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("PrimeCheck", "Error checking prime status: " + error.getMessage());
+                        Log.e("PrimeCheck", "Error con membresia prime: " + error.getMessage());
                         if (!activity.isFinishing() && !activity.isDestroyed()) {
-                            Toast.makeText(activity, "Error checking membership", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "Error con membresia prime: ", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

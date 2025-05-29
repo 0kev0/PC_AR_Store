@@ -415,8 +415,7 @@ public class EditProfileDialog extends DialogFragment {
                         if (listener != null && authTask.getException() != null) {
                             listener.onProfileUpdateFailed(authTask.getException());
                         }
-                        Toast.makeText(context,
-                                "Error al actualizar: " + (authTask.getException() != null ?
+                        Toast.makeText(context, "Error al actualizar: " + (authTask.getException() != null ?
                                         authTask.getException().getMessage() : "Error desconocido"),
                                 Toast.LENGTH_SHORT).show();
                     }
@@ -480,8 +479,7 @@ public class EditProfileDialog extends DialogFragment {
                                     if (listener != null && dbTask.getException() != null) {
                                         listener.onProfileUpdateFailed(dbTask.getException());
                                     }
-                                    Toast.makeText(context,
-                                            "Error al actualizar perfil: " +
+                                    Toast.makeText(context, "Error al actualizar perfil: " +
                                                     (dbTask.getException() != null ?
                                                             dbTask.getException().getMessage() : "Error desconocido"),
                                             Toast.LENGTH_SHORT).show();

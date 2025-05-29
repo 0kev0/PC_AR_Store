@@ -155,10 +155,8 @@ public class DiscountCodesFragment extends Fragment implements DiscountCodesAdap
         }
 
         databaseReference.child(originalCode.getCodeId()).updateChildren(updates)
-                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(),
-                        "Código actualizado", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(getContext(),
-                        "Error al actualizar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Código actualizado", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al actualizar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void showAddCodeDialog() {
@@ -242,10 +240,8 @@ public class DiscountCodesFragment extends Fragment implements DiscountCodesAdap
         discountCode.setCreatedBy(createdBy);
 
         databaseReference.child(codeId).setValue(discountCode)
-                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(),
-                        "Código creado: " + code, Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(getContext(),
-                        "Error al crear código: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Código creado: " + code, Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al crear código: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void deactivateCode(DiscountCode code) {
@@ -259,10 +255,8 @@ public class DiscountCodesFragment extends Fragment implements DiscountCodesAdap
         }
 
         databaseReference.child(code.getCodeId()).updateChildren(updates)
-                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(),
-                        "Código desactivado", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(getContext(),
-                        "Error al desactivar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Código desactivado", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al desactivar: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void loadDiscountCodes() {
@@ -287,8 +281,7 @@ public class DiscountCodesFragment extends Fragment implements DiscountCodesAdap
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "Error al cargar códigos: " + error.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error al cargar códigos: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

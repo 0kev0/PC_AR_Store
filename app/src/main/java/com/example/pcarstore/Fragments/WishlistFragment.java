@@ -48,8 +48,19 @@ public class WishlistFragment extends Fragment {
         Button btnClearWishlist = view.findViewById(R.id.btnClearWishlist);
 
         wishlistProducts = new ArrayList<>();
-        wishlistAdapter = new WishlistAdapter(getContext(), wishlistProducts, this::removeItemFromWishlist);
-        rvWishlistItems.setLayoutManager(new LinearLayoutManager(getContext()));
+        wishlistAdapter = new WishlistAdapter(getContext(), wishlistProducts, new WishlistAdapter.OnWishlistActionListener() {
+            @Override
+            public void onRemoveItem(Product product) {
+                // Lógica para eliminar de Firebase
+                wishlistRef.child(product.getProductId()).removeValue()
+                        .addOnSuccessListener(aVoid -> {
+                            // Actualizar lista local
+                            wishlistProducts.remove(product);
+                            wishlistAdapter.updateList(wishlistProducts);
+                            Toast.makeText(getContext(), "Eliminado de favoritos", Toast.LENGTH_SHORT).show();
+                        });
+            }
+        });        rvWishlistItems.setLayoutManager(new LinearLayoutManager(getContext()));
         rvWishlistItems.setAdapter(wishlistAdapter);
 
         btnClearWishlist.setOnClickListener(v -> clearWishlist());

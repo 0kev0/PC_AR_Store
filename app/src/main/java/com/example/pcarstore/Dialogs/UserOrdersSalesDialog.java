@@ -97,8 +97,7 @@ public class UserOrdersSalesDialog extends DialogFragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, "Error en listener: " + error.getMessage(), error.toException());
-                Toast.makeText(requireContext(), "Error en conexión: " + error.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Error en conexión: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
 

@@ -52,9 +52,7 @@ public class ChangePasswordDialog {
                         if (listener != null) {
                             listener.onResetEmailSent(email);
                         }
-                        Toast.makeText(context,
-                                "Correo de restablecimiento enviado a " + email,
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Correo de restablecimiento enviado a " + email, Toast.LENGTH_LONG).show();
                     } else {
                         String error = task.getException() != null ?
                                 task.getException().getMessage() :
@@ -62,9 +60,7 @@ public class ChangePasswordDialog {
                         if (listener != null) {
                             listener.onResetError(error);
                         }
-                        Toast.makeText(context,
-                                "Error al enviar correo: " + error,
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Error al enviar correo: " + error, Toast.LENGTH_SHORT).show();
                     }
                 });
     }

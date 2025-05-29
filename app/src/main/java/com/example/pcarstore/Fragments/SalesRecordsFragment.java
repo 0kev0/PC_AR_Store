@@ -60,7 +60,6 @@ public class SalesRecordsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         adapter.setOnUserClickListener(userId -> {
-            Toast.makeText(requireContext(), "Mostrando órdenes de " + userId, Toast.LENGTH_SHORT).show();
            try {
                 if (isAdded() && !isDetached()) {
                     UserOrdersSalesDialog dialog = UserOrdersSalesDialog.newInstance(userId);
@@ -70,8 +69,6 @@ public class SalesRecordsFragment extends Fragment {
                     dialog.show(fragmentManager, "UserOrdersSalesDialog");
 
                     Log.d("DialogDebug", "Mostrando diálogo para: " + userId);
-                    Toast.makeText(requireContext(), "Mostrando órdenes de " + userId,
-                            Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 Log.e("DialogError", "Error al mostrar diálogo", e);

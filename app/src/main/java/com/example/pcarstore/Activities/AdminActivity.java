@@ -248,7 +248,7 @@ public class AdminActivity extends AppCompatActivity implements FingerprintAuthL
             lastAuthTime = System.currentTimeMillis();
             isAuthInProgress = false;
 
-            Toast.makeText(this, "Autenticación exitosa", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Autenticación exitosa", Toast.LENGTH_LONG).show();
 
             currentFragment = new BalanceAdminFragment();
             loadFragment(currentFragment);

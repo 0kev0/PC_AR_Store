@@ -79,8 +79,7 @@ public class CreditCardPaymentDialog extends DialogFragment {
         } else if (getParentFragment() instanceof CreditCardPaymentListener) {
             listener = (CreditCardPaymentListener) getParentFragment();
         } else {
-            throw new ClassCastException(context.toString()
-                    + " must implement CreditCardPaymentListener");
+            throw new ClassCastException(context.toString() + " must implement CreditCardPaymentListener");
         }
     }
 

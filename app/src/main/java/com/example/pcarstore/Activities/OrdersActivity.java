@@ -100,9 +100,7 @@ public class OrdersActivity extends AppCompatActivity {
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         progressBar.setVisibility(View.GONE);
-                        Toast.makeText(OrdersActivity.this,
-                                "Error al cargar pedidos: " + error.getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(OrdersActivity.this, "Error al cargar pedidos: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                         emptyView.setVisibility(View.VISIBLE);
                     }
                 });
