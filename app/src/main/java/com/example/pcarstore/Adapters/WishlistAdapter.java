@@ -19,6 +19,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
     /*************************************************************VARIABLES******************************************************************************************/
     private final Context context;
     private final List<Product> wishlistProducts;
+    private final OnWishlistActionListener listener;
 
     public interface OnWishlistActionListener {
         void onRemoveItem(Product product);
@@ -27,6 +28,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
     public WishlistAdapter(Context context, List<Product> wishlistProducts, OnWishlistActionListener listener) {
         this.context = context;
         this.wishlistProducts = wishlistProducts;
+        this.listener = listener;
     }
 
     @NonNull
@@ -40,11 +42,20 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = wishlistProducts.get(position);
+
+        // Configurar datos del producto
         holder.productName.setText(product.getName());
         holder.productPrice.setText("$" + product.getPrice());
         Glide.with(holder.itemView.getContext())
                 .load(product.getMainImageUrl())
                 .into(holder.productImage);
+
+        // Configurar botón de eliminar
+        holder.btnRemove.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onRemoveItem(product);
+            }
+        });
     }
 
     @Override
@@ -52,10 +63,9 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
         return wishlistProducts.size();
     }
 
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView productName, productPrice;
-        ImageView productImage,btnRemove;
+        ImageView productImage, btnRemove;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,4 +76,10 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
         }
     }
 
+    // Método para actualizar la lista
+    public void updateList(List<Product> newList) {
+        wishlistProducts.clear();
+        wishlistProducts.addAll(newList);
+        notifyDataSetChanged();
+    }
 }
