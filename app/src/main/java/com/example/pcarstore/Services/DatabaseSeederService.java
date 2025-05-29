@@ -38,9 +38,35 @@ public class DatabaseSeederService {
      * Insert sample PC products into the database
      */
     private void insertProducts() {
-        // Procesadores
         Product product1 = new Product(
                 "prod_001",
+                "NVIDIA RTX 4090",
+                1999.99,
+                1799.99,
+                15,
+                4.9,
+                "Tarjetas Gráficas",
+                "La GPU más potente para gaming 8K y creación de contenido con arquitectura Ada Lovelace",
+                Arrays.asList("https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2Fnvidia-rtx-4090-2835295.webp?alt=media&token=2dfe5c06-ef4e-4fc9-ac3e-ccd8d67dadba",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FDSC_0249-Custom-1480x987.jpg?alt=media&token=b46d4334-67e2-4e73-85b0-42b069c5165c",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2Frtx_nobg.jpg?alt=media&token=d2add133-2592-45ae-b78a-297d3bc44c0d"),
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_003%2FMODELO_3D%2FUntitled.obj?alt=media&token=3e39b974-9e49-4a65-8f91-b8d6070b271d",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_003%2FTEXTURA%2FtexturaGenerica.jpg?alt=media&token=7a78ad20-eff2-4d48-a942-47ecc0ec0c83",
+                new HashMap<String, String>() {{
+                    put("Arquitectura", "Ada Lovelace");
+                    put("Núcleos CUDA", "16384");
+                    put("Memoria GDDR6X", "24GB");
+                    put("Velocidad Memoria", "21 Gbps");
+                    put("Ancho de banda", "1 TB/s");
+                    put("TDP", "450W");
+                    put("Conectores", "PCIe 4.0 x16");
+                    put("Salidas", "3x DisplayPort 1.4a, 1x HDMI 2.1a");
+                }}
+        );
+        mDatabase.child("products").child("prod_001").setValue(product1);
+        // Procesadores
+        Product product2 = new Product(
+                "prod_002",
                 "Intel Core i9-13900K",
                 599.99,
                 549.99,
@@ -52,7 +78,7 @@ public class DatabaseSeederService {
                         "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FIMG%2Fimg2.jpeg?alt=media&token=807e0ae0-53cf-43bd-9b1f-fae03aaec77f",
                         "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FIMG%2Fimg3.webp?alt=media&token=5dce4891-42b9-4f24-9b6e-bd3627dd6ac0"),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FMODELO_3D%2FintelCore9Model.obj?alt=media&token=536f91fd-085d-4e6d-ad72-0d61ff00d662",
-                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FTEXTURAS%2FtexturaGenerica.jpg?alt=media&token=91712be8-dc60-48e2-a137-9e03aa0cbeb0",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FTEXTURAS%2Ftexturametalica.jpeg?alt=media&token=81d45962-8954-4e66-ae02-190ceebfca5f",
                 new HashMap<String, String>() {{
                     put("Núcleos", "24 (8P+16E)");
                     put("Hilos", "32");
@@ -61,33 +87,6 @@ public class DatabaseSeederService {
                     put("Socket", "LGA 1700");
                     put("TDP", "125W");
                     put("Caché", "36MB");
-                }}
-        );
-        mDatabase.child("products").child("prod_001").setValue(product1);
-
-        Product product2 = new Product(
-                "prod_002",
-                "NVIDIA RTX 4090",
-                1999.99,
-                1799.99,
-                15,
-                4.9,
-                "Tarjetas Gráficas",
-                "La GPU más potente para gaming 8K y creación de contenido con arquitectura Ada Lovelace",
-                Arrays.asList("https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2Fnvidia-rtx-4090-2835295.webp?alt=media&token=2dfe5c06-ef4e-4fc9-ac3e-ccd8d67dadba",
-                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2FDSC_0249-Custom-1480x987.jpg?alt=media&token=b46d4334-67e2-4e73-85b0-42b069c5165c",
-                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_002%2FIMG%2Frtx_nobg.jpg?alt=media&token=d2add133-2592-45ae-b78a-297d3bc44c0d"),
-"https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_003%2FMODELO_3D%2FUntitled.obj?alt=media&token=3e39b974-9e49-4a65-8f91-b8d6070b271d",
-"https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_003%2FTEXTURA%2FtexturaGenerica.jpg?alt=media&token=7a78ad20-eff2-4d48-a942-47ecc0ec0c83",
-                new HashMap<String, String>() {{
-                    put("Arquitectura", "Ada Lovelace");
-                    put("Núcleos CUDA", "16384");
-                    put("Memoria GDDR6X", "24GB");
-                    put("Velocidad Memoria", "21 Gbps");
-                    put("Ancho de banda", "1 TB/s");
-                    put("TDP", "450W");
-                    put("Conectores", "PCIe 4.0 x16");
-                    put("Salidas", "3x DisplayPort 1.4a, 1x HDMI 2.1a");
                 }}
         );
         mDatabase.child("products").child("prod_002").setValue(product2);
@@ -102,8 +101,8 @@ public class DatabaseSeederService {
                 "Procesadores",
                 "Procesador de 14 núcleos (6P+8E) sin gráficos integrados para gaming",
                 Arrays.asList("", ""),
-                "",
-                "",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FMODELO_3D%2FintelCore9Model.obj?alt=media&token=536f91fd-085d-4e6d-ad72-0d61ff00d662",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FTEXTURAS%2Ftexturametalica.jpeg?alt=media&token=81d45962-8954-4e66-ae02-190ceebfca5f",
                 new HashMap<String, String>() {{
                     put("Núcleos", "14 (6P+8E)");
                     put("Hilos", "20");
@@ -400,7 +399,7 @@ public class DatabaseSeederService {
 
         Product product14 = new Product(
                 "prod_014",
-                "PC Fan Ventilador 140mm",
+                "Mouse logitec",
                 219.99,
                 199.99,
                 25,
@@ -408,8 +407,8 @@ public class DatabaseSeederService {
                 "Placas Base",
                 "Placa base AMD AM5 con sólida VRM y conectividad",
                 Arrays.asList("", ""),
-                "",
-                "",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_014%2FMODELOS_3D%2FWireless_Simple_Mouse_0301141012_texture.obj?alt=media&token=39c5fb8d-1d28-4522-880c-789fe82fab2c",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_014%2FTEXTURAS%2FWireless_Simple_Mouse_0301141012_texture.png?alt=media&token=eadc04ce-76e1-47ea-9ec4-0160b5541469",
                 new HashMap<String, String>() {{
                     put("Chipset", "AMD B650");
                     put("Socket", "AM5");
@@ -424,7 +423,7 @@ public class DatabaseSeederService {
 
         Product product15 = new Product(
                 "prod_015",
-                "Gigabyte X670E Aorus Master",
+                "Arduino uno ",
                 499.99,
                 469.99,
                 10,
@@ -432,8 +431,8 @@ public class DatabaseSeederService {
                 "Placas Base",
                 "Placa base flagship para Ryzen 7000 con PCIe 5.0 completo",
                 Arrays.asList("", ""),
-                "",
-                "",
+                "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_015%2FMODELO_3D%2FarduinoUno.obj?alt=media&token=d971c829-681f-4f54-aad3-98e05fda951c",
+    "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_015%2FTEXTURA%2FtexturaArduino.jpg?alt=media&token=be5aeb61-4bc9-4bb8-8fbd-e293d3ad5fab",
                 new HashMap<String, String>() {{
                     put("Chipset", "AMD X670E");
                     put("Socket", "AM5");
