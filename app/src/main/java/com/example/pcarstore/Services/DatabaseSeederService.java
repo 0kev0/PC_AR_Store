@@ -97,14 +97,17 @@ public class DatabaseSeederService {
 
         Product product3 = new Product(
                 "prod_003",
-                "no hay Intel Core i5-13600KF",
+                "Intel Core i5-13600KF",
                 299.99,
                 279.99,
                 40,
                 4.7,
                 "Procesadores",
                 "Procesador de 14 núcleos (6P+8E) sin gráficos integrados para gaming",
-                Arrays.asList("", ""),
+                Arrays.asList("https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_003%2FIMG%2Fi52.png?alt=media&token=afe621ec-2abd-4a31-89f6-06597ebf12ac",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_003%2FIMG%2Fi53.jpg?alt=media&token=aee31840-6b10-4f27-ad9f-6415dc3cb7c6",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_003%2FIMG%2Fi54.webp?alt=media&token=1aabe3ac-9255-487b-86b9-07c66cd06215",
+                        "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_003%2FIMG%2Fi5_1.webp?alt=media&token=82571a4e-6607-4529-ab69-719813d031ff"),
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FMODELO_3D%2FintelCore9Model.obj?alt=media&token=536f91fd-085d-4e6d-ad72-0d61ff00d662",
                 "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/PRODUCTS%2Fprod_001%2FTEXTURAS%2Ftexturametalica.jpeg?alt=media&token=81d45962-8954-4e66-ae02-190ceebfca5f",
                 new HashMap<String, String>() {{
