@@ -93,9 +93,7 @@ public class Gift_CardsFragment extends Fragment implements
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getContext(),
-                                "Error al cargar gift cards: " + error.getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error al cargar gift cards: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

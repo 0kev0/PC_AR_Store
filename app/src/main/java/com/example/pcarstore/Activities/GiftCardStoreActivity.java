@@ -60,9 +60,7 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
         });
         rvGiftCards.setLayoutManager(new LinearLayoutManager(this));
         rvGiftCards.setAdapter(adapter);
-        if(giftCardList.isEmpty()) {
-            Toast.makeText(this, "No hay gift cards disponibles", Toast.LENGTH_SHORT).show();
-        }
+
     }
 
     private void loadGiftCardsFromFirebase() {
@@ -199,7 +197,8 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
         });
     }
 
-    private void showInsufficientBalanceDialog(GiftCard giftCard, String recipientEmail, double currentBalance) {
+    private void showInsufficientBalanceDialog(GiftCard giftCard, String recipientEmail, double currentBalance)
+    {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Saldo insuficiente");
         builder.setMessage(String.format(Locale.getDefault(),
@@ -239,7 +238,7 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
         DatabaseReference userRef = FirebaseDatabase.getInstance()
                 .getReference("users").child(user.getUid());
 
-        userRef.child("balance").setValue(getCurrentUserBalance() + amountAdded)
+        userRef.child("saldo").setValue(getCurrentUserBalance() + amountAdded)
                 .addOnFailureListener(e -> Log.e("Balance", "Error updating balance", e));
     }
 
@@ -262,7 +261,7 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
         double newBalance = user.getSaldo() - giftCard.getAmount();
         userRef.child("saldo").setValue(newBalance)
                 .addOnSuccessListener(aVoid -> {
-                    registerTransaction(user.getUserId(), -giftCard.getAmount(),
+                    registerTransaction(user.getUserId(), giftCard.getAmount(),
                             "giftcard_purchase", "Compra de Gift Card");
                     createAndAssignGiftCard(giftCard, recipientEmail, user.getEmail());
                 })
@@ -297,8 +296,6 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
                 .addOnSuccessListener(aVoid -> {
                     hideProgressDialog();
 
-                    Toast.makeText(GiftCardStoreActivity.this,
-                            "Compra exitosa!", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     hideProgressDialog();
@@ -311,7 +308,7 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
                         addBalanceToRecipient(recipientEmail, giftCard.getAmount());
                     }
                     hideProgressDialog();
-                    Toast.makeText(this, "¡Gift Card enviada!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Compra exitosa! ¡Gift Card enviada!", Toast.LENGTH_SHORT).show();
                 });
     }
 
