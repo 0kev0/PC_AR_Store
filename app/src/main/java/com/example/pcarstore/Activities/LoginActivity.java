@@ -88,6 +88,9 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
+        // persiistenca para trabajar sin wifi
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
         DatabaseSeederService databaseSeederService = new DatabaseSeederService();
         databaseSeederService.initializeDatabase();
