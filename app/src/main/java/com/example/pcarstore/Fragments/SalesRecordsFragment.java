@@ -106,18 +106,21 @@ public class SalesRecordsFragment extends Fragment {
         ordersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("FirebaseData", "Cargando datos. Total de órdenes: " + snapshot.getChildrenCount());
+
                 Map<String, UserSales> userSalesMap = new HashMap<>();
 
                 for (DataSnapshot orderSnapshot : snapshot.getChildren()) {
                     processOrder(orderSnapshot, userSalesMap);
                 }
 
+                Log.d("FirebaseData", "Datos procesados. Resúmenes de ventas creados: " + userSalesMap.size());
                 updateAdapterWithNewData(userSalesMap);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Firebase", "Error al cargar órdenes: " + error.getMessage());
+                Log.e("Firebase", "Error al cargar órdenes", error.toException());
             }
         });
     }
@@ -127,9 +130,7 @@ public class SalesRecordsFragment extends Fragment {
         Double total = orderSnapshot.child("total").getValue(Double.class);
         String status = orderSnapshot.child("status").getValue(String.class);
 
-        if (userId != null && total != null && "completed".equalsIgnoreCase(status)) {
             userSalesMap.computeIfAbsent(userId, UserSales::new).addOrder(total);
-        }
     }
 
     private void updateAdapterWithNewData(Map<String, UserSales> userSalesMap) {

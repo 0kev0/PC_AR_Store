@@ -49,7 +49,13 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
         holder.tvAmount.setText(String.format(Locale.getDefault(), "$%.2f", giftCard.getAmount()));
         holder.tvStatus.setText(giftCard.getStatus());
 
-        String expirationStr = "Vence: " + dateFormat.format(giftCard.getExpirationDate());
+        // Manejo seguro de la fecha de expiración
+        String expirationStr = "Vence: ";
+        if (giftCard.getExpirationDate() != null) {
+            expirationStr += dateFormat.format(giftCard.getExpirationDate());
+        } else {
+            expirationStr += "No definida"; // O cualquier texto por defecto
+        }
         holder.tvExpiration.setText(expirationStr);
 
         if (giftCard.getRecipientEmail() != null && !giftCard.getRecipientEmail().isEmpty()) {

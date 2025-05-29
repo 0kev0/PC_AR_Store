@@ -790,73 +790,82 @@ public class DatabaseSeederService {
         specialGiftCard.setCardId("gc_special_001"); // Set a unique ID
         specialGiftCard.setCode("PDM-SUFIII"); // Override the generated code with your specific code
 
-// Set dates (optional, the constructor already sets them)
+        // Set dates (optional, the constructor already sets them)
         specialGiftCard.setCreationDate(new Date());
         specialGiftCard.setExpirationDate(new Date(System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000))); // 1 year
 
-// Save to Firebase
+        // Save to Firebase
         mDatabase.child("giftCards").child(specialGiftCard.getCardId()).setValue(specialGiftCard)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Special gift card created successfully"))
                 .addOnFailureListener(e -> Log.e(TAG, "Error creating special gift card", e));
 
         // GiftCard 1
-        GiftCard gc1 = new GiftCard(GiftCard.generateGiftCardCode(), 50.00, "admin1");
+        GiftCard gc1 = new GiftCard(50.00, "admin1");
         gc1.setCardId("gc_001");
+        gc1.setCode(GiftCard.generateGiftCardCode());
         mDatabase.child("giftCards").child(gc1.getCardId()).setValue(gc1);
 
         // GiftCard 2
-        GiftCard gc2 = new GiftCard(GiftCard.generateGiftCardCode(), 25.00, "admin1");
+        GiftCard gc2 = new GiftCard(25.00, "admin1");
         gc2.setCardId("gc_002");
+        gc2.setCode(GiftCard.generateGiftCardCode());
         mDatabase.child("giftCards").child(gc2.getCardId()).setValue(gc2);
 
         // GiftCard 3
-        GiftCard gc3 = new GiftCard(GiftCard.generateGiftCardCode(), 100.00, "admin2");
+        GiftCard gc3 = new GiftCard(100.00, "admin2");
         gc3.setCardId("gc_003");
+        gc3.setCode(GiftCard.generateGiftCardCode());
         mDatabase.child("giftCards").child(gc3.getCardId()).setValue(gc3);
 
         // GiftCard 4 (Redimida)
-        GiftCard gc4 = new GiftCard(GiftCard.generateGiftCardCode(), 75.00, "admin1");
+        GiftCard gc4 = new GiftCard(75.00, "admin1");
         gc4.setCardId("gc_004");
+        gc4.setCode(GiftCard.generateGiftCardCode());
         gc4.setStatus("redeemed");
         gc4.setRedeemedBy("user123");
         gc4.setRedeemedDate(new Date());
         mDatabase.child("giftCards").child(gc4.getCardId()).setValue(gc4);
 
         // GiftCard 5
-        GiftCard gc5 = new GiftCard(GiftCard.generateGiftCardCode(), 150.00, "admin3");
+        GiftCard gc5 = new GiftCard(150.00, "admin3");
         gc5.setCardId("gc_005");
+        gc5.setCode(GiftCard.generateGiftCardCode());
         mDatabase.child("giftCards").child(gc5.getCardId()).setValue(gc5);
 
         // GiftCard 6 (Expirada)
-        GiftCard gc6 = new GiftCard(GiftCard.generateGiftCardCode(), 30.00, "admin2");
+        GiftCard gc6 = new GiftCard(30.00, "admin2");
         gc6.setCardId("gc_006");
+        gc6.setCode(GiftCard.generateGiftCardCode());
         gc6.setExpirationDate(new Date(System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000))); // Expiró hace 30 días
         mDatabase.child("giftCards").child(gc6.getCardId()).setValue(gc6);
 
         // GiftCard 7
-        GiftCard gc7 = new GiftCard(GiftCard.generateGiftCardCode(), 200.00, "admin1");
+        GiftCard gc7 = new GiftCard(200.00, "admin1");
         gc7.setCardId("gc_007");
+        gc7.setCode(GiftCard.generateGiftCardCode());
         mDatabase.child("giftCards").child(gc7.getCardId()).setValue(gc7);
 
         // GiftCard 8
-        GiftCard gc8 = new GiftCard(GiftCard.generateGiftCardCode(), 10.00, "admin3");
+        GiftCard gc8 = new GiftCard(10.00, "admin3");
         gc8.setCardId("gc_008");
+        gc8.setCode(GiftCard.generateGiftCardCode());
         mDatabase.child("giftCards").child(gc8.getCardId()).setValue(gc8);
 
         // GiftCard 9 (Redimida)
-        GiftCard gc9 = new GiftCard(GiftCard.generateGiftCardCode(), 50.00, "admin2");
+        GiftCard gc9 = new GiftCard(50.00, "admin2");
         gc9.setCardId("gc_009");
+        gc9.setCode(GiftCard.generateGiftCardCode());
         gc9.setStatus("redeemed");
         gc9.setRedeemedBy("user456");
         gc9.setRedeemedDate(new Date(System.currentTimeMillis() - (15L * 24 * 60 * 60 * 1000))); // Redimida hace 15 días
         mDatabase.child("giftCards").child(gc9.getCardId()).setValue(gc9);
 
         // GiftCard 10
-        GiftCard gc10 = new GiftCard(GiftCard.generateGiftCardCode(), 125.00, "admin1");
+        GiftCard gc10 = new GiftCard(125.00, "admin1");
         gc10.setCardId("gc_010");
+        gc10.setCode(GiftCard.generateGiftCardCode());
         mDatabase.child("giftCards").child(gc10.getCardId()).setValue(gc10);
     }
-
     /**
      * Insert discount codes into the database
      */

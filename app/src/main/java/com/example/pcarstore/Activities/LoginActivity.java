@@ -88,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         DatabaseSeederService databaseSeederService = new DatabaseSeederService();
