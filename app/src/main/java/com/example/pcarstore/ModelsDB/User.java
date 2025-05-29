@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User {
-    /*************************************************************VARIABLES******************************************************************************************/
     private String userId;
     private String email;
     private String name;
@@ -31,7 +30,6 @@ public class User {
     public User() {
     }
 
-    // Builder class
     public static class Builder {
         private final String email;
         private String name = "";
@@ -92,7 +90,6 @@ public class User {
         }
     }
 
-    // Getters y setters...
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
     public String getEmail() { return email; }

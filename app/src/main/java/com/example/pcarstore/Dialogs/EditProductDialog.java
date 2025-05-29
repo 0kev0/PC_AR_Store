@@ -18,25 +18,20 @@ public class EditProductDialog {
     }
 
     public static void showEditDialog(View view, @NonNull Product product, EditProductDialogListener listener) {
-        // Inflar el layout del diálogo
         View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.dialog_edit_product, null);
 
-        // Obtener referencias a las vistas
         TextInputEditText etName = dialogView.findViewById(R.id.etProductName);
         TextInputEditText etPrice = dialogView.findViewById(R.id.etProductPrice);
         TextInputEditText etStock = dialogView.findViewById(R.id.etProductStock);
 
-        // Rellenar con los valores actuales
         etName.setText(product.getName());
         etPrice.setText(String.valueOf(product.getPrice()));
         etStock.setText(String.valueOf(product.getStock()));
 
-        // Crear el diálogo
         AlertDialog dialog = new AlertDialog.Builder(view.getContext())
                 .setTitle("Editar Producto")
                 .setView(dialogView)
                 .setPositiveButton("Guardar", (dialogInterface, which) -> {
-                    // Validar y guardar cambios
                     String name = etName.getText().toString().trim();
                     String priceStr = etPrice.getText().toString().trim();
                     String stockStr = etStock.getText().toString().trim();
@@ -53,7 +48,6 @@ public class EditProductDialog {
 
         dialog.show();
 
-        // Asegurar que el teclado se muestre correctamente
         etName.requestFocus();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }

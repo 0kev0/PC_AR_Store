@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapter.ProductViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
     private List<Product> productList = new ArrayList<>();
     private final OnProductActionsListener listener;
     public interface OnProductActionsListener {
@@ -93,7 +92,6 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
                 productImage.setImageResource(R.drawable.ic_products);
             }
 
-            // Set up listeners
             btnEdit.setOnClickListener(v -> listener.onEditProduct(product));
             btnDelete.setOnClickListener(v -> listener.onDeleteProduct(product));
         }

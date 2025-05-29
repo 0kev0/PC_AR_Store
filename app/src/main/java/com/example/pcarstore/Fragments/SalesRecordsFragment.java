@@ -34,8 +34,7 @@ import java.util.Map;
 import kotlin.TuplesKt;
 
 public class SalesRecordsFragment extends Fragment {
-    /*************************************************************VARIABLES******************************************************************************************/
-    private RecyclerView recyclerView;
+   private RecyclerView recyclerView;
     private UserSalesAdapter adapter;
     private final List<UserSales> userSalesList = new ArrayList<>();
 
@@ -66,13 +65,10 @@ public class SalesRecordsFragment extends Fragment {
                 if (isAdded() && !isDetached()) {
                     UserOrdersSalesDialog dialog = UserOrdersSalesDialog.newInstance(userId);
 
-                    // Usa el FragmentManager correcto
                     FragmentManager fragmentManager = getParentFragmentManager();
 
-                    // Muestra el diálogo con transición
                     dialog.show(fragmentManager, "UserOrdersSalesDialog");
 
-                    // Debug
                     Log.d("DialogDebug", "Mostrando diálogo para: " + userId);
                     Toast.makeText(requireContext(), "Mostrando órdenes de " + userId,
                             Toast.LENGTH_SHORT).show();
@@ -99,7 +95,7 @@ public class SalesRecordsFragment extends Fragment {
         filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                boolean sortDescending = position == 0; // Primera opción = Mayor a menor
+                boolean sortDescending = position == 0;
                 adapter.updateData(new ArrayList<>(userSalesList), sortDescending);
             }
 
@@ -142,7 +138,7 @@ public class SalesRecordsFragment extends Fragment {
     private void updateAdapterWithNewData(Map<String, UserSales> userSalesMap) {
         userSalesList.clear();
         userSalesList.addAll(userSalesMap.values());
-        adapter.updateData(new ArrayList<>(userSalesList), true); // Orden descendente por defecto
+        adapter.updateData(new ArrayList<>(userSalesList), true);
     }
 
 }

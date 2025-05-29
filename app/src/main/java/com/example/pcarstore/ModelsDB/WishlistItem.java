@@ -3,7 +3,6 @@ package com.example.pcarstore.ModelsDB;
 import java.util.Date;
 
 public class WishlistItem {
-    /*************************************************************VARIABLES******************************************************************************************/
     private String userId;
     private String productId;
     private Date addedDate;

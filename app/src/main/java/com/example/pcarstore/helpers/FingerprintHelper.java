@@ -17,7 +17,6 @@ public class FingerprintHelper extends FingerprintManager.AuthenticationCallback
     public void startAuth(FingerprintManager fingerprintManager,
                           FingerprintManager.CryptoObject cryptoObject) {
         try {
-            // Iniciar nueva autenticación
             fingerprintManager.authenticate(cryptoObject, null, 0, this, null);
             Log.d(TAG, "Autenticación por huella iniciada");
         } catch (SecurityException e) {

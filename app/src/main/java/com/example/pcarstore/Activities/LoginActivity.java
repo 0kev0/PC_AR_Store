@@ -88,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        // persiistenca para trabajar sin wifi
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -153,10 +152,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (!snapshot.exists()) {
-                        // Si no existe, registrarlo como nuevo usuario (rol "client" por defecto)
-                        //  registerNewUser(currentUser.getUid(), currentUser.getEmail());
                     } else {
-                        // Si existe, verificar el rol como antes
                         User user = snapshot.getValue(User.class);
                         if (user != null && user.getRole() != null) {
                             String storedRole = sessionManager.getUserRole();
@@ -270,7 +266,6 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d(TAG, "Usuario autenticado con éxito");
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            // Primero guardar datos, luego redirigir
                             saveUserDataAndRedirect(user);
                         }
                     } else {
@@ -302,23 +297,20 @@ public class LoginActivity extends AppCompatActivity {
         userData.put("provider", "google");
         userData.put("lastLogin", ServerValue.TIMESTAMP);
 
-        // Verificar si es usuario existente
         mDatabase.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
-                    // Nuevo usuario
                     userData.put("createdAt", ServerValue.TIMESTAMP);
-                    userData.put("role", "client"); // Rol por defecto
+                    userData.put("role", "client");
                     userData.put("membresiaPrime", false);
                 }
 
-                // Actualizar/crear datos
                 mDatabase.child(user.getUid()).updateChildren(userData)
                         .addOnSuccessListener(aVoid -> {
                             dismissProgressDialog();
                             Log.d(TAG, "Datos guardados correctamente");
-                            verifyUserRole(user); // Ahora sí redirigimos
+                            verifyUserRole(user);
                         })
                         .addOnFailureListener(e -> {
                             dismissProgressDialog();
@@ -370,11 +362,10 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            // Verificar si el correo está confirmado
                             if (!user.isEmailVerified()) {
                                 dismissProgressDialog();
                                 showEmailNotVerifiedDialog(user);
-                                mAuth.signOut(); // Cerrar sesión hasta que verifique
+                                mAuth.signOut();
                             } else {
                                 verifyUserRole(user.getUid());
                             }
@@ -484,7 +475,7 @@ public class LoginActivity extends AppCompatActivity {
 
         Map<String, Object> userData = new HashMap<>();
         userData.put("email", currentUser.getEmail());
-        userData.put("role", "client"); // Rol por defecto
+        userData.put("role", "client");
         userData.put("createdAt", ServerValue.TIMESTAMP);
 
         FirebaseDatabase.getInstance().getReference("users").child(userId)
@@ -550,18 +541,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void ChangePassword(View view) {
-        // Crear diálogo para solicitar correo electrónico
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Restablecer Contraseña");
         builder.setMessage("Ingrese su correo electrónico para recibir el enlace de restablecimiento");
 
-        // Configurar campo de entrada
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         input.setHint("correo@ejemplo.com");
         builder.setView(input);
 
-        // Configurar botones
         builder.setPositiveButton("Enviar", (dialog, which) -> {
             String email = input.getText().toString().trim();
             if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -573,7 +561,6 @@ public class LoginActivity extends AppCompatActivity {
 
         builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
 
-        // Mostrar diálogo
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -608,18 +595,15 @@ public class LoginActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (fingerprintManager == null || !fingerprintManager.isHardwareDetected()) {
-                // El dispositivo no tiene sensor de huella digital
                 return false;
             }
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_BIOMETRIC)
                     != PackageManager.PERMISSION_GRANTED) {
-                // Permiso no concedido
                 return false;
             }
 
             if (!fingerprintManager.hasEnrolledFingerprints()) {
-                // No hay huellas registradas en el dispositivo
                 return false;
             }
         }

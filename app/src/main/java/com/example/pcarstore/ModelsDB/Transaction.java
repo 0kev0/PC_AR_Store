@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Transaction {
-    /*************************************************************VARIABLES******************************************************************************************/
     private String id;
     private String type;
     private double amount;
@@ -18,7 +17,6 @@ public class Transaction {
     private String discountCode;
     private double discountAmount;
 
-    // Constructor vacío
     public Transaction() {}
 
     public static class ProductItem {
@@ -51,7 +49,7 @@ public class Transaction {
         }
     }
 
-    // Getters y setters
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 

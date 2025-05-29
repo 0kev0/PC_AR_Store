@@ -117,35 +117,28 @@ public class Gift_CardsFragment extends Fragment implements
                 this);
     }
 
-    // Implementación de interfaces de los diálogos
     @Override
     public void onGiftCardCreated(GiftCard giftCard) {
-        // Actualizar UI si es necesario
     }
 
     @Override
     public void onCreationError(String error) {
-        // Manejar error específico si es necesario
     }
 
     @Override
     public void onGiftCardUpdated() {
-        // Refrescar la lista si es necesario
     }
 
     @Override
     public void onUpdateError(String error) {
-        // Manejar error específico si es necesario
     }
 
     @Override
     public void onGiftCardExpired() {
-        // Refrescar la lista si es necesario
     }
 
     @Override
     public void onExpireError(String error) {
-        // Manejar error específico si es necesario
     }
 
 }

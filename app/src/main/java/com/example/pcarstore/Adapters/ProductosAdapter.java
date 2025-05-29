@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.ProductViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
     private List<Product> productList = new ArrayList<>();
     private final OnProductActionsListener listener;
     private final DatabaseReference productsRef;
@@ -74,7 +73,6 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Handle error
             }
         });
     }
@@ -82,7 +80,6 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
     private void checkWishlistStatus() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null || wishlistRef == null) {
-            // Si no hay usuario, marcamos todos como no en wishlist
             for (Product product : productList) {
                 product.setInWishlist(false);
             }
@@ -102,7 +99,6 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Handle error
             }
         });
     }
@@ -183,20 +179,17 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
                 productCategory.setText(product.getCategory());
             }
 
-            // Cargar imagen principal
             if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
                 Glide.with(itemView.getContext())
-                        .load(product.getImageUrls().get(0)) // Usar la primera imagen
+                        .load(product.getImageUrls().get(0))
                         .placeholder(R.drawable.ic_products)
                         .into(productImage);
             } else {
                 productImage.setImageResource(R.drawable.ic_products);
             }
 
-            // Configurar wishlist icon
             updateWishlistIcon(product.isInWishlist());
 
-            // Configurar listeners
             btnEdit.setOnClickListener(v -> listener.onEditProduct(product));
             btnDelete.setOnClickListener(v -> listener.onDeleteProduct(product));
 
@@ -204,7 +197,7 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.Prod
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 if (currentUser == null) {
                     if (listener != null) {
-                        listener.onWishlistUpdated(product, false); // Para manejar login requerido
+                        listener.onWishlistUpdated(product, false);
                     }
                     return;
                 }

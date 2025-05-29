@@ -22,7 +22,6 @@ import com.example.pcarstore.R;
 import java.util.Date;
 
 public class OrderDetailsDialog extends DialogFragment {
-    /*************************************************************VARIABLES******************************************************************************************/
     private final Order order;
     private ProgressBar progressBar;
     private TextView orderStatusTextView;
@@ -39,7 +38,6 @@ public class OrderDetailsDialog extends DialogFragment {
         Dialog dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.dialog_order_details);
 
-        // Inicializar vistas
         TextView orderIdTextView = dialog.findViewById(R.id.tvOrderId);
         orderStatusTextView = dialog.findViewById(R.id.tvStatus);
         TextView orderTotalTextView = dialog.findViewById(R.id.tvTotalAmount);
@@ -49,7 +47,6 @@ public class OrderDetailsDialog extends DialogFragment {
         progressBar = dialog.findViewById(R.id.orderProgress);
         Button closeButton = dialog.findViewById(R.id.btnClose);
 
-        // Mostrar detalles de la orden
         orderIdTextView.setText(order.getOrderId());
         orderStatusTextView.setText(order.getStatus());
         orderTotalTextView.setText("$" + order.getTotal());
@@ -57,12 +54,10 @@ public class OrderDetailsDialog extends DialogFragment {
         deliveryDateTextView.setText(order.getDeliveryDate().toString());
         itemsCountTextView.setText(order.getItems().size() + " artículos");
 
-        // Iniciar actualización periódica del progreso
         startProgressUpdate();
 
-        // Cerrar el diálogo
         closeButton.setOnClickListener(v -> {
-            handler.removeCallbacks(updateProgressRunnable); // Detener actualización
+            handler.removeCallbacks(updateProgressRunnable);
             dismiss();
         });
 
@@ -85,7 +80,7 @@ public class OrderDetailsDialog extends DialogFragment {
                 int progress = calculateProgress(order.getDate(), order.getDeliveryDate());
                 progressBar.setProgress(progress);
                 orderStatusTextView.setText(getOrderStatus(progress));
-                handler.postDelayed(this, 3000); // Actualizar cada 3 segundos
+                handler.postDelayed(this, 3000);
             }
         };
         handler.post(updateProgressRunnable);
@@ -104,7 +99,7 @@ public class OrderDetailsDialog extends DialogFragment {
         long totalTime = endTime - startTime;
         long elapsedTime = currentTime - startTime;
 
-        return (int) ((elapsedTime * 100) / totalTime); // Calcular porcentaje
+        return (int) ((elapsedTime * 100) / totalTime);
     }
 
     private String getOrderStatus(int progress) {
@@ -128,7 +123,7 @@ public class OrderDetailsDialog extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(updateProgressRunnable); // Detener actualización
+        handler.removeCallbacks(updateProgressRunnable);
     }
 
 }

@@ -39,22 +39,19 @@ public class EditGiftCardDialog {
         EditText etStatus = dialogView.findViewById(R.id.et_status);
         EditText etRecipientEmail = dialogView.findViewById(R.id.et_recipient_email);
 
-        // Configurar valores iniciales
         etAmount.setText(String.valueOf(giftCard.getAmount()));
         etCurrency.setText(giftCard.getCurrency() != null ? giftCard.getCurrency() : "USD");
         etStatus.setText(giftCard.getStatus());
         etRecipientEmail.setText(giftCard.getRecipientEmail() != null ? giftCard.getRecipientEmail() : "");
 
-        // Manejo de fechas
         Date expirationDate = giftCard.getExpirationDate() != null ?
                 giftCard.getExpirationDate() :
-                new Date(System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000)); // 1 año por defecto
+                new Date(System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000));
         etExpiryDate.setText(dateFormatter.format(expirationDate));
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(expirationDate);
 
-        // Configurar DatePicker
         etExpiryDate.setOnClickListener(v ->
                 showDatePicker(context, calendar, etExpiryDate, dateFormatter));
 
@@ -119,14 +116,12 @@ public class EditGiftCardDialog {
                                        DatabaseReference databaseRef,
                                        OnGiftCardUpdatedListener listener) {
 
-        // Crear objeto GiftCard actualizado
         GiftCard updatedGiftCard = new GiftCard(
                 originalGiftCard.getCode(),
                 newAmount,
                 originalGiftCard.getCreatedBy()
         );
 
-        // Establecer propiedades adicionales
         updatedGiftCard.setCardId(originalGiftCard.getCardId());
         updatedGiftCard.setCurrency(newCurrency);
         updatedGiftCard.setExpirationDate(newExpiryDate);
@@ -134,19 +129,17 @@ public class EditGiftCardDialog {
         updatedGiftCard.setRecipientEmail(newRecipientEmail.isEmpty() ? null : newRecipientEmail);
         updatedGiftCard.setCreationDate(originalGiftCard.getCreationDate());
 
-        // Construir referencia correcta
         DatabaseReference targetRef;
         String refKey = databaseRef.getKey();
 
-        if (refKey == null) { // Es la referencia raíz
+        if (refKey == null) {
             targetRef = databaseRef.child("giftCards").child(originalGiftCard.getCardId());
-        } else if (refKey.equals("giftCards")) { // Ya apunta a giftCards
+        } else if (refKey.equals("giftCards")) {
             targetRef = databaseRef.child(originalGiftCard.getCardId());
-        } else { // Es otra referencia inesperada
+        } else {
             targetRef = databaseRef.child("giftCards").child(originalGiftCard.getCardId());
         }
 
-        // Actualizar en Firebase
         targetRef.setValue(updatedGiftCard.toMap())
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Gift Card actualizada", Toast.LENGTH_SHORT).show();

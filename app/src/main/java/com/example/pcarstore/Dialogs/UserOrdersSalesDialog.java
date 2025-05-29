@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 public class UserOrdersSalesDialog extends DialogFragment {
-    /*************************************************************VARIABLES******************************************************************************************/
     private static final String TAG = "UserOrdersDialog";
     private static final String ARG_USER_ID = "user_id";
     private DatabaseReference ordersRef;
@@ -77,14 +76,12 @@ public class UserOrdersSalesDialog extends DialogFragment {
                     try {
                         Map<String, Object> orderMap = new HashMap<>();
 
-                        // Agregar solo los datos necesarios para mostrar
                         orderMap.put("orderId", orderSnapshot.getKey());
                         orderMap.put("status", orderSnapshot.child("status").getValue(String.class));
                         orderMap.put("total", orderSnapshot.child("total").getValue(Double.class));
 
                         ordersList.add(orderMap);
 
-                        // Log para depuración
                         Log.d(TAG, "Orden agregada: ID=" + orderSnapshot.getKey() +
                                 ", Estado=" + orderMap.get("status") +
                                 ", Total=" + orderMap.get("total"));
@@ -94,7 +91,6 @@ public class UserOrdersSalesDialog extends DialogFragment {
                     }
                 }
 
-                // Actualizar el adaptador con la lista simplificada
                 adapter.updateOrders(ordersList);
             }
 

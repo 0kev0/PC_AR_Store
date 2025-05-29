@@ -44,7 +44,6 @@ import java.util.Map;
 public class PlaneRenderer {
   private static final String TAG = PlaneRenderer.class.getSimpleName();
 
-  // Shader names.
   private static final String VERTEX_SHADER_NAME = "shaders/plane.vert";
   private static final String FRAGMENT_SHADER_NAME = "shaders/plane.frag";
   private static final String TEXTURE_NAME = "models/trigrid.png";
@@ -70,11 +69,6 @@ public class PlaneRenderer {
   private static final float DOTS_PER_METER = 10.0f;
   private static final float EQUILATERAL_TRIANGLE_SCALE = (float) (1 / Math.sqrt(3));
 
-  // Using the "signed distance field" approach to render sharp lines and circles.
-  // {dotThreshold, lineThreshold, lineFadeSpeed, occlusionScale}
-  // dotThreshold/lineThreshold: red/green intensity above which dots/lines are present
-  // lineFadeShrink:  lines will fade in between alpha = 1-(1/lineFadeShrink) and 1.0
-  // occlusionShrink: occluded planes will fade out between alpha = 0 and 1/occlusionShrink
   private static final float[] GRID_CONTROL = {0.2f, 0.4f, 2.0f, 1.5f};
 
   private final Mesh mesh;
@@ -91,7 +85,6 @@ public class PlaneRenderer {
           .order(ByteOrder.nativeOrder())
           .asIntBuffer();
 
-  // Temporary lists/matrices allocated here to reduce number of allocations for each frame.
   private final float[] viewMatrix = new float[16];
   private final float[] modelMatrix = new float[16];
   private final float[] modelViewMatrix = new float[16];
@@ -116,10 +109,10 @@ public class PlaneRenderer {
             .setTexture("u_Texture", texture)
             .setVec4("u_GridControl", GRID_CONTROL)
             .setBlend(
-                BlendFactor.DST_ALPHA, // RGB (src)
-                BlendFactor.ONE, // RGB (dest)
-                BlendFactor.ZERO, // ALPHA (src)
-                BlendFactor.ONE_MINUS_SRC_ALPHA) // ALPHA (dest)
+                BlendFactor.DST_ALPHA,
+                BlendFactor.ONE,
+                BlendFactor.ZERO,
+                BlendFactor.ONE_MINUS_SRC_ALPHA)
             .setDepthWrite(false);
 
     indexBufferObject = new IndexBuffer(render, /*entries=*/ null);
@@ -138,17 +131,12 @@ public class PlaneRenderer {
       return;
     }
 
-    // Generate a new set of vertices and a corresponding triangle strip index set so that
-    // the plane boundary polygon has a fading edge. This is done by making a copy of the
-    // boundary polygon vertices and scaling it down around center to push it inwards. Then
-    // the index buffer is setup accordingly.
     boundary.rewind();
     int boundaryVertices = boundary.limit() / 2;
     int numVertices;
     int numIndices;
 
     numVertices = boundaryVertices * VERTS_PER_BOUNDARY_VERT;
-    // drawn as GL_TRIANGLE_STRIP with 3n-2 triangles (n-2 for fill, 2n for perimeter).
     numIndices = boundaryVertices * INDICES_PER_BOUNDARY_VERT;
 
     if (vertexBuffer.capacity() < numVertices * COORDS_PER_VERTEX) {
@@ -177,9 +165,6 @@ public class PlaneRenderer {
     indexBuffer.rewind();
     indexBuffer.limit(numIndices);
 
-    // Note: when either dimension of the bounding box is smaller than 2*FADE_RADIUS_M we
-    // generate a bunch of 0-area triangles.  These don't get rendered though so it works
-    // out ok.
     float xScale = Math.max((extentX - 2 * FADE_RADIUS_M) / extentX, 0.0f);
     float zScale = Math.max((extentZ - 2 * FADE_RADIUS_M) / extentZ, 0.0f);
 
@@ -194,17 +179,13 @@ public class PlaneRenderer {
       vertexBuffer.put(1.0f);
     }
 
-    // step 1, perimeter
     indexBuffer.put((short) ((boundaryVertices - 1) * 2));
     for (int i = 0; i < boundaryVertices; ++i) {
       indexBuffer.put((short) (i * 2));
       indexBuffer.put((short) (i * 2 + 1));
     }
     indexBuffer.put((short) 1);
-    // This leaves us on the interior edge of the perimeter between the inset vertices
-    // for boundary verts n-1 and 0.
 
-    // step 2, interior:
     for (int i = 1; i < boundaryVertices / 2; ++i) {
       indexBuffer.put((short) ((boundaryVertices - 1 - i) * 2 + 1));
       indexBuffer.put((short) (i * 2 + 1));
@@ -224,8 +205,7 @@ public class PlaneRenderer {
    */
   public void drawPlanes(
       SampleRender render, Collection<Plane> allPlanes, Pose cameraPose, float[] cameraProjection) {
-    // Planes must be sorted by distance from camera so that we draw closer planes first, and
-    // they occlude the farther planes.
+
     List<SortablePlane> sortedPlanes = new ArrayList<>();
 
     for (Plane plane : allPlanes) {
@@ -234,7 +214,7 @@ public class PlaneRenderer {
       }
 
       float distance = calculateDistanceToPlane(plane.getCenterPose(), cameraPose);
-      if (distance < 0) { // Plane is back-facing.
+      if (distance < 0) {
         continue;
       }
       sortedPlanes.add(new SortablePlane(distance, plane));
@@ -255,21 +235,17 @@ public class PlaneRenderer {
       float[] planeMatrix = new float[16];
       plane.getCenterPose().toMatrix(planeMatrix, 0);
 
-      // Get transformed Y axis of plane's coordinate system.
       plane.getCenterPose().getTransformedAxis(1, 1.0f, normalVector, 0);
 
       updatePlaneParameters(
           planeMatrix, plane.getExtentX(), plane.getExtentZ(), plane.getPolygon());
 
-      // Get plane index. Keep a map to assign same indices to same planes.
       Integer planeIndex = planeIndexMap.get(plane);
       if (planeIndex == null) {
         planeIndex = planeIndexMap.size();
         planeIndexMap.put(plane, planeIndex);
       }
 
-      // Each plane will have its own angle offset from others, to make them easier to
-      // distinguish. Compute a 2x2 rotation matrix from the angle.
       float angleRadians = planeIndex * 0.144f;
       float uScale = DOTS_PER_METER;
       float vScale = DOTS_PER_METER * EQUILATERAL_TRIANGLE_SCALE;
@@ -278,18 +254,15 @@ public class PlaneRenderer {
       planeAngleUvMatrix[2] = +(float) Math.sin(angleRadians) * uScale;
       planeAngleUvMatrix[3] = +(float) Math.cos(angleRadians) * vScale;
 
-      // Build the ModelView and ModelViewProjection matrices
-      // for calculating cube position and light.
+
       Matrix.multiplyMM(modelViewMatrix, 0, viewMatrix, 0, modelMatrix, 0);
       Matrix.multiplyMM(modelViewProjectionMatrix, 0, cameraProjection, 0, modelViewMatrix, 0);
 
-      // Populate the shader uniforms for this frame.
       shader.setMat4("u_Model", modelMatrix);
       shader.setMat4("u_ModelViewProjection", modelViewProjectionMatrix);
       shader.setMat2("u_PlaneUvMatrix", planeAngleUvMatrix);
       shader.setVec3("u_Normal", normalVector);
 
-      // Set the position of the plane
       vertexBufferObject.set(vertexBuffer);
       indexBufferObject.set(indexBuffer);
 
@@ -307,8 +280,6 @@ public class PlaneRenderer {
     }
   }
 
-  // Calculate the normal distance to plane from cameraPose, the given planePose should have y axis
-  // parallel to plane's normal, for example plane's center pose or hit test pose.
   public static float calculateDistanceToPlane(Pose planePose, Pose cameraPose) {
     float[] normal = new float[3];
     float cameraX = cameraPose.tx();

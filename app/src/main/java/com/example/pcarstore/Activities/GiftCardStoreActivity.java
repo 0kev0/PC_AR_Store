@@ -69,7 +69,7 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
         showProgressDialog();
         Query query = FirebaseDatabase.getInstance()
                 .getReference("giftCards")
-                .orderByChild("amount"); // Ordenar por amount directamente en Firebase
+                .orderByChild("amount");
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -255,8 +255,7 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
     }
 
     private double getCurrentUserBalance() {
-        // Implementa según tu estructura de datos
-        return 0.0; // Valor temporal
+        return 0.0;
     }
 
     private void completeGiftCardPurchase(DatabaseReference userRef, User user, GiftCard giftCard, String recipientEmail) {
@@ -341,7 +340,6 @@ public class GiftCardStoreActivity extends AppCompatActivity implements CreditCa
     }
 
     private String generateGiftCardCode() {
-        // Implementa tu lógica de generación de código
         return "PDM-" + System.currentTimeMillis();
     }
 

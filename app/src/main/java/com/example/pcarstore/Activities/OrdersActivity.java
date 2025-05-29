@@ -45,18 +45,16 @@ public class OrdersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_orders_usuarios);
 
-        // Configurar toolbar
+
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
         ordersRef = FirebaseDatabase.getInstance().getReference("orders");
 
-        // Inicializar vistas
         RecyclerView ordersRecyclerView = findViewById(R.id.ordersRecyclerView);
         progressBar = findViewById(R.id.progressBar);
         emptyView = findViewById(R.id.emptyView);
@@ -87,7 +85,6 @@ public class OrdersActivity extends AppCompatActivity {
                             }
                         }
 
-                        // Ordenar por fecha (más reciente primero)
                         Collections.sort(orders, (o1, o2) -> Long.compare(o2.getDate().getTime(), o1.getDate().getTime()));
 
                         adapter.setOrders(orders);
@@ -119,22 +116,18 @@ public class OrdersActivity extends AppCompatActivity {
             order.setStatus(orderSnapshot.child("status").getValue(String.class));
             order.setTotal(orderSnapshot.child("total").getValue(Double.class));
 
-            // Parsear fecha de orden
             Long timestamp = orderSnapshot.child("date").getValue(Long.class);
             if (timestamp != null) {
                 order.setDate(new Date(timestamp));
             }
 
-            // Parsear fecha de entrega
             Long deliveryTimestamp = orderSnapshot.child("deliveryDate").getValue(Long.class);
             if (deliveryTimestamp != null) {
                 order.setDeliveryDate(new Date(deliveryTimestamp));
             } else if (timestamp != null) {
-                // Si no hay fecha de entrega pero sí hay fecha de orden, calcular automáticamente
-                order.setDate(new Date(timestamp)); // Esto activará el cálculo automático de la fecha de entrega
+                order.setDate(new Date(timestamp));
             }
 
-            // Parsear items
             Map<String, OrderItem> items = new HashMap<>();
             DataSnapshot itemsSnapshot = orderSnapshot.child("items");
             for (DataSnapshot itemSnapshot : itemsSnapshot.getChildren()) {
@@ -155,7 +148,6 @@ public class OrdersActivity extends AppCompatActivity {
     }
 
     private void onOrderClicked(Order order) {
-        // Aquí puedes implementar la navegación al detalle de la orden
         Toast.makeText(this, "Pedido seleccionado: " + order.getOrderId(), Toast.LENGTH_SHORT).show();
 
         OrderDetailsDialog dialog = new OrderDetailsDialog(order);

@@ -127,11 +127,10 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
     private final float[] viewInverseMatrix = new float[16];
     private final float[] worldLightDirection = {0.0f, 0.0f, 0.0f, 0.0f};
     private final float[] viewLightDirection = new float[4];
-    private float scaleFactor = 0.1f; // Valor inicial
+    private float scaleFactor = 0.1f;
     private float rotationAngle = 0f;
     private static final float SCALE_STEP = 0.05f;
     private static final float ROTATION_STEP = 15f;
-    // Product data
     private String modelPath;
     private String texturePath;
 
@@ -155,13 +154,11 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
 
         btnIncrease.setOnClickListener(v -> {
             scaleFactor += SCALE_STEP;
-            // Limitar el tamaño máximo si es necesario
             scaleFactor = Math.min(scaleFactor, 2.0f);
         });
 
         btnDecrease.setOnClickListener(v -> {
             scaleFactor -= SCALE_STEP;
-            // Limitar el tamaño mínimo si es necesario
             scaleFactor = Math.max(scaleFactor, 0.05f);
         });
 
@@ -356,7 +353,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                     new Mesh(
                             render, Mesh.PrimitiveMode.POINTS, null, pointCloudVertexBuffers);
 
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////
             try {
                 virtualObjectAlbedoTexture = Texture.createFromFile(
                         render,
@@ -380,7 +376,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                             Texture.WrapMode.CLAMP_TO_EDGE,
                             Texture.ColorFormat.LINEAR);
 
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////
             try {
                 virtualObjectMesh = Mesh.createFromFile(render, modelPath);
             } catch (IOException e) {
@@ -388,7 +383,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                 Toast.makeText(this, "no funca el modelo", Toast.LENGTH_SHORT).show();
 
             }
-            /// ////////////////////////////////////////////////////////////////////
             virtualObjectShader =
                     Shader.createFromAssets(
                                     render,
@@ -457,7 +451,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
             try (Image depthImage = frame.acquireDepthImage16Bits()) {
                 backgroundRenderer.updateCameraDepthTexture(depthImage);
             } catch (NotYetAvailableException e) {
-                // This normally means that depth data is not available yet.
             }
         }
 
@@ -523,14 +516,12 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
 
             anchor.getPose().toMatrix(modelMatrix, 0);
 
-            // AÑADIDO: Matriz de escala para controlar el tamaño del modelo
             float[] scaleMatrix = new float[16];
             Matrix.setIdentityM(scaleMatrix, 0);
             Matrix.scaleM(scaleMatrix, 0, this.scaleFactor, this.scaleFactor, this.scaleFactor);
             float[] rotationMatrix = new float[16];
-            Matrix.setRotateM(rotationMatrix, 0, rotationAngle, 0f, 1f, 0f); // Rotar alrededor del eje Y
+            Matrix.setRotateM(rotationMatrix, 0, rotationAngle, 0f, 1f, 0f);
             Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, rotationMatrix, 0);
-            // Combinar la matriz de pose con la matriz de escala
             Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, scaleMatrix, 0);
 
             Matrix.multiplyMM(modelViewMatrix, 0, viewMatrix, 0, modelMatrix, 0);

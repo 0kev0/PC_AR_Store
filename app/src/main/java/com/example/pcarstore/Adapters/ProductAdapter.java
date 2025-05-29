@@ -35,11 +35,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private OnCartUpdateListener cartUpdateListener;
     public interface OnProductClickListener {
         void onProductClick(Product product);
-        void onAddToCart(Product product); // Make sure this method is included
+        void onAddToCart(Product product);
         void onWishlistClick(Product product, boolean isInWishlist);
     }
 
-    // Interface para actualizacion de carrito
     public interface OnCartUpdateListener {
         void onCartUpdated(Product product, int quantity);
     }
@@ -120,14 +119,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     })
                     .into(productImage);
 
-            // Update wishlist icon based on current status
             updateWishlistIcon(product.isInWishlist());
 
-            // Set up wishlist button click listener
             btnWishlist.setOnClickListener(v -> {
                 if (mAuth.getCurrentUser() != null) {
-                    // Important: Just call the listener - don't modify Firebase here!
-                    // This prevents double handling of wishlist actions
                     if (listener != null) {
                         listener.onWishlistClick(product, product.isInWishlist());
                     }
@@ -168,12 +163,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         private void updateWishlistIcon(boolean isInWishlist) {
             if (isInWishlist) {
-                // Product is in wishlist - show filled heart in gray
                 btnWishlist.setIconResource(R.drawable.ic_heart);
                 btnWishlist.setIconTint(itemView.getContext().getResources().getColorStateList(R.color.heart, null));
                 btnWishlist.setStrokeColor(itemView.getContext().getResources().getColorStateList(R.color.heart, null));
             } else {
-                // Product is not in wishlist - show outlined heart in pink
                 btnWishlist.setIconResource(R.drawable.ic_unfill_heart);
                 btnWishlist.setIconTint(itemView.getContext().getResources().getColorStateList(R.color.gray, null));
                 btnWishlist.setStrokeColor(itemView.getContext().getResources().getColorStateList(R.color.gray, null));

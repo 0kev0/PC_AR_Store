@@ -43,7 +43,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.io.File;
 
 public class ProductDetailFragment extends Fragment {
-    /*************************************************************VARIABLES******************************************************************************************/
     private static final String TAG = "ProductDetailFragment";
     private String productId;
     private DatabaseReference productRef;
@@ -56,9 +55,8 @@ public class ProductDetailFragment extends Fragment {
     private Button btnAddToCart, btnViewAR;
     private InicioActivity inicioActivity;
     private MaterialButton btnWishlist;
-    // Modelo 3D y textura
     private ProgressDialog progressDialog;
-    private static final long CACHE_EXPIRATION_TIME = 120000; // 2 minutos en milisegundos
+    private static final long CACHE_EXPIRATION_TIME = 120000;
     public static ProductDetailFragment newInstance(String productId) {
         ProductDetailFragment fragment = new ProductDetailFragment();
         Bundle args = new Bundle();
@@ -84,7 +82,7 @@ public class ProductDetailFragment extends Fragment {
         if (currentUser != null) {
             wishlistRef = FirebaseDatabase.getInstance().getReference()
                     .child("wishlist")
-                    .child(currentUser.getUid()); // Referencia específica del usuario
+                    .child(currentUser.getUid());
         }
     }
 
@@ -113,7 +111,6 @@ public class ProductDetailFragment extends Fragment {
         setupRealtimeListener();
         setupButtonListeners();
 
-        // Initialize progress dialog
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setTitle("Preparando visualización AR");
         progressDialog.setMessage("Descargando archivos necesarios...");
@@ -166,7 +163,7 @@ public class ProductDetailFragment extends Fragment {
 
     private void addToWishlist() {
         wishlistRef.child(productId)
-                .setValue(true) // Guarda como true para indicar que existe
+                .setValue(true)
                 .addOnSuccessListener(aVoid -> {
                     currentProduct.setInWishlist(true);
                     updateWishlistButton(true);
@@ -318,7 +315,7 @@ public class ProductDetailFragment extends Fragment {
         productDescription.setText(product.getDescription());
 
         if (product.getRating() != null) {
-            // Configurar el RatingBar basado en la calificación
+
             float rating = product.getRating().floatValue();
 
             if (rating > 5.0f) {
@@ -327,13 +324,10 @@ public class ProductDetailFragment extends Fragment {
                 productRating.setNumStars(5);
             }
 
-            // Establecer la calificación
             productRating.setRating(rating);
 
-            // Configurar el paso (para permitir medias estrellas)
             productRating.setStepSize(0.5f);
         } else {
-            //sin rating
             productRating.setNumStars(5);
             productRating.setRating(0);
         }
@@ -369,8 +363,6 @@ public class ProductDetailFragment extends Fragment {
             showToast("Error: No se puede agregar al carrito, producto no disponible");
             return;
         }
-
-        // Default quantity is 1, you can modify this if needed
         addToCart(currentProduct, 1);
     }
 
@@ -386,7 +378,6 @@ public class ProductDetailFragment extends Fragment {
             return;
         }
 
-        // Usuario autenticado - proceder con la lógica del carrito
         proceedWithAddToCart(currentUser.getUid(), product, quantity);
     }
 
@@ -395,7 +386,6 @@ public class ProductDetailFragment extends Fragment {
                 .setTitle("Inicio de sesión requerido")
                 .setMessage("Para agregar productos al carrito necesitas iniciar sesión. ¿Deseas iniciar sesión ahora?")
                 .setPositiveButton("Iniciar sesión", (dialog, which) -> {
-                    // Redirigir a LoginActivity
                     Intent loginIntent = new Intent(getContext(), LoginActivity.class);
                     loginIntent.putExtra("redirect_to", "cart");
                     loginIntent.putExtra("product_id", product.getProductId()); // Opcional: para agregar después del login
@@ -412,7 +402,6 @@ public class ProductDetailFragment extends Fragment {
     }
 
     private void proceedWithAddToCart(String userId, Product product, int quantity) {
-        // Actualizar contador del carrito
         if (inicioActivity != null) {
             inicioActivity.incrementCartCount();
         }

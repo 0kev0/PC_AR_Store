@@ -60,7 +60,6 @@ public class CreditCardPaymentDialog extends DialogFragment {
             initialAmount = getArguments().getDouble("amount", 0.0);
         }
 
-        // Intenta obtener el listener del Fragment padre si no se ha asignado manualmente
         if (listener == null && getParentFragment() instanceof CreditCardPaymentListener) {
             listener = (CreditCardPaymentListener) getParentFragment();
         }
@@ -69,7 +68,7 @@ public class CreditCardPaymentDialog extends DialogFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null; // Previene memory leaks
+        listener = null;
     }
 
     @Override
@@ -100,7 +99,6 @@ public class CreditCardPaymentDialog extends DialogFragment {
         Button btnCancel = dialogView.findViewById(R.id.btnCancelRecarga);
         Button btnConfirm = dialogView.findViewById(R.id.btnConfirmRecarga);
 
-        // Format card number as user types
         etCardNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -129,7 +127,6 @@ public class CreditCardPaymentDialog extends DialogFragment {
             }
         });
 
-        // Format expiry date as user types
         etExpiry.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -160,7 +157,6 @@ public class CreditCardPaymentDialog extends DialogFragment {
 
         etAmount.setText(String.format(Locale.getDefault(), "%.2f", initialAmount));
 
-        // Configurar el botón Cancelar
         btnCancel.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onPaymentCancelled();
@@ -168,7 +164,6 @@ public class CreditCardPaymentDialog extends DialogFragment {
             dismiss();
         });
 
-        // Configurar el botón Confirmar
         btnConfirm.setOnClickListener(v -> {
             String cardName = etCardName.getText().toString().trim();
             String cardNumber = etCardNumber.getText().toString().replaceAll(" ", "");
@@ -176,7 +171,6 @@ public class CreditCardPaymentDialog extends DialogFragment {
             String cvv = etCvv.getText().toString().trim();
             String amountStr = etAmount.getText().toString().trim();
 
-            // Validación de tarjeta
             CardValidationResult cardValidation = CardValidatorService.validateCard(
                     cardNumber, expiry, cvv, cardName);
 
@@ -192,7 +186,6 @@ public class CreditCardPaymentDialog extends DialogFragment {
                     return;
                 }
 
-                // All good
                 listener.onPaymentConfirmed(cardName, cardNumber, expiry, cvv, amount);
                 dismiss();
             } catch (NumberFormatException e) {

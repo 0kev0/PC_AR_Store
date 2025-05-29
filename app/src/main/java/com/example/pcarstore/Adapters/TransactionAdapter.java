@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
     private final Context context;
     private final List<Transaction> transactionList;
 
@@ -40,8 +39,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         Transaction transaction = transactionList.get(position);
 
         holder.tvTransactionType.setText(transaction.getReadableType());
-
-        // Mostrar cantidad con color según el tipo
         if (transaction.getType().contains("purchase")) {
             holder.tvTransactionAmount.setText(String.format(Locale.getDefault(), "-$%.2f", transaction.getAmount()));
             holder.tvTransactionAmount.setTextColor(context.getResources().getColor(R.color.red_700));
@@ -50,7 +47,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             holder.tvTransactionAmount.setTextColor(context.getResources().getColor(R.color.green_700));
         }
 
-        // Formatear fecha
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy - HH:mm", Locale.getDefault());
         holder.tvTransactionDate.setText(sdf.format(new Date(transaction.getDate())));
 

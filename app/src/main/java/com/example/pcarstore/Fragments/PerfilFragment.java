@@ -72,10 +72,8 @@ public class PerfilFragment extends Fragment {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference("profile_images");
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
-        // Initialize userData as null, will be loaded from database
         userData = null;
 
-        // Initialize the profile dialog with the updated constructor
         editProfileDialog = new EditProfileDialog(
                 requireContext(),
                 mAuth,
@@ -83,7 +81,6 @@ public class PerfilFragment extends Fragment {
                 FirebaseStorage.getInstance()
         );
 
-        // Configure listener for the dialog
         editProfileDialog.setOnProfileUpdateListener(new EditProfileDialog.OnProfileUpdateListener() {
             @Override
             public void onImageSelectionRequested(Intent intent, int requestCode) {
@@ -112,7 +109,6 @@ public class PerfilFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_perfil, container, false);
 
-        // Initialize views
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
         tvUserName = view.findViewById(R.id.tvUserName);
         tvUserEmail = view.findViewById(R.id.tvUserEmail);
@@ -156,7 +152,6 @@ public class PerfilFragment extends Fragment {
             Log.d("PerfilFragment", "Imagen seleccionada URI: " + (imageUri != null ? imageUri.toString() : "null"));
 
             if (imageUri != null) {
-                // Actualizar la vista previa inmediatamente
                 Glide.with(requireContext())
                         .load(imageUri)
                         .circleCrop()
@@ -164,7 +159,6 @@ public class PerfilFragment extends Fragment {
                         .error(R.drawable.ic_account_circle)
                         .into(ivProfilePicture);
 
-                // Pasar la URI al diálogo de edición
                 if (editProfileDialog != null) {
                     editProfileDialog.setImageUri(imageUri);
                     Log.d("PerfilFragment", "URI de imagen pasada al diálogo de edición");
@@ -192,7 +186,6 @@ public class PerfilFragment extends Fragment {
                     @Override
                     public void onPrimePurchased(boolean success) {
                         if (success) {
-                            // Recargar datos del usuario después de la compra exitosa
                             loadUserData();
                         }
                     }
@@ -210,16 +203,10 @@ public class PerfilFragment extends Fragment {
             tvUserEmail.setText(currentUser.getEmail() != null ?
                     currentUser.getEmail() : "No especificado");
 
-            // Mostrar imagen temporal mientras carga
             ivProfilePicture.setImageResource(R.drawable.ic_account_circle);
-
-            // Cargar datos desde Realtime Database (que incluirá la URL de la imagen si existe)
             loadUserDetailsFromDatabase(currentUser.getUid());
-
-            // Mostrar "Cargando saldo..."
             tvUserBalance.setText("Cargando saldo...");
         } else {
-            // Modo invitado
             tvUserName.setText("Invitado");
             tvUserEmail.setText("No has iniciado sesión");
             ivProfilePicture.setImageResource(R.drawable.ic_account_circle);
@@ -241,25 +228,21 @@ public class PerfilFragment extends Fragment {
                         userData = snapshot.getValue(User.class);
 
                         if (userData != null) {
-                            // Set user ID if null
                             if (userData.getUserId() == null) {
                                 userData.setUserId(userId);
                             }
 
-                            // Update UI
                             if (userData.getName() != null && !userData.getName().isEmpty()) {
                                 tvUserName.setText(userData.getName());
                             }
 
-                            // Intenta cargar la imagen desde la URL guardada en la base de datos primero
                             if (userData.getProfileImageUrl() != null && !userData.getProfileImageUrl().isEmpty()) {
                                 loadImageWithGlide(userData.getProfileImageUrl());
                             } else {
-                                // Si no hay URL en la base de datos, intenta cargar desde Storage
                                 loadProfileImageFromStorage(userId);
                             }
 
-                            // Handle balance
+
                             if (snapshot.hasChild("saldo")) {
                                 Double saldo = snapshot.child("saldo").getValue(Double.class);
                                 updateBalanceUI(saldo != null ? saldo : 0.0);
@@ -270,7 +253,6 @@ public class PerfilFragment extends Fragment {
                         }
                     } catch (Exception e) {
                         Log.e("PerfilFragment", "Error parsing user data", e);
-                        // Si hay error, intenta cargar imagen desde Storage directamente
                         loadProfileImageFromStorage(userId);
                     }
                 }
@@ -279,31 +261,26 @@ public class PerfilFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("PerfilFragment", "Error loading user details", error.toException());
-                updateBalanceUI(-1); // Mostrar error
-                // Intenta cargar imagen desde Storage directamente
+                updateBalanceUI(-1);
                 loadProfileImageFromStorage(userId);
             }
         });
     }
 
     private void loadProfileImageFromStorage(String userId) {
-        // Referencia al archivo en Storage con la estructura USERS/CLIENTS/userId.jpeg
+
         StorageReference profileImageRef = FirebaseStorage.getInstance()
                 .getReference("USERS/CLIENTS")
                 .child(userId + ".jpeg");
 
-        // Obtener URL de descarga
         profileImageRef.getDownloadUrl()
                 .addOnSuccessListener(uri -> {
-                    // Cargar imagen con Glide
                     loadImageWithGlide(uri.toString());
 
-                    // Guardar esta URL en Realtime Database para futuras cargas rápidas
                     saveImageUrlToDatabase(userId, uri.toString());
                 })
                 .addOnFailureListener(e -> {
                     Log.d("PerfilFragment", "No se encontró imagen en Storage, usando imagen por defecto");
-                    // Mantener la imagen por defecto que ya estaba establecida
                 });
     }
 
@@ -331,7 +308,7 @@ public class PerfilFragment extends Fragment {
         String formattedBalance;
         int colorId;
 
-        if (balance < 0) { // Error case
+        if (balance < 0) {
             formattedBalance = "Error al cargar";
             colorId = R.color.colorError;
         } else {
@@ -387,7 +364,6 @@ public class PerfilFragment extends Fragment {
         giftCardDialog.setGiftCardCallback(new GiftCardDialog.GiftCardCallback() {
             @Override
             public void onSuccess(double amount) {
-                // Actualizar saldo en la UI directamente
                 DatabaseReference userRef = FirebaseDatabase.getInstance()
                         .getReference("users")
                         .child(currentUser.getUid())
@@ -439,11 +415,9 @@ public class PerfilFragment extends Fragment {
 
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_profile_settings, null);
 
-        // Configure elements
         view.findViewById(R.id.btn_edit_profile).setOnClickListener(v -> editProfile());
         view.findViewById(R.id.btn_payment_methods).setOnClickListener(v -> showPaymentMethods());
 
-        // Configure notifications switch
         SwitchMaterial switchNotifications = view.findViewById(R.id.switch_notifications);
         boolean notificationsEnabled = sharedPreferences.getBoolean("notifications_enabled", true);
         switchNotifications.setChecked(notificationsEnabled);
@@ -456,7 +430,6 @@ public class PerfilFragment extends Fragment {
             }
         });
 
-        // Configure dark mode switch
         SwitchMaterial switchDarkMode = view.findViewById(R.id.switch_dark_mode);
         boolean isDarkMode = sharedPreferences.getBoolean("dark_mode_enabled", false);
         switchDarkMode.setChecked(isDarkMode);
@@ -476,7 +449,6 @@ public class PerfilFragment extends Fragment {
     }
 
     private void showPaymentMethods() {
-        // Implement logic to show payment methods
         Toast.makeText(getContext(), "Mostrar métodos de pago", Toast.LENGTH_SHORT).show();
     }
 

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class SummaryProductAdapter extends RecyclerView.Adapter<SummaryProductAdapter.SummaryProductViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
     private final List<OrderItem> orderItems;
 
     public SummaryProductAdapter(List<OrderItem> orderItems) {

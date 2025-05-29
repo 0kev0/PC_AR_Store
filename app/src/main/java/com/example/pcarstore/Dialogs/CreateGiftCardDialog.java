@@ -86,31 +86,25 @@ public class CreateGiftCardDialog {
                                        int expiryDays, String recipientEmail,
                                        OnGiftCardCreatedListener listener) {
 
-        // Generar un ID único para la gift card
         String cardId = databaseRef.child("giftCards").push().getKey();
         if (cardId == null) {
             Toast.makeText(context, "Error al generar ID para la gift card", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Crear la gift card usando el constructor adecuado
         GiftCard giftCard = new GiftCard(GiftCard.generateGiftCardCode(), amount, userId);
         giftCard.setCardId(cardId);
         giftCard.setCurrency(currency);
         giftCard.setExpirationDate(calculateExpirationDate(expiryDays));
         giftCard.setRecipientEmail(recipientEmail.isEmpty() ? null : recipientEmail);
 
-        // Determinar la referencia correcta
         DatabaseReference targetRef;
         if (databaseRef.getKey() == null || !databaseRef.getKey().equals("giftCards")) {
-            // Si es la referencia raíz o no apunta a giftCards
             targetRef = databaseRef.child("giftCards").child(cardId);
         } else {
-            // Si ya apunta al nodo giftCards
             targetRef = databaseRef.child(cardId);
         }
 
-        // Guardar en Firebase
         targetRef.setValue(giftCard.toMap())
                 .addOnSuccessListener(aVoid -> {
                     String message = String.format("Gift Card creada!\nCódigo: %s", giftCard.getCode());

@@ -86,14 +86,12 @@ public class DiscountCodesFragment extends Fragment implements DiscountCodesAdap
         EditText etDiscount = dialogView.findViewById(R.id.et_discount);
         EditText etExpiryDate = dialogView.findViewById(R.id.et_expiry_date);
 
-        // Configurar valores actuales
         etCode.setText(code.getCode());
         etDiscount.setText(String.valueOf(code.getDiscountPercentage()));
         if (code.getExpirationDate() != null) {
             etExpiryDate.setText(dateFormat.format(code.getExpirationDate()));
         }
 
-        // Date picker para fecha de expiración
         Calendar calendar = Calendar.getInstance();
         if (code.getExpirationDate() != null) {
             calendar.setTime(code.getExpirationDate());

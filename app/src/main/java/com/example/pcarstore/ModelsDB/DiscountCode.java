@@ -3,13 +3,12 @@ package com.example.pcarstore.ModelsDB;
 import java.util.Date;
 
 public class DiscountCode {
-    /*************************************************************VARIABLES******************************************************************************************/
-    private String codeId;
+   private String codeId;
     private String code;
-    private double discountPercentage; // 15.0 = 15%
+    private double discountPercentage;
     private Date creationDate;
     private Date expirationDate;
-    private String status; // "active", "used", "expired"
+    private String status;
     private String createdBy;
     private String usedBy;
     private Date usedDate;
@@ -22,7 +21,7 @@ public class DiscountCode {
         this.discountPercentage = discountPercentage;
         this.createdBy = createdBy;
         this.creationDate = new Date();
-        this.expirationDate = new Date(System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000)); // 30 días de validez
+        this.expirationDate = new Date(System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000));
         this.status = "active";
         this.minPurchaseRequired = 0.0;
     }
@@ -58,7 +57,6 @@ public class DiscountCode {
     public double getMinPurchaseRequired() { return minPurchaseRequired; }
     public void setMinPurchaseRequired(double minPurchaseRequired) { this.minPurchaseRequired = minPurchaseRequired; }
 
-    // Metodo de validación
     public boolean isValid() {
         return "active".equals(status) &&
                 new Date().before(expirationDate) &&
@@ -76,7 +74,6 @@ public class DiscountCode {
         return code.toString();
     }
 
-    // Metodo para marcar como usado
     public void markAsUsed(String userId) {
         this.status = "used";
         this.usedBy = userId;

@@ -27,11 +27,6 @@ import android.view.Surface;
 import android.view.WindowManager;
 import com.google.ar.core.Session;
 
-/**
- * Helper to track the display rotations. In particular, the 180 degree rotations are not notified
- * by the onSurfaceChanged() callback, and thus they require listening to the android display
- * events.
- */
 public final class DisplayRotationHelper implements DisplayListener {
   private boolean viewportChanged;
   private int viewportWidth;
@@ -40,11 +35,7 @@ public final class DisplayRotationHelper implements DisplayListener {
   private final DisplayManager displayManager;
   private final CameraManager cameraManager;
 
-  /**
-   * Constructs the DisplayRotationHelper but does not register the listener yet.
-   *
-   * @param context the Android {@link Context}.
-   */
+
   public DisplayRotationHelper(Context context) {
     displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
     cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
@@ -62,15 +53,6 @@ public final class DisplayRotationHelper implements DisplayListener {
     displayManager.unregisterDisplayListener(this);
   }
 
-  /**
-   * Records a change in surface dimensions. This will be later used by {@link
-   * #updateSessionIfNeeded(Session)}. Should be called from {@link
-   * android.opengl.GLSurfaceView.Renderer
-   * #onSurfaceChanged(javax.microedition.khronos.opengles.GL10, int, int)}.
-   *
-   * @param width the updated width of the surface.
-   * @param height the updated height of the surface.
-   */
   public void onSurfaceChanged(int width, int height) {
     viewportWidth = width;
     viewportHeight = height;
