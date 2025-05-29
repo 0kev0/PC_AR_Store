@@ -56,15 +56,12 @@ public class InventarioFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_inventario, container, false);
 
-        // Inicializar Firebase
         productsRef = FirebaseDatabase.getInstance().getReference("products");
         transactionsRef = FirebaseDatabase.getInstance().getReference("transactions");
 
-        // Configurar RecyclerView
         RecyclerView recyclerView = view.findViewById(R.id.productsRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Configurar adaptador con listeners internos
         adapter = new AdminProductAdapter(new AdminProductAdapter.OnProductActionsListener() {
             @Override
             public void onEditProduct(Product product) {
@@ -78,7 +75,6 @@ public class InventarioFragment extends Fragment {
         });
         recyclerView.setAdapter(adapter);
 
-        // Botón para agregar producto
         MaterialButton btnAddProduct = view.findViewById(R.id.btnAddProduct);
         btnAddProduct.setOnClickListener(v -> showAddProductDialog());
 
@@ -91,7 +87,6 @@ public class InventarioFragment extends Fragment {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View dialogView = inflater.inflate(R.layout.dialog_add_product, null);
 
-        // Configurar vistas del diálogo
         TextInputEditText etName = dialogView.findViewById(R.id.etProductName);
         TextInputEditText etPrice = dialogView.findViewById(R.id.etProductPrice);
         TextInputEditText etCost = dialogView.findViewById(R.id.etProductCost);
@@ -103,7 +98,7 @@ public class InventarioFragment extends Fragment {
         RecyclerView rvSelectedImages = dialogView.findViewById(R.id.rvSelectedImages);
 
 
-        // Reiniciar las listas de imágenes para un nuevo producto
+
         selectedImageUris = new ArrayList<>();
         selectedImageUrls.clear();
 
@@ -135,7 +130,6 @@ public class InventarioFragment extends Fragment {
                     }
 
                     if (validateProductInput(name, priceStr, costStr, stockStr, category, ratingStr)) {
-                        // Primero subir las imágenes y luego agregar el producto
                         uploadImagesAndAddProduct(selectedImageUris, name, priceStr, costStr, stockStr, category, description, ratingStr);
                     }
                 })
@@ -146,10 +140,8 @@ public class InventarioFragment extends Fragment {
     private void uploadImagesAndAddProduct(List<Uri> imageUris, String name, String priceStr,
                                           String costStr, String stockStr, String category,
                                           String description, String ratingStr) {
-        // Limpiar las URLs de imágenes anteriores
         selectedImageUrls.clear();
 
-        // Contador para saber cuándo hemos subido todas las imágenes
         final int[] uploadCount = {0};
         final int totalImages = imageUris.size();
 
@@ -158,7 +150,6 @@ public class InventarioFragment extends Fragment {
                 @Override
                 public void onUploadComplete() {
                     uploadCount[0]++;
-                    // Cuando todas las imágenes están subidas, agregamos el producto
                     if (uploadCount[0] == totalImages) {
                         addProduct(name, priceStr, costStr, stockStr, category, description, ratingStr);
                     }
@@ -166,7 +157,6 @@ public class InventarioFragment extends Fragment {
 
                 @Override
                 public void onUploadFailed() {
-                    // Si falla alguna imagen, no continuamos
                     Toast.makeText(getContext(), "Error al subir imágenes", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -242,19 +232,15 @@ public class InventarioFragment extends Fragment {
     private void addProduct(String name, String priceStr, String costStr, String stockStr,
                             String category, String description, String ratingStr) {
         try {
-            // Parsear valores numéricos
             double price = Double.parseDouble(priceStr);
             double cost = Double.parseDouble(costStr);
             int stock = Integer.parseInt(stockStr);
             double rating = Double.parseDouble(ratingStr);
 
-            // Validar que haya al menos una imagen seleccionada
             if (selectedImageUrls.isEmpty()) {
                 Toast.makeText(getContext(), "Debe seleccionar al menos una imagen", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            // Crear el objeto Producto
             Product product = new Product();
             product.setName(name);
             product.setPrice(price);
@@ -265,7 +251,6 @@ public class InventarioFragment extends Fragment {
             product.setRating(rating);
             product.setImageUrls(new ArrayList<>(selectedImageUrls));
 
-            // Usar el ID que ya generamos al seleccionar imágenes
             String productId = currentProductIdForImages;
             if (productId == null || productId.isEmpty()) {
                 Toast.makeText(getContext(), "Error: No se generó ID de producto", Toast.LENGTH_SHORT).show();
@@ -273,31 +258,26 @@ public class InventarioFragment extends Fragment {
             }
             product.setProductId(productId);
 
-            // Guardar el producto en Firebase Database
             productsRef.child(productId).setValue(product)
                     .addOnSuccessListener(aVoid -> {
-                        // Registrar la transacción de inventario
                         registerInventoryPurchase(product, productId);
 
-                        // Limpiar las variables temporales
                         selectedImageUrls.clear();
                         currentProductIdForImages = null;
 
-                        // Notificar al usuario y actualizar la lista
                         Toast.makeText(getContext(), "Producto agregado exitosamente", Toast.LENGTH_SHORT).show();
                         loadProducts();
                     })
                     .addOnFailureListener(e -> {
-                        // Manejar errores
+
                         Toast.makeText(getContext(), "Error al guardar producto: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.e("FirebaseError", "Error al agregar producto", e);
 
-                        // Opcional: Intentar eliminar las imágenes subidas si falla
                         deleteUploadedImages(productId);
                     });
 
         } catch (NumberFormatException e) {
-            // Manejar errores de formato numérico
+
             Toast.makeText(getContext(), "Error: Verifique los valores numéricos", Toast.LENGTH_SHORT).show();
             Log.e("NumberFormat", "Error al parsear valores numéricos", e);
         }
@@ -310,9 +290,8 @@ public class InventarioFragment extends Fragment {
         storageRef.listAll()
                 .addOnSuccessListener(listResult -> {
                     for (StorageReference item : listResult.getItems()) {
-                        item.delete(); // Eliminar cada imagen
+                        item.delete();
                     }
-                    // También eliminar la carpeta IMG si está vacía
                     storageRef.child("IMG").delete();
                 })
                 .addOnFailureListener(e -> {
@@ -423,7 +402,7 @@ public class InventarioFragment extends Fragment {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View dialogView = inflater.inflate(R.layout.dialog_add_product, null);
 
-        // Initialize views
+
         TextInputEditText etName = dialogView.findViewById(R.id.etProductName);
         TextInputEditText etPrice = dialogView.findViewById(R.id.etProductPrice);
         TextInputEditText etCost = dialogView.findViewById(R.id.etProductCost);
@@ -434,7 +413,7 @@ public class InventarioFragment extends Fragment {
         Button btnSelectImages = dialogView.findViewById(R.id.btnSelectImages);
         RecyclerView rvSelectedImages = dialogView.findViewById(R.id.rvSelectedImages);
 
-        // Set current product values
+
         etName.setText(product.getName());
         etPrice.setText(String.valueOf(product.getPrice()));
         etCost.setText(String.valueOf(product.getCost()));
@@ -443,7 +422,6 @@ public class InventarioFragment extends Fragment {
         etDescription.setText(product.getDescription());
         etRating.setText(String.valueOf(product.getRating()));
 
-        // Initialize image handling
         List<Uri> selectedImageUris = new ArrayList<>();
         rvSelectedImages.setLayoutManager(new LinearLayoutManager(getContext(),
                 LinearLayoutManager.HORIZONTAL, false));
@@ -470,11 +448,10 @@ public class InventarioFragment extends Fragment {
 
                     if (validateProductInput(name, priceStr, costStr, stockStr, category, ratingStr)) {
                         if (!selectedImageUris.isEmpty()) {
-                            // If new images were selected, upload them first
                             uploadImagesAndUpdateProduct(selectedImageUris, product.getProductId(),
                                     name, priceStr, costStr, stockStr, category, description, ratingStr);
                         } else {
-                            // If no new images, just update with existing URLs
+
                             updateProduct(product.getProductId(), name, priceStr, costStr, stockStr,
                                     category, description, ratingStr);
                         }
@@ -487,10 +464,9 @@ public class InventarioFragment extends Fragment {
     private void uploadImagesAndUpdateProduct(List<Uri> imageUris, String productId, String name,
                                               String priceStr, String costStr, String stockStr,
                                               String category, String description, String ratingStr) {
-        // Clear selectedImageUrls to avoid duplicates
         selectedImageUrls.clear();
 
-        // Keep track of uploads
+
         final int[] uploadCount = {0};
         final int totalImages = imageUris.size();
 
@@ -500,7 +476,6 @@ public class InventarioFragment extends Fragment {
                 public void onUploadComplete() {
                     uploadCount[0]++;
                     if (uploadCount[0] == totalImages) {
-                        // Combine new URLs with existing ones
                         List<String> allImageUrls = new ArrayList<>();
                         allImageUrls.addAll(selectedImageUrls);
                         updateProduct(productId, name, priceStr, costStr, stockStr,
@@ -520,14 +495,12 @@ public class InventarioFragment extends Fragment {
                                String stockStr, String category, String description,
                                String ratingStr) {
         try {
-            // Parse values
+
             double price = Double.parseDouble(priceStr);
             double cost = Double.parseDouble(costStr);
             int stock = Integer.parseInt(stockStr);
             double rating = Double.parseDouble(ratingStr);
 
-
-            // Create updated product
             Product updatedProduct = new Product();
             updatedProduct.setProductId(productId);
             updatedProduct.setName(name);
@@ -538,13 +511,11 @@ public class InventarioFragment extends Fragment {
             updatedProduct.setDescription(description);
             updatedProduct.setRating(rating);
 
-            // Update in database
             productsRef.child(productId).setValue(updatedProduct)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getContext(), "Producto actualizado", Toast.LENGTH_SHORT).show();
                         loadProducts();
 
-                        // Clear temporary data
                         selectedImageUrls.clear();
                         selectedImageUris.clear();
                     })

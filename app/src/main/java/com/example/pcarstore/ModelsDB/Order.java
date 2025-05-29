@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Calendar;
 
 public class Order {
-    /*************************************************************VARIABLES******************************************************************************************/
     private String orderId;
     private String userId;
     private Date date;
@@ -34,7 +33,6 @@ public class Order {
     }
 
 
-    // Getters y Setters
     public String getOrderId() {
         return orderId;
     }

@@ -56,7 +56,7 @@ public class GLError {
 
   private static List<Integer> getGlErrors() {
     int errorCode = GLES30.glGetError();
-    // Shortcut for no errors
+
     if (errorCode == GLES30.GL_NO_ERROR) {
       return null;
     }

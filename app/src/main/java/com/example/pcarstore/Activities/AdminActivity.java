@@ -38,7 +38,7 @@ public class AdminActivity extends AppCompatActivity implements FingerprintAuthL
 
     private static final String TAG = "AdminActivity";
     private static final String KEY_NAME = "admin_config_key";
-    private static final long AUTH_VALID_DURATION = 30000; // 30 segundos de validez
+    private static final long AUTH_VALID_DURATION = 30000;
     private FingerprintManager fingerprintManager;
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
@@ -87,7 +87,6 @@ public class AdminActivity extends AppCompatActivity implements FingerprintAuthL
     }
 
     private boolean handleNavigationItemSelected(@NonNull MenuItem menuItem) {
-        // Si ya está seleccionado, no hacer nada
         if (menuItem.getItemId() == previousSelectedItem.getItemId()) {
             return true;
         }
@@ -251,11 +250,9 @@ public class AdminActivity extends AppCompatActivity implements FingerprintAuthL
 
             Toast.makeText(this, "Autenticación exitosa", Toast.LENGTH_LONG).show();
 
-            // Ahora podemos navegar al fragmento seguro
             currentFragment = new BalanceAdminFragment();
             loadFragment(currentFragment);
 
-            // Actualizar la selección en la navegación inferior
             bottomNavigationView.setSelectedItemId(R.id.nav_balance);
             previousSelectedItem = bottomNavigationView.getMenu().findItem(R.id.nav_balance);
         });
@@ -267,7 +264,6 @@ public class AdminActivity extends AppCompatActivity implements FingerprintAuthL
             isAuthInProgress = false;
             Toast.makeText(this, "Error de autenticación: " + error, Toast.LENGTH_SHORT).show();
 
-            // Restaurar la selección anterior
             bottomNavigationView.setSelectedItemId(previousSelectedItem.getItemId());
         });
     }

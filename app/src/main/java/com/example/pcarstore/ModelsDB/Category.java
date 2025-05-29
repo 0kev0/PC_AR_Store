@@ -1,7 +1,6 @@
 package com.example.pcarstore.ModelsDB;
 
 public class Category {
-    /*************************************************************VARIABLES******************************************************************************************/
     private String categoryId;
     private String name;
     private String description;
@@ -17,7 +16,6 @@ public class Category {
         this.productCount = 0;
     }
 
-    // Getters y Setters
     public String getCategoryId() {
         return categoryId;
     }

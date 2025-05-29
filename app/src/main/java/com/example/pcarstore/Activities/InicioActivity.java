@@ -27,7 +27,6 @@ public class InicioActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(this::onNavigationItemSelected);
 
-        // Configurar el badge
         cartBadge = bottomNavigationView.getOrCreateBadge(R.id.Carrito);
 
         updateCartBadge(0);

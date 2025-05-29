@@ -38,19 +38,16 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewH
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         Uri imageUri = imageUris.get(position);
 
-        // Cargar la imagen con Glide
         Glide.with(context)
                 .load(imageUri)
                 .centerCrop()
                 .placeholder(R.drawable.ic_account_circle)
                 .into(holder.imageView);
 
-        // Resaltar la imagen seleccionada
         holder.itemView.setBackgroundResource(
                 selectedPosition == position ? R.drawable.ic_account_circle : android.R.color.transparent
         );
 
-        // Manejar clics en la imagen usando getAdapterPosition()
         holder.itemView.setOnClickListener(v -> {
             int adapterPosition = holder.getAdapterPosition();
             if (adapterPosition != RecyclerView.NO_POSITION) {

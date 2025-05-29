@@ -19,10 +19,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class DiscountCodesAdapter extends RecyclerView.Adapter<DiscountCodesAdapter.DiscountCodeViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
     public interface OnDiscountCodeActionsListener {
         void onDeactivateCode(DiscountCode code);
-        void onEditCode(DiscountCode code); // Nuevo método para editar
+        void onEditCode(DiscountCode code);
     }
     private List<DiscountCode> discountCodes;
     private final Context context;
@@ -91,14 +90,12 @@ public class DiscountCodesAdapter extends RecyclerView.Adapter<DiscountCodesAdap
     }
 
     private void setupButtons(DiscountCodeViewHolder holder, DiscountCode code) {
-        // Botón Editar
         holder.btnEdit.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onEditCode(code);
             }
         });
 
-        // Botón Desactivar (solo para códigos activos)
         if ("active".equals(code.getStatus())) {
             holder.btnDeactivate.setOnClickListener(v -> {
                 if (listener != null) {
@@ -121,7 +118,7 @@ public class DiscountCodesAdapter extends RecyclerView.Adapter<DiscountCodesAdap
     }
 
     static class DiscountCodeViewHolder extends RecyclerView.ViewHolder {
-        TextView tvCode, tvDiscount, tvMinPurchase, tvExpiry; // Changed from MaterialTextView
+        TextView tvCode, tvDiscount, tvMinPurchase, tvExpiry;
         Chip chipStatus;
         MaterialButton btnEdit, btnDeactivate;
 

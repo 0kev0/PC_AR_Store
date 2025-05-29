@@ -73,7 +73,6 @@ public class CatalogoFragment extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_catalogo, container, false);
-        // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -82,7 +81,6 @@ public class CatalogoFragment extends Fragment{
         LinearLayout searchLayoutProducts = view.findViewById(R.id.searchLayoutProducts);
         searchInput = view.findViewById(R.id.searchEditText);
 
-        // Configurar el buscador
         setupSearchFunctionality();
 
         initViews(view);
@@ -97,8 +95,6 @@ public class CatalogoFragment extends Fragment{
         productsRecycler = view.findViewById(R.id.recyclerViewCatalogo);
         categoriesRecycler = view.findViewById(R.id.categoriesRecycler);
 
-
-        // Inicializar referencia a la wishlist
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             wishlistRef = FirebaseDatabase.getInstance().getReference("wishlist").child(currentUser.getUid());
@@ -116,7 +112,6 @@ public class CatalogoFragment extends Fragment{
     }
 
     private void initializeAdapters() {
-        // Adapter de productos con la funcionalidad de wishlist corregida
         productAdapter = new ProductAdapter(productList, new ProductAdapter.OnProductClickListener() {
             @Override
             public void onProductClick(Product product) {
@@ -134,7 +129,6 @@ public class CatalogoFragment extends Fragment{
             }
         }, context);
 
-        // Adapter de categorías
         categoryAdapter = new CategoryAdapter(context, categoryList, category ->
                 filterProductsByCategoryName(category.getName())
         );
@@ -190,7 +184,6 @@ public class CatalogoFragment extends Fragment{
     public static String normalizeSearchTerm(String input) {
         if (input == null) return "";
 
-        // Convertir a minúsculas y quitar acentos
         String normalized = Normalizer.normalize(input, Normalizer.Form.NFD)
                 .replaceAll("[^\\p{ASCII}]", "")
                 .toLowerCase();
@@ -246,7 +239,6 @@ public class CatalogoFragment extends Fragment{
                     showToast("Añadido a tu lista de deseos");
                 })
                 .addOnFailureListener(e -> {
-                    // En caso de error, revertimos el cambio
                     product.setInWishlist(false);
                     productAdapter.notifyDataSetChanged();
                     showToast("Error al añadir a la lista de deseos");
@@ -412,7 +404,6 @@ public class CatalogoFragment extends Fragment{
                     productList.clear();
                     productList.addAll(newProducts);
 
-                    // Verificar wishlist para cada producto
                     checkWishlistStatus();
                 }
             }
@@ -428,7 +419,6 @@ public class CatalogoFragment extends Fragment{
     private void checkWishlistStatus() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null || wishlistRef == null) {
-            // Si no hay usuario logueado, no hay productos en wishlist
             for (Product product : productList) {
                 product.setInWishlist(false);
             }

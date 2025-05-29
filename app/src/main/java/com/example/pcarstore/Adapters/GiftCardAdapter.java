@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCardViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
+
     private final List<GiftCard> giftCards;
     private final Context context;
     private final SimpleDateFormat dateFormat;
@@ -45,16 +45,13 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
     public void onBindViewHolder(@NonNull GiftCardViewHolder holder, int position) {
         GiftCard giftCard = giftCards.get(position);
 
-        // Configurar los datos de la gift card
         holder.tvCode.setText(giftCard.getCode());
         holder.tvAmount.setText(String.format(Locale.getDefault(), "$%.2f", giftCard.getAmount()));
         holder.tvStatus.setText(giftCard.getStatus());
 
-        // Formatear fechas
         String expirationStr = "Vence: " + dateFormat.format(giftCard.getExpirationDate());
         holder.tvExpiration.setText(expirationStr);
 
-        // Mostrar destinatario si existe
         if (giftCard.getRecipientEmail() != null && !giftCard.getRecipientEmail().isEmpty()) {
             holder.tvRecipient.setText("Para: " + giftCard.getRecipientEmail());
             holder.tvRecipient.setVisibility(View.VISIBLE);
@@ -70,13 +67,12 @@ public class GiftCardAdapter extends RecyclerView.Adapter<GiftCardAdapter.GiftCa
             case "VENCIDA":
                 statusColor = R.color.red;
                 break;
-            default: // ACTIVE
+            default:
                 statusColor = R.color.blue;
                 break;
         }
         holder.tvStatus.setBackgroundColor(context.getResources().getColor(statusColor));
 
-        // Configurar listeners de los botones
         holder.btnEdit.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onEditGiftCard(giftCard);

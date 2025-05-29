@@ -124,7 +124,6 @@ public class Shader implements Closeable {
       close();
       throw t;
     } finally {
-      // Shader objects can be flagged for deletion immediately after program creation.
       if (vertexShaderId != 0) {
         GLES30.glDeleteShader(vertexShaderId);
         GLError.maybeLogGLError(Log.WARN, TAG, "Failed to free vertex shader", "glDeleteShader");
@@ -233,8 +232,6 @@ public class Shader implements Closeable {
 
   /** Sets a texture uniform. */
   public Shader setTexture(String name, Texture texture) {
-    // Special handling for Textures. If replacing an existing texture uniform, reuse the texture
-    // unit.
     int location = getUniformLocation(name);
     Uniform uniform = uniforms.get(location);
     int textureUnit;
@@ -402,7 +399,6 @@ public class Shader implements Closeable {
    * instead, prefer {@link SampleRender#draw}.
    */
   public void lowLevelUse() {
-    // Make active shader/set uniforms
     if (programId == 0) {
       throw new IllegalStateException("Attempted to use freed shader");
     }
@@ -431,8 +427,6 @@ public class Shader implements Closeable {
       GLError.maybeThrowGLException("Failed to disable backface culling", "glDisable");
     }
     try {
-      // Remove all non-texture uniforms from the map after setting them, since they're stored as
-      // part of the program.
       ArrayList<Integer> obsoleteEntries = new ArrayList<>(uniforms.size());
       for (Map.Entry<Integer, Uniform> entry : uniforms.entrySet()) {
         try {
@@ -648,7 +642,6 @@ public class Shader implements Closeable {
         sourceCode.replaceAll(
             "(?m)^(\\s*#\\s*version\\s+.*)$", "$1\n" + Matcher.quoteReplacement(definesCode));
     if (result.equals(sourceCode)) {
-      // No #version specified, so just prepend source
       return definesCode + sourceCode;
     }
     return result;

@@ -37,7 +37,6 @@ public class EditAdminDialog {
         TextInputEditText etEmail = dialogView.findViewById(R.id.etEditEmail);
         TextInputEditText etRole = dialogView.findViewById(R.id.etEditRole);
 
-        // Rellenar con datos actuales
         etName.setText(currentName);
         etEmail.setText(currentEmail);
         etRole.setText(currentRole);

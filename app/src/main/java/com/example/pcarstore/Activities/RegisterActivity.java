@@ -30,11 +30,9 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Inicialización de Firebase
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        // Inicialización de vistas
         initViews();
         setupTextWatchers();
     }
@@ -159,8 +157,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void saveUserToDatabase(String email, String fullName, String userId) {
-        // URL de imagen por defecto (puede ser una URL genérica o null)
-        String defaultImageUrl = "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/R.jpeg?alt=media&token=7c62b33a-f487-4257-8dd8-c6955ed6248e"; // O usar una URL genérica si prefieres
+        String defaultImageUrl = "https://firebasestorage.googleapis.com/v0/b/pcarstore.firebasestorage.app/o/R.jpeg?alt=media&token=7c62b33a-f487-4257-8dd8-c6955ed6248e";
 
         User user = new User.Builder(email)
                 .setName(fullName)
@@ -173,7 +170,6 @@ public class RegisterActivity extends AppCompatActivity {
         mDatabase.child("users").child(userId)
                 .setValue(user)
                 .addOnSuccessListener(aVoid -> {
-                    // Solo crear la estructura de directorios
                     Toast.makeText(this, "¡Registro exitoso!", Toast.LENGTH_LONG).show();
                     finish();
                 })

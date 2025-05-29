@@ -264,7 +264,6 @@ public class AdminFragment extends Fragment implements FingerprintAuthListener {
     }
 
     private void setupClickListeners(View rootView) {
-        // Métricas
         rootView.findViewById(R.id.metric_users).setOnClickListener(v -> {
             Toast.makeText(getContext(), "Ver detalles de usuarios", Toast.LENGTH_SHORT).show();
         });
@@ -277,7 +276,6 @@ public class AdminFragment extends Fragment implements FingerprintAuthListener {
             Toast.makeText(getContext(), "Ver detalles de pedidos", Toast.LENGTH_SHORT).show();
         });
 
-        // Acciones rápidas
         rootView.findViewById(R.id.card_manage_users).setOnClickListener(v -> {
             replaceFragment(new UsuariosFragment());
         });
@@ -299,7 +297,6 @@ public class AdminFragment extends Fragment implements FingerprintAuthListener {
                         .setNegativeButton("Cancelar", null)
                         .show();
             } else {
-                // Dispositivo no compatible con huella digital
                 new AlertDialog.Builder(getContext())
                         .setTitle("Advertencia de seguridad")
                         .setMessage("Tu dispositivo no soporta autenticación por huella. ¿Deseas continuar?")
@@ -421,25 +418,20 @@ public class AdminFragment extends Fragment implements FingerprintAuthListener {
 
     private void openSettings() {
         try {
-            // Verificación adicional del estado del fragmento y la actividad
             if (!isAdded() || getActivity() == null || getActivity().isFinishing()) {
                 Log.e("openSettings", "Fragmento no adjunto o actividad no disponible");
                 return;
             }
 
-            // Crear el nuevo fragmento
             Fragment settingsFragment = new ConfiguracionAdminFragment();
 
-            // Obtener el FragmentManager de manera segura
             FragmentManager fragmentManager = getParentFragmentManager();
 
-            // Verificar si la transacción es posible
             if (fragmentManager.isDestroyed()) {
                 Log.e("openSettings", "FragmentManager destruido");
                 return;
             }
 
-            // Realizar la transacción
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setCustomAnimations(
                     android.R.anim.fade_in,
@@ -447,7 +439,7 @@ public class AdminFragment extends Fragment implements FingerprintAuthListener {
             );
             transaction.replace(R.id.fragmentContaineradmin, settingsFragment);
             transaction.addToBackStack("admin_to_settings");
-            transaction.commitAllowingStateLoss(); // Usar commitAllowingStateLoss para evitar excepciones
+            transaction.commitAllowingStateLoss();
 
         } catch (Exception e) {
             Log.e("openSettings", "Error al abrir configuración: " + e.getMessage());

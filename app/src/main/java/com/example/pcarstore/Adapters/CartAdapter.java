@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
-    public interface OnCartItemListener {
+     public interface OnCartItemListener {
         void onIncreaseQuantity(String productId, int newQuantity);
         void onDecreaseQuantity(String productId, int newQuantity);
         void onRemoveItem(String productId);
@@ -34,13 +33,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     public CartAdapter(Context context, OnCartUpdatedListener listener, OnCartItemListener cartItemListener) {
         this.context = context;
-        this.cartItems = new ArrayList<>(); // Inicializar con lista vacía
+        this.cartItems = new ArrayList<>();
         this.cartItemListener = cartItemListener;
     }
 
     public void updateCartItems(List<OrderItem> newItems) {
         if (newItems != null) {
-            this.cartItems = new ArrayList<>(newItems); // Copia defensiva
+            this.cartItems = new ArrayList<>(newItems);
         } else {
             this.cartItems = new ArrayList<>();
         }
@@ -58,7 +57,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
         OrderItem item = cartItems.get(position);
 
-        // Configurar vistas con el item
         holder.tvProductName.setText(item.getProductName());
         holder.tvPrice.setText(String.format(Locale.getDefault(), "$%.2f", item.getPrice()));
         holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
@@ -70,7 +68,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .into(holder.ivProductImage);
         }
 
-        // Configurar listeners
         holder.btnIncrease.setOnClickListener(v -> {
             int newQuantity = item.getQuantity() + 1;
             if (cartItemListener != null) {
@@ -94,7 +91,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     @Override
     public int getItemCount() {
-        return cartItems != null ? cartItems.size() : 0; // Protección contra null
+        return cartItems != null ? cartItems.size() : 0;
     }
 
     static class CartViewHolder extends RecyclerView.ViewHolder {

@@ -17,7 +17,6 @@ import com.example.pcarstore.R;
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
     private final Context context;
     private final List<Category> categoryList;
     private final OnCategoryClickListener listener;

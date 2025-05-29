@@ -16,8 +16,7 @@ import com.example.pcarstore.R;
 import java.util.List;
 
 public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHolder> {
-    /*************************************************************VARIABLES******************************************************************************************/
-    private final Context context;
+   private final Context context;
     private final List<Product> wishlistProducts;
     private final OnWishlistActionListener listener;
 

@@ -94,12 +94,10 @@ public class ConfiguracionAdminFragment extends Fragment  {
         ChangePasswordDialog.show(requireContext(), new ChangePasswordDialog.OnPasswordResetListener() {
             @Override
             public void onResetEmailSent(String email) {
-                // Puedes agregar lógica adicional aquí si es necesario
             }
 
             @Override
             public void onResetError(String error) {
-                // Manejo de errores específico del fragmento si es necesario
             }
         });
     }

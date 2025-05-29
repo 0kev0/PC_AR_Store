@@ -50,7 +50,6 @@ public class Framebuffer implements Closeable {
               Texture.WrapMode.CLAMP_TO_EDGE,
               /*useMipmaps=*/ false);
 
-      // Set parameters of the depth texture so that it's readable by shaders.
       GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, depthTexture.getTextureId());
       GLError.maybeThrowGLException("Failed to bind depth texture", "glBindTexture");
       GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_COMPARE_MODE, GLES30.GL_NONE);
@@ -60,10 +59,8 @@ public class Framebuffer implements Closeable {
       GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
       GLError.maybeThrowGLException("Failed to set texture parameter", "glTexParameteri");
 
-      // Set initial dimensions.
       resize(width, height);
 
-      // Create framebuffer object and bind to the color and depth textures.
       GLES30.glGenFramebuffers(1, framebufferId, 0);
       GLError.maybeThrowGLException("Framebuffer creation failed", "glGenFramebuffers");
       GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, framebufferId[0]);
@@ -114,7 +111,7 @@ public class Framebuffer implements Closeable {
     this.width = width;
     this.height = height;
 
-    // Color texture
+
     GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, colorTexture.getTextureId());
     GLError.maybeThrowGLException("Failed to bind color texture", "glBindTexture");
     GLES30.glTexImage2D(
@@ -129,7 +126,6 @@ public class Framebuffer implements Closeable {
         /*pixels=*/ null);
     GLError.maybeThrowGLException("Failed to specify color texture format", "glTexImage2D");
 
-    // Depth texture
     GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, depthTexture.getTextureId());
     GLError.maybeThrowGLException("Failed to bind depth texture", "glBindTexture");
     GLES30.glTexImage2D(

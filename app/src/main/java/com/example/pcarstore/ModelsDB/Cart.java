@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Cart {
-    /*************************************************************VARIABLES******************************************************************************************/
-    private String userId;
+   private String userId;
 
     private Map<String, OrderItem> items;
 
