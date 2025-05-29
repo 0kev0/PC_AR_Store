@@ -13,13 +13,11 @@ import android.widget.Toast;
 
 import com.example.pcarstore.R;
 
-
 public class CodesFragment extends Fragment {
 
     public CodesFragment() {
 
     }
-
     private void setupClickListeners(View rootView){
         rootView.findViewById(R.id.gift_cards).setOnClickListener(v -> {
             replaceFragment(new Gift_CardsFragment());
@@ -29,7 +27,6 @@ public class CodesFragment extends Fragment {
         });
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,8 +34,7 @@ public class CodesFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cupones, container, false);
         setupClickListeners(view);
         return view;
@@ -58,4 +54,5 @@ public class CodesFragment extends Fragment {
             Log.e("GiftFragment", "Error en replaceFragment", e);
         }
     }
+
 }

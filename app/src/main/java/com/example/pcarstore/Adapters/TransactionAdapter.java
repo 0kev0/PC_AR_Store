@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder> {
-
-    private Context context;
-    private List<Transaction> transactionList;
+    /*************************************************************VARIABLES******************************************************************************************/
+    private final Context context;
+    private final List<Transaction> transactionList;
 
     public TransactionAdapter(Context context, List<Transaction> transactionList) {
         this.context = context;
@@ -76,4 +76,5 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             tvTransactionUser = itemView.findViewById(R.id.tvTransactionUser);
         }
     }
+
 }

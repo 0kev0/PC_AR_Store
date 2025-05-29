@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Transaction {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String id;
     private String type;
     private double amount;

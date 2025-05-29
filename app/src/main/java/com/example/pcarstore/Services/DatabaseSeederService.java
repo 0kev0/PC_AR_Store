@@ -13,9 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
- * Service class for initializing database data
- * Handles all insert operations for products, categories, gift cards, and discount codes
- *
+ * Service class para inicializar database
  */
 public class DatabaseSeederService {
 
@@ -897,9 +895,6 @@ public class DatabaseSeederService {
         mDatabase.child("discountCodes").child(code10.getCodeId()).setValue(code10);
     }
 
-    /**
-     * Insert departments with their cities and shipping costs into the database
-     */
     /**
      * Insert departments of El Salvador with their cities and shipping costs into the database
      */

@@ -26,7 +26,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.Locale;
 
 public class CreditCardPaymentDialog extends DialogFragment {
-
     public interface CreditCardPaymentListener {
         void onPaymentConfirmed(String cardName, String cardNumber, String expiry, String cvv, double amount);
         void onPaymentCancelled();
@@ -35,12 +34,8 @@ public class CreditCardPaymentDialog extends DialogFragment {
     public void setListener(CreditCardPaymentListener listener) {
         this.listener = listener;
     }
-
-
-
     private CreditCardPaymentListener listener;
     private double initialAmount;
-
     public static CreditCardPaymentDialog newInstance(double amount) {
         CreditCardPaymentDialog dialog = new CreditCardPaymentDialog();
         Bundle args = new Bundle();
@@ -212,4 +207,5 @@ public class CreditCardPaymentDialog extends DialogFragment {
     private void showError(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
+
 }

@@ -52,18 +52,14 @@ import androidx.preference.PreferenceManager;
 import java.util.Locale;
 
 public class PerfilFragment extends Fragment {
+    /*************************************************************VARIABLES******************************************************************************************/
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private SharedPreferences sharedPreferences;
     private ImageView ivProfilePicture;
     private TextView tvUserName, tvUserEmail, tvUserBalance;
-    private Button btnEditProfile, btnLogout;
-    private Button btnOrders, btnWishlist, btnGifCard, btnSettings,btnGifCardShop;
     MaterialButton btnPrime;
-
     private static final int PICK_IMAGE_REQUEST = 1;
-    private Uri imageUri;
-    private StorageReference storageRef;
     private EditProfileDialog editProfileDialog;
     private User userData;
     private Uri tempImageUri;
@@ -73,7 +69,7 @@ public class PerfilFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        storageRef = FirebaseStorage.getInstance().getReference("profile_images");
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference("profile_images");
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
         // Initialize userData as null, will be loaded from database
@@ -111,22 +107,22 @@ public class PerfilFragment extends Fragment {
 
 
     }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_perfil, container, false);
 
         // Initialize views
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
         tvUserName = view.findViewById(R.id.tvUserName);
         tvUserEmail = view.findViewById(R.id.tvUserEmail);
-        btnEditProfile = view.findViewById(R.id.btnEditProfile);
-        btnLogout = view.findViewById(R.id.btnLogout);
-        btnOrders = view.findViewById(R.id.btnOrders);
-        btnWishlist = view.findViewById(R.id.btnWishlist);
-        btnGifCard = view.findViewById(R.id.btnGifCard);
-        btnGifCardShop = view.findViewById(R.id.btnShowGiftCardShop);
-        btnSettings = view.findViewById(R.id.btnSettings);
+        Button btnEditProfile = view.findViewById(R.id.btnEditProfile);
+        Button btnLogout = view.findViewById(R.id.btnLogout);
+        Button btnOrders = view.findViewById(R.id.btnOrders);
+        Button btnWishlist = view.findViewById(R.id.btnWishlist);
+        Button btnGifCard = view.findViewById(R.id.btnGifCard);
+        Button btnGifCardShop = view.findViewById(R.id.btnShowGiftCardShop);
+        Button btnSettings = view.findViewById(R.id.btnSettings);
         tvUserBalance = view.findViewById(R.id.tvUserBalance);
 
         loadUserData();
@@ -156,7 +152,7 @@ public class PerfilFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            imageUri = data.getData();
+            Uri imageUri = data.getData();
             Log.d("PerfilFragment", "Imagen seleccionada URI: " + (imageUri != null ? imageUri.toString() : "null"));
 
             if (imageUri != null) {
@@ -182,6 +178,7 @@ public class PerfilFragment extends Fragment {
             Log.d("PerfilFragment", "Selección de imagen cancelada o fallida");
         }
     }
+
     private void showPrimeDialog() {
         if (currentUser == null) {
             Toast.makeText(getContext(), "Debes iniciar sesión para adquirir Prime", Toast.LENGTH_SHORT).show();
@@ -230,6 +227,7 @@ public class PerfilFragment extends Fragment {
             tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
         }
     }
+
     private void loadUserDetailsFromDatabase(String userId) {
         DatabaseReference userRef = FirebaseDatabase.getInstance()
                 .getReference("users")
@@ -287,6 +285,7 @@ public class PerfilFragment extends Fragment {
             }
         });
     }
+
     private void loadProfileImageFromStorage(String userId) {
         // Referencia al archivo en Storage con la estructura USERS/CLIENTS/userId.jpeg
         StorageReference profileImageRef = FirebaseStorage.getInstance()
@@ -307,6 +306,7 @@ public class PerfilFragment extends Fragment {
                     // Mantener la imagen por defecto que ya estaba establecida
                 });
     }
+
     private void loadImageWithGlide(String imageUrl) {
         Glide.with(requireContext())
                 .load(imageUrl)
@@ -315,6 +315,7 @@ public class PerfilFragment extends Fragment {
                 .error(R.drawable.ic_account_circle)
                 .into(ivProfilePicture);
     }
+
     private void saveImageUrlToDatabase(String userId, String imageUrl) {
         FirebaseDatabase.getInstance()
                 .getReference("users")
@@ -325,6 +326,7 @@ public class PerfilFragment extends Fragment {
                     Log.e("PerfilFragment", "Error al guardar URL de imagen en la base de datos", e);
                 });
     }
+
     private void updateBalanceUI(double balance) {
         String formattedBalance;
         int colorId;
@@ -340,6 +342,7 @@ public class PerfilFragment extends Fragment {
         tvUserBalance.setText(formattedBalance);
         tvUserBalance.setTextColor(ContextCompat.getColor(requireContext(), colorId));
     }
+
     private void logout() {
         mAuth.signOut();
         startActivity(new Intent(getActivity(), LoginActivity.class));
@@ -347,6 +350,7 @@ public class PerfilFragment extends Fragment {
             getActivity().finish();
         }
     }
+
     private void showOrders() {
         if (mAuth.getCurrentUser() != null) {
             startActivity(new Intent(getActivity(), OrdersActivity.class));
@@ -356,6 +360,7 @@ public class PerfilFragment extends Fragment {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
     private void showWishlist() {
         if (mAuth.getCurrentUser() != null) {
             Fragment wishlistFragment = new WishlistFragment();
@@ -369,6 +374,7 @@ public class PerfilFragment extends Fragment {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
     private void showGifCard() {
         if (mAuth.getCurrentUser() == null) {
             Toast.makeText(getContext(),
@@ -422,9 +428,11 @@ public class PerfilFragment extends Fragment {
         });
         giftCardDialog.show();
     }
+
     private void showGifCardShop() {
         startActivity(new Intent(getActivity(), GiftCardStoreActivity.class));
     }
+
     private void showSettings() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
         builder.setTitle("Configuración de cuenta");
@@ -493,4 +501,5 @@ public class PerfilFragment extends Fragment {
             loadUserData();
         }
     }
+
 }

@@ -13,18 +13,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.R;
 import com.example.pcarstore.helpers.CameraPermissionHelper;
 import com.example.pcarstore.helpers.DepthSettings;
@@ -66,15 +63,7 @@ import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -102,7 +91,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
     private static final int CUBEMAP_RESOLUTION = 16;
     private static final int CUBEMAP_NUMBER_OF_IMPORTANCE_SAMPLES = 32;
     private static final float APPROXIMATE_DISTANCE_METERS = 2.0f;
-
     private GLSurfaceView surfaceView;
     private boolean installRequested;
     private Session session;
@@ -139,27 +127,13 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
     private final float[] viewInverseMatrix = new float[16];
     private final float[] worldLightDirection = {0.0f, 0.0f, 0.0f, 0.0f};
     private final float[] viewLightDirection = new float[4];
-
     private float scaleFactor = 0.1f; // Valor inicial
     private float rotationAngle = 0f;
     private static final float SCALE_STEP = 0.05f;
     private static final float ROTATION_STEP = 15f;
-    private TextView instructionsText;
-
-    // Firebase Storage
-    private FirebaseStorage storage;
-    private DatabaseReference mDatabase;
-
-
     // Product data
-    private Product product;
-    private String productId;
-    private File modelFile;
-    private File textureFile;
     private String modelPath;
     private String texturePath;
-    private boolean modelLoaded = false;
-    private boolean textureLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,11 +145,7 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        // Inicializar Firebase
-        storage = FirebaseStorage.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        productId = getIntent().getStringExtra("product_id");
         modelPath = getIntent().getStringExtra("model_path");
         texturePath = getIntent().getStringExtra("texture_path");
 
@@ -240,7 +210,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
         }
         return false;
     }
-
     @Override
     protected void onDestroy() {
         if (session != null) {
@@ -311,7 +280,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
         surfaceView.onResume();
         displayRotationHelper.onResume();
     }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -321,7 +289,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
             session.pause();
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
         super.onRequestPermissionsResult(requestCode, permissions, results);
@@ -334,7 +301,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
             finish();
         }
     }
-
     @Override
     public void onSurfaceCreated(SampleRender render) {
         try {
@@ -445,13 +411,11 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
             messageSnackbarHelper.showError(this, "Failed to read a required asset file: " + e);
         }
     }
-
     @Override
     public void onSurfaceChanged(SampleRender render, int width, int height) {
         displayRotationHelper.onSurfaceChanged(width, height);
         virtualSceneFramebuffer.resize(width, height);
     }
-
     @Override
     public void onDrawFrame(SampleRender render) {
         if (session == null) {
@@ -551,8 +515,8 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
 
         render.clear(virtualSceneFramebuffer, 0f, 0f, 0f, 0f);
         for (wrapped_Anchor wrappedAnchor : wrappedAnchors) {
-            Anchor anchor = wrappedAnchor.getAnchor();
-            Trackable trackable = wrappedAnchor.getTrackable();
+            Anchor anchor = wrappedAnchor.anchor();
+            Trackable trackable = wrappedAnchor.trackable();
             if (anchor.getTrackingState() != TrackingState.TRACKING) {
                 continue;
             }
@@ -610,7 +574,7 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                         || (trackable instanceof InstantPlacementPoint)
                         || (trackable instanceof DepthPoint)) {
                     if (wrappedAnchors.size() >= 20) {
-                        wrappedAnchors.get(0).getAnchor().detach();
+                        wrappedAnchors.get(0).anchor().detach();
                         wrappedAnchors.remove(0);
                     }
 
@@ -621,7 +585,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
             }
         }
     }
-
     private void showOcclusionDialogIfNeeded() {
         boolean isDepthSupported = session.isDepthModeSupported(Config.DepthMode.AUTOMATIC);
         if (!depthSettings.shouldShowDepthEnableDialog() || !isDepthSupported) {
@@ -643,7 +606,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                         })
                 .show();
     }
-
     private void launchInstantPlacementSettingsMenuDialog() {
         resetSettingsMenuDialogCheckboxes();
         Resources resources = getResources();
@@ -662,7 +624,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                         (DialogInterface dialog, int which) -> resetSettingsMenuDialogCheckboxes())
                 .show();
     }
-
     private void launchDepthSettingsMenuDialog() {
         resetSettingsMenuDialogCheckboxes();
         Resources resources = getResources();
@@ -690,7 +651,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                     .show();
         }
     }
-
     private void applySettingsMenuDialogCheckboxes() {
         depthSettings.setUseDepthForOcclusion(depthSettingsMenuDialogCheckboxes[0]);
         depthSettings.setDepthColorVisualizationEnabled(depthSettingsMenuDialogCheckboxes[1]);
@@ -698,14 +658,12 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                 instantPlacementSettingsMenuDialogCheckboxes[0]);
         configureSession();
     }
-
     private void resetSettingsMenuDialogCheckboxes() {
         depthSettingsMenuDialogCheckboxes[0] = depthSettings.useDepthForOcclusion();
         depthSettingsMenuDialogCheckboxes[1] = depthSettings.depthColorVisualizationEnabled();
         instantPlacementSettingsMenuDialogCheckboxes[0] =
                 instantPlacementSettings.isInstantPlacementEnabled();
     }
-
     private boolean hasTrackingPlane() {
         for (Plane plane : session.getAllTrackables(Plane.class)) {
             if (plane.getTrackingState() == TrackingState.TRACKING) {
@@ -714,7 +672,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
         }
         return false;
     }
-
     private void updateLightEstimation(LightEstimate lightEstimate, float[] viewMatrix) {
         if (lightEstimate.getState() != LightEstimate.State.VALID) {
             virtualObjectShader.setBool("u_LightEstimateIsValid", false);
@@ -733,7 +690,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
                 lightEstimate.getEnvironmentalHdrAmbientSphericalHarmonics());
         cubemapFilter.update(lightEstimate.acquireEnvironmentalHdrCubeMap());
     }
-
     private void updateMainLight(float[] direction, float[] intensity, float[] viewMatrix) {
         worldLightDirection[0] = direction[0];
         worldLightDirection[1] = direction[1];
@@ -742,7 +698,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
         virtualObjectShader.setVec4("u_ViewLightDirection", viewLightDirection);
         virtualObjectShader.setVec3("u_LightIntensity", intensity);
     }
-
     private void updateSphericalHarmonicsCoefficients(float[] coefficients) {
         if (coefficients.length != 9 * 3) {
             throw new IllegalArgumentException(
@@ -755,7 +710,6 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
         virtualObjectShader.setVec3Array(
                 "u_SphericalHarmonicsCoefficients", sphericalHarmonicsCoefficients);
     }
-
     private void configureSession() {
         Config config = session.getConfig();
         config.setLightEstimationMode(Config.LightEstimationMode.ENVIRONMENTAL_HDR);
@@ -773,20 +727,5 @@ public class ProductShowARActivity extends AppCompatActivity implements SampleRe
     }
 }
 
-class wrapped_Anchor {
-    private Anchor anchor;
-    private Trackable trackable;
-
-    public wrapped_Anchor(Anchor anchor, Trackable trackable) {
-        this.anchor = anchor;
-        this.trackable = trackable;
-    }
-
-    public Anchor getAnchor() {
-        return anchor;
-    }
-
-    public Trackable getTrackable() {
-        return trackable;
-    }
+record wrapped_Anchor(Anchor anchor, Trackable trackable) {
 }

@@ -1,6 +1,7 @@
 package com.example.pcarstore.ModelsDB;
 
 public class UserSales {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String userId;
     private String userName;
     private int orderCount;
@@ -20,9 +21,12 @@ public class UserSales {
     }
 
     public String getUserId() { return userId; }
+
     public int getOrderCount() { return orderCount; }
+
     public double getTotalAmount() { return totalAmount; }
 
     public void setUserName(String userName) {this.userName = userName;}
+
     public String getUserName() {return userName != null ? userName : userId;}
 }

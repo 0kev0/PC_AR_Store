@@ -1,6 +1,7 @@
 package com.example.pcarstore.ModelsDB;
 
 public class Category {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String categoryId;
     private String name;
     private String description;
@@ -25,9 +26,11 @@ public class Category {
         this.categoryId = categoryId;
     }
 
+
     public String getName() {
         return name;
     }
+
 
     public void setName(String name) {
         this.name = name;
@@ -56,4 +59,5 @@ public class Category {
     public void setProductCount(int productCount) {
         this.productCount = productCount;
     }
+
 }

@@ -49,13 +49,12 @@ import java.util.Locale;
 import java.util.Map;
 
 public class PaymentConfirmationDialog extends DialogFragment {
-
-    private List<OrderItem> orderItems;
-    private double cartTotal;
-    private PaymentConfirmationListener listener;
+    /*************************************************************VARIABLES******************************************************************************************/
+    private final List<OrderItem> orderItems;
+    private final double cartTotal;
+    private final PaymentConfirmationListener listener;
     private double currentDiscount = 0.0;
     private String appliedDiscountCode = null;
-    private Button btnConfirmPayment;
     private TextView tvAvailableBalance;
     private TextView tvShipping;
     private TextView tvSubtotal;
@@ -63,7 +62,6 @@ public class PaymentConfirmationDialog extends DialogFragment {
     private TextView tvTotal;
     private double userBalance = 0.0;
     private double shippingCost = 0.0;
-    private User currentUser;
     private boolean isPrimeMember = false;
 
     public interface PaymentConfirmationListener {
@@ -78,7 +76,6 @@ public class PaymentConfirmationDialog extends DialogFragment {
         this.listener = listener;
     }
 
-    //quitar cuadro del dialogo por defecto
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_payment_confirmation, container, false);
@@ -105,7 +102,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
         tvShipping = dialogView.findViewById(R.id.tv_shipping);
         tvDiscount = dialogView.findViewById(R.id.tv_discount);
         tvTotal = dialogView.findViewById(R.id.tv_total);
-        btnConfirmPayment = dialogView.findViewById(R.id.btn_confirm_payment);
+        Button btnConfirmPayment = dialogView.findViewById(R.id.btn_confirm_payment);
         Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
 
         // Configurar RecyclerView
@@ -246,6 +243,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
             }
         });
     }
+
     private void verifyAndProcessPayment() {
         double totalToPay = cartTotal + shippingCost - currentDiscount;
 
@@ -369,6 +367,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
         });
     }
 
+
     private void validateAndApplyDiscount(String code) {
         DatabaseReference discountsRef = FirebaseDatabase.getInstance().getReference("discountCodes");
         Query discountQuery = discountsRef.orderByChild("code").equalTo(code);
@@ -480,4 +479,5 @@ public class PaymentConfirmationDialog extends DialogFragment {
                     onComplete.run();
                 });
     }
+
 }

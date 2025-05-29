@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pcarstore.Adapters.OrderSalesAdapter;
-import com.example.pcarstore.ModelsDB.Order;
-import com.example.pcarstore.ModelsDB.OrderItem;
 import com.example.pcarstore.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,15 +22,14 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class UserOrdersSalesDialog extends DialogFragment {
+    /*************************************************************VARIABLES******************************************************************************************/
     private static final String TAG = "UserOrdersDialog";
     private static final String ARG_USER_ID = "user_id";
-
     private DatabaseReference ordersRef;
     private ValueEventListener ordersListener;
     private OrderSalesAdapter adapter;
@@ -112,50 +109,6 @@ public class UserOrdersSalesDialog extends DialogFragment {
         userOrdersQuery.addValueEventListener(ordersListener);
     }
 
-
-    private Order parseOrderSnapshot(DataSnapshot orderSnapshot) {
-        try {
-            Order order = new Order();
-            order.setOrderId(orderSnapshot.getKey());
-            order.setUserId(orderSnapshot.child("userId").getValue(String.class));
-            order.setStatus(orderSnapshot.child("status").getValue(String.class));
-            order.setTotal(orderSnapshot.child("total").getValue(Double.class));
-
-            // Parsear fecha de orden
-            Long timestamp = orderSnapshot.child("date").getValue(Long.class);
-            if (timestamp != null) {
-                order.setDate(new Date(timestamp));
-            }
-
-            // Parsear fecha de entrega
-            Long deliveryTimestamp = orderSnapshot.child("deliveryDate").getValue(Long.class);
-            if (deliveryTimestamp != null) {
-                order.setDeliveryDate(new Date(deliveryTimestamp));
-            } else if (timestamp != null) {
-                // Si no hay fecha de entrega pero sí hay fecha de orden, calcular automáticamente
-                order.setDate(new Date(timestamp)); // Esto activará el cálculo automático de la fecha de entrega
-            }
-
-            // Parsear items
-            Map<String, OrderItem> items = new HashMap<>();
-            DataSnapshot itemsSnapshot = orderSnapshot.child("items");
-            for (DataSnapshot itemSnapshot : itemsSnapshot.getChildren()) {
-                OrderItem item = new OrderItem();
-                item.setProductId(itemSnapshot.child("productId").getValue(String.class));
-                item.setProductName(itemSnapshot.child("productName").getValue(String.class));
-                item.setPrice(itemSnapshot.child("price").getValue(Double.class));
-                item.setQuantity(itemSnapshot.child("quantity").getValue(Integer.class));
-                items.put(itemSnapshot.getKey(), item);
-            }
-            order.setItems(items);
-
-            return order;
-        } catch (Exception e) {
-            Log.e("OrdersActivity", "Error parsing order", e);
-            return null;
-        }
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -174,4 +127,5 @@ public class UserOrdersSalesDialog extends DialogFragment {
                     ViewGroup.LayoutParams.MATCH_PARENT);
         }
     }
+
 }

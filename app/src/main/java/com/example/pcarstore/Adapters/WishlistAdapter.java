@@ -1,32 +1,24 @@
 package com.example.pcarstore.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.example.pcarstore.ModelsDB.Product;
-import com.example.pcarstore.ModelsDB.WishlistItem;
 import com.example.pcarstore.R;
 import java.util.List;
 
 public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHolder> {
-    private Context context;
-    private List<Product> wishlistProducts;
-    private OnWishlistActionListener listener;
+    /*************************************************************VARIABLES******************************************************************************************/
+    private final Context context;
+    private final List<Product> wishlistProducts;
 
     public interface OnWishlistActionListener {
         void onRemoveItem(Product product);
@@ -35,7 +27,6 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
     public WishlistAdapter(Context context, List<Product> wishlistProducts, OnWishlistActionListener listener) {
         this.context = context;
         this.wishlistProducts = wishlistProducts;
-        this.listener = listener;
     }
 
     @NonNull
@@ -45,6 +36,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = wishlistProducts.get(position);
@@ -54,7 +46,6 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
                 .load(product.getMainImageUrl())
                 .into(holder.productImage);
     }
-
 
     @Override
     public int getItemCount() {
@@ -74,4 +65,5 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
             btnRemove = itemView.findViewById(R.id.btnRemove);
         }
     }
+
 }

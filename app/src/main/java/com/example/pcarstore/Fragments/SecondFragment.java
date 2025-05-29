@@ -11,14 +11,11 @@ import androidx.fragment.app.Fragment;
 import com.example.pcarstore.databinding.FragmentSecondBinding;
 
 public class SecondFragment extends Fragment {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private FragmentSecondBinding binding;
 
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentSecondBinding.inflate(inflater, container, false);
         return binding.getRoot();
@@ -35,5 +32,6 @@ public class SecondFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
 
 }

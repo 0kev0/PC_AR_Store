@@ -13,16 +13,15 @@ import com.google.firebase.database.DatabaseReference;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
 
 public class EditDiscountCodeDialog {
-
     public interface OnDiscountCodeUpdatedListener {
         void onCodeUpdated();
         void onUpdateError(String error);
     }
+
 
     public static void show(Context context, DiscountCode code,
                             DatabaseReference databaseRef, SimpleDateFormat dateFormat,
@@ -137,4 +136,5 @@ public class EditDiscountCodeDialog {
                     }
                 });
     }
+
 }

@@ -1,14 +1,8 @@
 package com.example.pcarstore.Fragments;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +11,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import com.example.pcarstore.Activities.LoginActivity;
 import com.example.pcarstore.Dialogs.ChangePasswordDialog;
 import com.example.pcarstore.Dialogs.EditAdminDialog;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
-import com.example.pcarstore.helpers.FingerprintAuthListener;
-import com.example.pcarstore.helpers.FingerprintHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,17 +29,14 @@ import java.security.KeyStore;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 public class ConfiguracionAdminFragment extends Fragment  {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private String currentUserId;
-
     private TextView tvName, tvEmail, tvRole;
     private Button btnEditInfo, changePassword, btnLogout;
-
     private FingerprintManager fingerprintManager;
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
@@ -56,8 +44,7 @@ public class ConfiguracionAdminFragment extends Fragment  {
     private Cipher cipher;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_configuracion_admin, container, false);
 
         changePassword = view.findViewById(R.id.btnChangePassword);
@@ -149,5 +136,6 @@ public class ConfiguracionAdminFragment extends Fragment  {
             });
         }
     }
+
 
 }

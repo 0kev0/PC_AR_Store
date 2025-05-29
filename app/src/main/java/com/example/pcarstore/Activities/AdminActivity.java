@@ -22,7 +22,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.pcarstore.Fragments.AdminFragment;
 import com.example.pcarstore.Fragments.BalanceAdminFragment;
-import com.example.pcarstore.Fragments.ConfiguracionAdminFragment;
 import com.example.pcarstore.Fragments.SalesRecordsFragment;
 import com.example.pcarstore.R;
 import com.example.pcarstore.helpers.FingerprintAuthListener;
@@ -40,7 +39,6 @@ public class AdminActivity extends AppCompatActivity implements FingerprintAuthL
     private static final String TAG = "AdminActivity";
     private static final String KEY_NAME = "admin_config_key";
     private static final long AUTH_VALID_DURATION = 30000; // 30 segundos de validez
-
     private FingerprintManager fingerprintManager;
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;

@@ -1,6 +1,5 @@
 package com.example.pcarstore.Adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,18 +25,14 @@ import java.util.List;
 import java.util.Locale;
 
 public class UserSalesAdapter extends RecyclerView.Adapter<UserSalesAdapter.UserViewHolder> {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private List<UserSales> userSalesList;
-    private Context context;
-
+    private final Context context;
     public interface OnUserClickListener {
         void onUserClick(String userId);
     }
 
-    private OnUserClickListener listener;
-
     public void setOnUserClickListener(OnUserClickListener listener) {
-        this.listener = listener;
     }
 
     public UserSalesAdapter(List<UserSales> userSalesList, Context context) {
@@ -120,4 +115,5 @@ public class UserSalesAdapter extends RecyclerView.Adapter<UserSalesAdapter.User
             tvTotalAmount = itemView.findViewById(R.id.tvTotalAmount);
         }
     }
+
 }

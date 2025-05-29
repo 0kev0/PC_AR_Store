@@ -9,35 +9,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GiftCard {
-    // Identificador único (generado por Firebase)
+    /*************************************************************VARIABLES******************************************************************************************/
     private String cardId;
-
-    // Código de la tarjeta (ej: "PDM-XK3B9L")
     private String code;
-
-    // Valor monetario
     private double amount;
-
-    // Moneda (USD por defecto)
     private String currency = "USD";
-
-    // Fechas almacenadas como timestamp (compatible con Firebase)
     private Long creationDate;
     private Long expirationDate;
     private Long redeemedDate;
-
-    // Estados posibles: "active", "redeemed", "expired", "cancelled"
     private String status = "active";
-
-    // Información de usuarios
     private String recipientEmail;
     private String createdBy;
     private String redeemedBy;
 
-    // Constructor vacío requerido por Firebase
     public GiftCard() {}
 
-    // Constructor para creación de nuevas tarjetas
     public GiftCard(double amount, String createdBy) {
         this.code = generateGiftCardCode();
         this.amount = amount;
@@ -48,10 +34,6 @@ public class GiftCard {
 
     public GiftCard(String s, double amount, String userId) {
     }
-
-    // -------------------------------
-    // Getters y Setters optimizados
-    // -------------------------------
 
     @PropertyName("cardId")
     public String getCardId() { return cardId; }

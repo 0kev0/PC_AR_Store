@@ -39,11 +39,9 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 public class AdminFragment extends Fragment implements FingerprintAuthListener {
-
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private FingerprintManager fingerprintManager;
     private KeyStore keyStore;
-    private KeyGenerator keyGenerator;
     private static final String KEY_NAME = "admin_config_key";
     private Cipher cipher;
     private TextView tvUsersCount;
@@ -51,8 +49,7 @@ public class AdminFragment extends Fragment implements FingerprintAuthListener {
     private TextView tvOrdersCount;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin, container, false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -64,6 +61,7 @@ public class AdminFragment extends Fragment implements FingerprintAuthListener {
         updateMetrics();
         return view;
     }
+
     private void setupRecentActivities(View rootView) {
         setupRecentUsers(rootView);
         setupRecentOrders(rootView);
@@ -363,7 +361,7 @@ public class AdminFragment extends Fragment implements FingerprintAuthListener {
     protected void generateKey() {
         try {
             keyStore = KeyStore.getInstance("AndroidKeyStore");
-            keyGenerator = KeyGenerator.getInstance(
+            KeyGenerator keyGenerator = KeyGenerator.getInstance(
                     KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
 
             keyStore.load(null);
@@ -474,4 +472,5 @@ public class AdminFragment extends Fragment implements FingerprintAuthListener {
         tvProductsCount = null;
         tvOrdersCount = null;
     }
+
 }

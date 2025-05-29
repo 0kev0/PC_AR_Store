@@ -19,10 +19,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 
 public class DownloadService {
+    /*************************************************************VARIABLES******************************************************************************************/
     private static final String TAG = "DownloadService";
     private final Context context;
     private final FirebaseStorage storage;
@@ -30,14 +30,10 @@ public class DownloadService {
     private File textureFile;
     private boolean modelLoaded = false;
     private boolean textureLoaded = false;
-
-    // Views para el diálogo personalizado
-    private View progressView;
     private TextView tvProgressMessage;
     private TextView tvProgressPercent;
     private TextView tvFileSize;
     private ProgressBar progressBar;
-    private Button btnCancel;
     private Dialog progressDialog;
 
     public interface DownloadCallback {
@@ -50,17 +46,17 @@ public class DownloadService {
         this.storage = FirebaseStorage.getInstance();
         initProgressDialog();
     }
-
     private void initProgressDialog() {
         // Inflar el layout personalizado
-        progressView = LayoutInflater.from(context).inflate(R.layout.custom_progress_layout, null);
+        // Views para el diálogo personalizado
+        View progressView = LayoutInflater.from(context).inflate(R.layout.custom_progress_layout, null);
 
         // Configurar vistas
         tvProgressMessage = progressView.findViewById(R.id.tvProgressMessage);
         tvProgressPercent = progressView.findViewById(R.id.tvProgressPercent);
         tvFileSize = progressView.findViewById(R.id.tvFileSize);
         progressBar = progressView.findViewById(R.id.progressBar);
-        btnCancel = progressView.findViewById(R.id.btnCancel);
+        Button btnCancel = progressView.findViewById(R.id.btnCancel);
 
         // Configurar el diálogo
         progressDialog = new Dialog(context);
@@ -75,10 +71,7 @@ public class DownloadService {
             // Aquí puedes agregar lógica para cancelar las descargas si es necesario
         });
     }
-
-    public void downloadModelAndTexture(String modelUrl, String textureUrl,
-                                        String modelFilename, String textureFilename,
-                                        DownloadCallback callback) {
+    public void downloadModelAndTexture(String modelUrl, String textureUrl, String modelFilename, String textureFilename, DownloadCallback callback) {
         showProgress("Preparando descargas...", 0, null);
 
         // Crear archivos con nombres específicos en el directorio de caché
@@ -105,9 +98,7 @@ public class DownloadService {
             startDownloads(modelRef, textureRef, -1, -1, callback);
         });
     }
-
-    private void startDownloads(StorageReference modelRef, StorageReference textureRef,
-                                long modelSize, long textureSize, DownloadCallback callback) {
+    private void startDownloads(StorageReference modelRef, StorageReference textureRef, long modelSize, long textureSize, DownloadCallback callback) {
         // Eliminar la creación de archivos temporales ya que ahora los recibimos como parámetro
         String modelMsg = "Descargando modelo 3D";
         showProgress(modelMsg, 0, modelSize > 0 ? "Tamaño: " + formatFileSize(modelSize) : null);
@@ -122,7 +113,6 @@ public class DownloadService {
             });
         });
     }
-
     private void downloadModel(StorageReference modelRef, long modelSize, Runnable onSuccess) {
         modelRef.getFile(modelFile).addOnProgressListener(taskSnapshot -> {
             if (modelSize > 0) {
@@ -147,7 +137,6 @@ public class DownloadService {
             Toast.makeText(context, "Error al descargar el modelo 3D", Toast.LENGTH_SHORT).show();
         });
     }
-
     private void downloadTexture(StorageReference textureRef, long textureSize, Runnable onSuccess) {
         textureRef.getFile(textureFile).addOnProgressListener(taskSnapshot -> {
             if (textureSize > 0) {
@@ -172,7 +161,6 @@ public class DownloadService {
             Toast.makeText(context, "Error al descargar la textura", Toast.LENGTH_SHORT).show();
         });
     }
-
     private void checkFilesReady(DownloadCallback callback) {
         new Handler().postDelayed(() -> {
             dismissProgress();
@@ -186,14 +174,12 @@ public class DownloadService {
             }
         }, 500);
     }
-
     private void showProgress(String message, int progress, String fileSizeInfo) {
         if (progressDialog != null && !progressDialog.isShowing()) {
             progressDialog.show();
         }
         updateProgress(message, progress, fileSizeInfo);
     }
-
     private void updateProgress(String message, int progress, String fileSizeInfo) {
         if (progressDialog != null && progressDialog.isShowing()) {
             tvProgressMessage.setText(message);
@@ -208,13 +194,11 @@ public class DownloadService {
             }
         }
     }
-
     private void dismissProgress() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
     }
-
     private String formatFileSize(long size) {
         if (size <= 0) return "0 B";
 

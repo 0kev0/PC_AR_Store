@@ -1,6 +1,5 @@
 package com.example.pcarstore.Adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,21 +11,15 @@ import com.bumptech.glide.Glide;
 import com.example.pcarstore.ModelsDB.User;
 import com.example.pcarstore.R;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private static final String TAG = "UserAdapter";
     private List<User> userList = new ArrayList<>();
     private List<User> userListFull = new ArrayList<>();
     private final OnUserClickListener listener;
-
     public interface OnUserClickListener {
         void onEditClick(User user);
         void onDeleteClick(User user);
@@ -36,8 +29,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public UserAdapter(OnUserClickListener listener) {
         this.listener = listener;
     }
-
-
 
     @NonNull
     @Override
@@ -61,23 +52,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public void updateList(List<User> newList) {
         this.userList = new ArrayList<>(newList);
         this.userListFull = new ArrayList<>(newList);
-        notifyDataSetChanged();
-    }
-
-    public void filterUsers(String query) {
-        List<User> filteredList = new ArrayList<>();
-        if (query.isEmpty()) {
-            filteredList.addAll(userListFull);
-        } else {
-            for (User user : userListFull) {
-                if (user.getName().toLowerCase().contains(query.toLowerCase()) ||
-                        user.getEmail().toLowerCase().contains(query.toLowerCase()) ||
-                        (user.getRole() != null && user.getRole().toLowerCase().contains(query.toLowerCase()))) {
-                    filteredList.add(user);
-                }
-            }
-        }
-        this.userList = filteredList;
         notifyDataSetChanged();
     }
 
@@ -146,24 +120,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             btnDelete.setOnClickListener(v -> listener.onDeleteClick(user));
             btnDetails.setOnClickListener(v -> listener.onViewDetailsClick(user));
             itemView.setOnClickListener(v -> listener.onViewDetailsClick(user));
-        }
-    }
-    public void removeUserFromList(String userId) {
-        // Eliminar de ambas listas
-        for (int i = 0; i < userList.size(); i++) {
-            if (userList.get(i).getUserId().equals(userId)) {
-                userList.remove(i);
-                notifyItemRemoved(i);
-                break;
-            }
-        }
-
-        // También eliminar de la lista completa
-        for (int i = 0; i < userListFull.size(); i++) {
-            if (userListFull.get(i).getUserId().equals(userId)) {
-                userListFull.remove(i);
-                break;
-            }
         }
     }
 

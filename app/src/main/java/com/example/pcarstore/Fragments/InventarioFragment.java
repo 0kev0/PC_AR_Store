@@ -22,8 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pcarstore.Adapters.AdminProductAdapter;
 import com.example.pcarstore.Adapters.ImagesAdapter;
-import com.example.pcarstore.Dialogs.AddProductDialog;
-import com.example.pcarstore.Dialogs.EditProductDialog;
 import com.example.pcarstore.ModelsDB.Product;
 import com.example.pcarstore.R;
 import com.google.android.material.button.MaterialButton;
@@ -37,26 +35,22 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class InventarioFragment extends Fragment {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private static final int PICK_IMAGES_REQUEST = 1;
     private static final int RESULT_OK = Activity.RESULT_OK;
-    private RecyclerView recyclerView;
     private AdminProductAdapter adapter;
     private DatabaseReference productsRef;
     private DatabaseReference transactionsRef;
-    private MaterialButton btnAddProduct;
-    private List<Product> productList = new ArrayList<>();
-    private List<String> selectedImageUrls = new ArrayList<>();
+    private final List<Product> productList = new ArrayList<>();
+    private final List<String> selectedImageUrls = new ArrayList<>();
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_inventario, container, false);
 
         // Inicializar Firebase
@@ -64,7 +58,7 @@ public class InventarioFragment extends Fragment {
         transactionsRef = FirebaseDatabase.getInstance().getReference("transactions");
 
         // Configurar RecyclerView
-        recyclerView = view.findViewById(R.id.productsRecycler);
+        RecyclerView recyclerView = view.findViewById(R.id.productsRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Configurar adaptador con listeners internos
@@ -82,7 +76,7 @@ public class InventarioFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         // Botón para agregar producto
-        btnAddProduct = view.findViewById(R.id.btnAddProduct);
+        MaterialButton btnAddProduct = view.findViewById(R.id.btnAddProduct);
         btnAddProduct.setOnClickListener(v -> showAddProductDialog());
 
         loadProducts();
@@ -136,8 +130,7 @@ public class InventarioFragment extends Fragment {
                 .show();
     }
 
-    private boolean validateProductInput(String name, String price, String cost,
-                                         String stock, String category, String rating) {
+    private boolean validateProductInput(String name, String price, String cost, String stock, String category, String rating) {
         if (name.isEmpty() || category.isEmpty()) {
             Toast.makeText(getContext(), "Nombre y categoría son obligatorios", Toast.LENGTH_SHORT).show();
             return false;
@@ -169,9 +162,7 @@ public class InventarioFragment extends Fragment {
         return true;
     }
 
-    private void addProduct(String name, String priceStr, String costStr,
-                            String stockStr, String category,
-                            String description, String ratingStr) {
+    private void addProduct(String name, String priceStr, String costStr, String stockStr, String category, String description, String ratingStr) {
         try {
             double price = Double.parseDouble(priceStr);
             double cost = Double.parseDouble(costStr);
@@ -345,4 +336,5 @@ public class InventarioFragment extends Fragment {
             }
         });
     }
+
 }

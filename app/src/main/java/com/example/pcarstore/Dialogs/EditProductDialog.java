@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 
@@ -13,7 +12,6 @@ import com.example.pcarstore.R;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class EditProductDialog {
-
     public interface EditProductDialogListener {
         boolean validateInputs(String name, String price, String stock);
         void updateProduct(String productId, String name, double price, int stock);
@@ -59,4 +57,5 @@ public class EditProductDialog {
         etName.requestFocus();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
+
 }

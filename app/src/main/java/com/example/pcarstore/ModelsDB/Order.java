@@ -1,13 +1,12 @@
 package com.example.pcarstore.ModelsDB;
 
-import com.google.firebase.database.PropertyName;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Calendar;
 
 public class Order {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String orderId;
     private String userId;
     private Date date;
@@ -60,11 +59,9 @@ public class Order {
         this.date = date;
         this.deliveryDate = calculateDeliveryDate(date);
     }
-
     public Date getDeliveryDate() {
         return deliveryDate;
     }
-
     public void setDeliveryDate(Date deliveryDate) {
         this.deliveryDate = deliveryDate;
     }

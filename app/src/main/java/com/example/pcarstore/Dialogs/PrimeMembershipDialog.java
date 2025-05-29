@@ -30,17 +30,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PrimeMembershipDialog extends Dialog {
-
+/*************************************************************VARIABLES******************************************************************************************/
     private static final double PRIME_PRICE = 7.00;
     private User currentUser;
-    private OnPrimePurchaseListener purchaseListener;
-
+    private final OnPrimePurchaseListener purchaseListener;
     private TextView tvCurrentBalance;
     private MaterialButton btnPurchase, btnCancel;
     private ProgressBar progressBar;
     private DatabaseReference userRef;
     private DatabaseReference transactionsRef;
-    private FirebaseUser firebaseUser;
+    private final FirebaseUser firebaseUser;
 
     public interface OnPrimePurchaseListener {
         void onPrimePurchased(boolean success);
@@ -219,4 +218,5 @@ public class PrimeMembershipDialog extends Dialog {
                     onComplete.run(); // Continuamos aunque falle el registro
                 });
     }
+
 }

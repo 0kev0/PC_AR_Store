@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pcarstore.Adapters.DiscountCodesAdapter;
 import com.example.pcarstore.ModelsDB.DiscountCode;
 import com.example.pcarstore.R;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,14 +37,12 @@ import java.util.Map;
 import java.util.UUID;
 
 public class DiscountCodesFragment extends Fragment implements DiscountCodesAdapter.OnDiscountCodeActionsListener {
-
-    private RecyclerView recyclerView;
+    /*************************************************************VARIABLES******************************************************************************************/
     private DiscountCodesAdapter adapter;
-    private List<DiscountCode> discountCodes = new ArrayList<>();
+    private final List<DiscountCode> discountCodes = new ArrayList<>();
     private DatabaseReference databaseReference;
-    private Button fabAddCode;
     private FirebaseAuth mAuth;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,13 +50,13 @@ public class DiscountCodesFragment extends Fragment implements DiscountCodesAdap
         View view = inflater.inflate(R.layout.fragment_discount_codes, container, false);
 
         mAuth = FirebaseAuth.getInstance();
-        recyclerView = view.findViewById(R.id.rv_gift_cards);
+        RecyclerView recyclerView = view.findViewById(R.id.rv_gift_cards);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new DiscountCodesAdapter(discountCodes, getContext(), this);
         recyclerView.setAdapter(adapter);
 
         databaseReference = FirebaseDatabase.getInstance().getReference("discountCodes");
-        fabAddCode = view.findViewById(R.id.button_add_code);
+        Button fabAddCode = view.findViewById(R.id.button_add_code);
         fabAddCode.setOnClickListener(v -> showAddCodeDialog());
 
         loadDiscountCodes();
@@ -146,8 +143,7 @@ public class DiscountCodesFragment extends Fragment implements DiscountCodesAdap
                 .show();
     }
 
-    private void updateDiscountCode(DiscountCode originalCode, String newCode,
-                                    double discountPercentage, String expiryDate) {
+    private void updateDiscountCode(DiscountCode originalCode, String newCode, double discountPercentage, String expiryDate) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("code", newCode);
         updates.put("discountPercentage", discountPercentage);
@@ -227,8 +223,7 @@ public class DiscountCodesFragment extends Fragment implements DiscountCodesAdap
                 .show();
     }
 
-    private void createDiscountCode(String code, double discountPercentage,
-                                    String expiryDate, String createdBy) {
+    private void createDiscountCode(String code, double discountPercentage, String expiryDate, String createdBy) {
         String codeId = databaseReference.push().getKey();
         Date creationDate = new Date();
 
@@ -299,4 +294,5 @@ public class DiscountCodesFragment extends Fragment implements DiscountCodesAdap
             }
         });
     }
+
 }

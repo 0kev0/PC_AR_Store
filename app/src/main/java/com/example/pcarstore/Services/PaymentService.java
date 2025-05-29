@@ -3,10 +3,8 @@ package com.example.pcarstore.Services;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
-import java.util.Locale;
 
 public class PaymentService {
 
@@ -18,11 +16,7 @@ public class PaymentService {
     /**
      * Procesa el pago con tarjeta
      */
-    public static void processCardPayment(
-            Context context,
-            DatabaseReference userBalanceRef,
-            double amount,
-            PaymentCallback callback) {
+    public static void processCardPayment(Context context, DatabaseReference userBalanceRef, double amount, PaymentCallback callback) {
 
         ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Procesando pago con tarjeta...");

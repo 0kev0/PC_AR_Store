@@ -12,11 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DeactivateDiscountCodeDialog {
-
     public interface OnDiscountCodeDeactivatedListener {
         void onCodeDeactivated();
         void onDeactivationError(String error);
     }
+
 
     public static void show(Context context, DiscountCode code,
                             DatabaseReference databaseRef,
@@ -58,4 +58,5 @@ public class DeactivateDiscountCodeDialog {
                     }
                 });
     }
+
 }

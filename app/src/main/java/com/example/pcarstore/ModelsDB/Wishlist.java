@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Wishlist {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String userId;
     private Map<String, OrderItem> items;
 

@@ -1,12 +1,14 @@
 package com.example.pcarstore.ModelsDB;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class Cart {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String userId;
+
     private Map<String, OrderItem> items;
+
     private double total;
 
     public Cart() {
@@ -56,11 +58,5 @@ public class Cart {
         total = items.values().stream()
                 .mapToDouble(OrderItem::getTotalPrice)
                 .sum();
-    }
-
-    public Order convertToOrder(String status) {
-        Order order = new Order(userId, status, total);
-        order.setItems(new HashMap<>(items));
-        return order;
     }
 }

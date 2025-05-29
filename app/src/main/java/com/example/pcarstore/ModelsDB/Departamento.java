@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Departamento {
+    /*************************************************************VARIABLES******************************************************************************************/
     private String id;
     private String nombre;
     private String ciudadSede;
@@ -15,13 +16,16 @@ public class Departamento {
         return id;
     }
 
+
     public void setId(String id) {
         this.id = id;
     }
 
+
     public String getNombre() {
         return nombre;
     }
+
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
@@ -59,7 +63,7 @@ public class Departamento {
         this.costoEnvioSede = costoEnvioSede;
     }
 
-    // Método para calcular costo de envío
+    // Metodo para calcular costo de envío
     public double calcularCostoEnvio(String ciudadDestino) {
         if (ciudadDestino == null || ciudadDestino.isEmpty()) {
             return costoBaseEnvio; // Costo por defecto
@@ -75,6 +79,7 @@ public class Departamento {
 
         return costoBaseEnvio * 1.5; // Costo aumentado para ciudades fuera del departamento
     }
+
 
     public static class Builder {
         private String nombre;
@@ -125,4 +130,5 @@ public class Departamento {
             return dep;
         }
     }
+
 }

@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,16 +16,14 @@ import com.example.pcarstore.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
-
+    /*************************************************************VARIABLES******************************************************************************************/
     private List<Order> orders;
     private final OnOrderClickListener listener;
     private final SimpleDateFormat dateFormat;
-
     public interface OnOrderClickListener {
         void onOrderClick(Order order);
     }
@@ -144,4 +141,5 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             }
         }
     }
+
 }
