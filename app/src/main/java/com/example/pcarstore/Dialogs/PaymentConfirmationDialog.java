@@ -358,9 +358,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
             @Override
             public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
                 if (error != null) {
-                    Toast.makeText(getContext(),
-                            "Error al actualizar saldo",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error al actualizar saldo", Toast.LENGTH_SHORT).show();
                 }
                 onComplete.run();
             }
@@ -473,9 +471,7 @@ public class PaymentConfirmationDialog extends DialogFragment {
         discountRef.updateChildren(updates)
                 .addOnSuccessListener(aVoid -> onComplete.run())
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(),
-                            "Error al registrar descuento",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error al registrar descuento", Toast.LENGTH_SHORT).show();
                     onComplete.run();
                 });
     }
