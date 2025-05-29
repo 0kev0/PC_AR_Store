@@ -258,11 +258,12 @@ public class PaymentConfirmationDialog extends DialogFragment {
         } else {
             double missingAmount = totalToPay - userBalance;
             if (listener != null) {
+                dismiss();
                 listener.onInsufficientBalance(missingAmount);
             }
             Toast.makeText(getContext(),
                     String.format(Locale.getDefault(),
-                            "Saldo insuficiente. Faltan %.2f €", missingAmount),
+                            "Saldo insuficiente. Faltan %.2f $", missingAmount),
                     Toast.LENGTH_LONG).show();
         }
     }
